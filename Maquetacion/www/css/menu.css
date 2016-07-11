@@ -1,0 +1,32 @@
+a{
+  /*agregar espacio en entre las letras y hacer más grande la letra*/
+  font-size: 1.4em;
+  letter-spacing: 2px;
+}
+#logoSIMAORDPRO{
+height: 70px;
+}
+#pBV{
+  font-size: 3em;
+  margin-left: 20%;
+  font-family: Duru Sans;
+}
+.navbar-header{
+  width: auto;
+  height: 90px;
+}
+#aLogo{
+  margin-left: 15px;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+#imgLogo{
+  height:100%;
+  margin: 0px;
+}
+.nav.navbar-nav{
+  /*border: 1px solid blue;*/
+  margin: 20px 0 0 20px;
+  /*padding: 50% 50%;*/
+}

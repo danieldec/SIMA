@@ -1,0 +1,27 @@
+caption{
+	text-align: center;
+	font-size: 1.5em;
+}
+.col-md-offset-3.col-md-6.text-center>button{
+	border: 2px solid #f90f44;
+	font-size: 1.5em;
+
+}
+.col-md-offset-3.col-md-6.text-center>a{
+	border: 2px solid #f90f44;
+	font-size: 1.5em;
+}
+th{
+	text-align: center;
+}
+tbody tr:first-child{
+	/*color: blue;*/
+
+}
+button.btn.btn-default.form-control{
+	width: 101px;
+}
+.filaSeleccionada:hover{
+	color: red;
+	background-color: #c8e6c9;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/index.css" media="screen" title="no title" charset="utf-8">
+  <title>Captura Orden de Producción</title>
+</head>
+  <body>
+    <div class="row">
+      <div class="col-xs-3 text-center col-xs-offset-9">
+        <img src="public/img/sima.jpg" alt="SIMA LOGO" id="logoSIMAORDPRO"class="img-thumbnail img-thumbnail">
+      </div>
+    </div>
+    <div class="container-fluid well">
+      <form class="" action="#" method="post">
+        <div class="row">
+          <div class="col-xs-12 text-center"><h1>Captura Orden de Producción</h1></div>
+        </div>
+        <div class="row">
+          <div class="col-xs-3 text-center"><label>Fecha</label></div>
+          <div class="col-xs-3 text-center"><label>Hora</label></div>
+          <div class="col-xs-3 text-center"><label>No. Parte</label></div>
+          <div class="col-xs-3 text-center"><label>Cantidad</label></div>
+        </div>
+        <div class="row">
+          <div class="col-xs-3">
+            <input class="form-control text-center" name="fecha" placeholder="Fecha" type="date" required/>
+          </div>
+          <div class="col-xs-3">
+            <input class="form-control text-center" id="inpHoraOrden"type="time" name="hora" placeholder="hora" required/>
+          </div>
+          <div class="col-xs-3">
+            <input type="text" name="numeroParte" class="form-control text-center" required/>
+          </div>
+          <div class="col-xs-3">
+            <input type="number" id="cantidadPartes" step="500,1" min="0" max="100000"name="cantidadPartes" class="form-control text-center" required/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6 col-xs-offset-3 text-center"><input type="submit" value="Generar Orden de Producción"></div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-xs-12"><button id="prueba">Prueba</button></div>
+      </div>
+    </div>
+
+
+    <!-- Aquí Inicia los Scripts de la página web-->
+    <!-- jQuery library -->
+    <script src="http://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

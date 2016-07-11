@@ -1,0 +1,47 @@
+body{
+  font-family: 'Duru Sans', sans-serif;
+}
+label{
+  font-size: 1.5em;
+}
+input{
+  text-align: center;
+  height: 50px;
+}
+div{
+/*border: 1px solid rgb(142, 149, 0);*/
+}
+.row>.col-sm-4,.col-xs-4,.col-xs-6, .col-sm-3,.col-sm-5,.col-sm-6,.col-md-4,.col-md-3,
+.col-md-6,.col-md-9,.col-xs-9,.col-xs-3,.col-xs-2,.col-xs-12{
+/*  border: 1px solid #80c847;*/
+}
+.col-xs-6.col-xs-offset-3.text-center{
+  margin-top: 15px;
+}
+#logoSIMAORDPRO{
+height: 70px;
+}
+#pBV{
+  font-size: 3em;
+  margin-left: 20%;
+  font-family: Duru Sans;
+}
+.navbar-header{
+  width: auto;
+  height: 90px;
+}
+#aLogo{
+  margin-left: 15px;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+#imgLogo{
+  height:100%;
+  margin: 0px;
+}
+
+#btnIniciarSesion{
+  letter-spacing: 3px;
+  font-size: 1.5em;
+}
