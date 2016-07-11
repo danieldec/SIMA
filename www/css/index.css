@@ -1,0 +1,81 @@
+@font-face {
+  font-family: Popins-med;
+  src: url('../fonts/Poppins-Medium.ttf') format ('woff');
+  font-family: ShadowsIntoLightTwo-Regular;
+  src: url('../fonts/ShadowsIntoLightTwo-Regular.ttf') format('woff');
+  font-family: BubblegumSans-Regular;
+  src: url('../fonts/BubblegumSans-Regular.ttf') format('woff');
+  font-family: Questrial-Regular;
+  src: url('../fonts/Questrial-Regular.ttf') format('woff');
+}
+body{
+  font-family: Questrial-Regular;
+  background-color: #f1f8e9;
+}
+label{
+  font-size: 1.5em;
+}
+input{
+  text-align: center;
+  height: 50px;
+}
+div{
+/*border: 1px solid rgb(142, 149, 0);*/
+}
+
+.row>.col-sm-4,.col-xs-4,.col-xs-6, .col-sm-3,.col-sm-5,.col-sm-6,.col-md-4,.col-md-3,
+.col-md-6,.col-md-9,.col-xs-9,.col-xs-3,.col-xs-2,.col-xs-12{
+/*  border: 1px solid #80c847;*/
+}
+.col-xs-6.col-xs-offset-3.text-center{
+  margin-top: 15px;
+}
+
+.navbar-header{
+  width: auto;
+  height: 90px;
+}
+.sesion::-webkit-input-placeholder{
+  font-size: 25px;
+  letter-spacing: 7px;
+}
+.sesion:-moz-placeholder{ /* Firefox 18- */
+  font-size: 25px;
+  letter-spacing: 7px;
+}
+.sesion::-moz-placeholder{ /* Firefox 19+ */
+  font-size: 25px;
+  letter-spacing: 7px;
+}
+.sesion:-ms-input-placeholder{
+  font-size: 25px;
+  letter-spacing: 7px;
+}
+.sesion{
+  font-size: 20px;
+  padding: 2px 12px;
+}
+#logoSIMAORDPRO{
+height: 70px;
+}
+#pBV{
+  font-size: 3em;
+  margin-left: 20%;
+  color: #000;
+}
+#aLogo{
+  margin-left: 15px;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+#imgLogo{
+  height:100%;
+  margin: 0px;
+}
+
+#btnIniciarSesion{
+  letter-spacing: 3px;
+  font-size: 1.5em;
+  padding: 0px 16px;
+}
