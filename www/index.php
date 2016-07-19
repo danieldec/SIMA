@@ -11,17 +11,17 @@
   <br>
   <br>
   <div class="container well col-md-8 col-md-offset-2">
-    <form class="form-horizontal" method="post">
+    <form class="form-horizontal" id="loginForm" method="post">
       <div class="form-group">
         <label for="inputEmail3" class="col-sm-2 control-label">Usuario</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control sesion" id="inputEmail3" placeholder="Usuario" required name="inUsuario">
+          <input type="text" class="form-control sesion" id="inUsuario" placeholder="Usuario" required name="inUsuario">
         </div>
       </div>
       <div class="form-group">
         <label for="inputPassword3" class="col-sm-2 control-label">Contraseña</label>
         <div class="col-sm-10">
-          <input type="password" class="form-control sesion" id="inputPassword3" placeholder="Contraseña" required name="inContra" id="inContra">
+          <input type="password" class="form-control sesion" placeholder="***" required name="inContra" id="inContra">
         </div>
       </div>
 
@@ -31,6 +31,8 @@
         </div>
       </div>
     </form>
+    <div class="" id="tipoAlerta">
+    </div>
   </div>
   <!-- Aquí Inicia los Scripts de la página web-->
   <?php include('php/scriptsPiePagIndex.php'); ?>

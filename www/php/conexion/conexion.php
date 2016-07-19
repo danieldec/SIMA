@@ -2,7 +2,7 @@
   $usuario="root";
   $contrasena="";
   $equipo="localhost";
-  $baseDatos="SIMA";
+  $baseDatos="SIMAP";
   $conexion=new mysqli($equipo,$usuario,$contrasena,$baseDatos,3306);
   $conexion->set_charset('utf8');
   if ($conexion->connect_errno) {

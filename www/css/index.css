@@ -1,3 +1,4 @@
+/*Agregamos las fuentes a usar aquí :D*/
 @font-face {
   font-family: Popins-med;
   src: url('../fonts/Poppins-Medium.ttf') format ('woff');
@@ -78,4 +79,7 @@ height: 70px;
   letter-spacing: 3px;
   font-size: 1.5em;
   padding: 0px 16px;
+}
+#inUsuario{
+  text-transform: uppercase;
 }
