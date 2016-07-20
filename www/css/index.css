@@ -56,6 +56,10 @@ div{
   font-size: 20px;
   padding: 2px 12px;
 }
+#tipoAlerta{
+  font-size: 20px;
+  letter-spacing: 7px;
+}
 #logoSIMAORDPRO{
 height: 70px;
 }
