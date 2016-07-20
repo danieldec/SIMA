@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <?php
-
-  ?>
+  <?php session_start()?>
   <meta charset="UTF-8">
   <title>Admin</title>
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->
@@ -15,7 +13,7 @@
   <?php include '../nav.php'; ?>
   <!-- Aquí empieza el tab de la página-->
   <div class="row">
-    <div class="col-sm-12 text-right">
+    <div id="dia" class="col-sm-12 text-right">
       <?php
       // $fecha1=new DateTime();
       // print_r($fecha1);

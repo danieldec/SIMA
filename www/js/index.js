@@ -28,13 +28,13 @@ $(document).on('ready',function () {
       contrasenaUsuario:contrasena},
       function(data, status) {
         if (data=="admin") {
-
+          window.alert("Ingresaste Correctamente");
+          window.location.href="php/admin/";
         }else{
             $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(5000);
         }
-
       }
     );
     e.preventDefault();
-  })
+  });
 });

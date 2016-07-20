@@ -11,7 +11,7 @@
   <br>
   <br>
   <div class="container well col-md-8 col-md-offset-2">
-    <form class="form-horizontal" id="loginForm" method="post">
+    <form class="form-horizontal" id="loginForm" action="login.php" method="post">
       <div class="form-group">
         <label for="inputEmail3" class="col-sm-2 control-label">Usuario</label>
         <div class="col-sm-10">
@@ -33,6 +33,7 @@
     </form>
     <div class="" id="tipoAlerta">
     </div>
+
   </div>
   <!-- Aquí Inicia los Scripts de la página web-->
   <?php include('php/scriptsPiePagIndex.php'); ?>

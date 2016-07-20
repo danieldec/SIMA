@@ -19,7 +19,7 @@
       return "MARTES";
     }
     if ($today=="Wednesday") {
-      return "MIERCOLES";
+      return "MIÉRCOLES";
     }
     if ($today=="Thursday") {
       return "JUEVES";

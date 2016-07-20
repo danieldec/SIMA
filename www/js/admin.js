@@ -12,7 +12,7 @@ $(document).on('ready',function() {
   //   console.log($(this).val());
   // });
 
-  //este evento nos permite hacer quelas minusculas se hagan mayusculas
+  //este evento nos permite hacer que las minusculas se hagan mayusculas
   $('input[type="text"]').on('keyup',function (e) {
     cadena=$(this).val().toUpperCase();
     $(this).val(cadena);
@@ -20,5 +20,13 @@ $(document).on('ready',function() {
   $('input[type="password"]').on('click',function (e) {
     console.log($(this).val());
   });
-
+  //dialogo de confirmación para cerrar sesión
+  $('#aCerrarSesion').on('click',function(e) {
+    var r= window.confirm("¿Estas seguro que quieres salir?");
+    if (r==true) {
+      return true;
+    }else{
+      e.preventDefault();
+    }
+  });
 });
