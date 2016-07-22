@@ -1,4 +1,6 @@
 $(document).on('ready',function() {
+  var cadena="";
+  var inputTypeText=$('input[type="text"]');
   //evento del menu tab
   $('.nav-tabs a').on('click',function (e) {
     e.preventDefault();
@@ -7,19 +9,13 @@ $(document).on('ready',function() {
     console.log($(this).tab('show'));
   });
 
-  var cadena="";
-  // $('input[type="text"]').on('blur',function () {
-  //   console.log($(this).val());
-  // });
 
   //este evento nos permite hacer que las minusculas se hagan mayusculas
-  $('input[type="text"]').on('keyup',function (e) {
+  inputTypeText.bind('keyup blur focus',function (e) {
     cadena=$(this).val().toUpperCase();
-    $(this).val(cadena);
+    console.log(cadena);
   });
-  $('input[type="password"]').on('click',function (e) {
-    console.log($(this).val());
-  });
+
   //dialogo de confirmación para cerrar sesión
   $('#aCerrarSesion').on('click',function(e) {
     var r= window.confirm("¿Estas seguro que quieres salir?");
@@ -29,4 +25,5 @@ $(document).on('ready',function() {
       e.preventDefault();
     }
   });
+  inputTypeText.val(cadena);
 });

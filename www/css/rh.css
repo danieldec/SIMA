@@ -1,0 +1,26 @@
+caption{
+  text-align: center;
+  font-size: 1.5em;
+}
+th{
+  text-align: center;
+}
+input[type="text"]{
+  border: 1px solid green;
+}
+div>input[type="text"]{
+  border: 1px solid orange;
+  text-transform: uppercase;
+}
+button>span{
+  margin-right: 1px;
+}
+form>div.alert.alert-danger,div.alert.alert-success{
+  font-size: 15px;
+  letter-spacing: 3px;
+  margin: 5px auto;
+}
+#spanMenErr{
+  font-size: 22px;
+  color:#df9525;
+}

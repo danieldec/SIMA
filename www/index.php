@@ -15,7 +15,7 @@
       <div class="form-group">
         <label for="inputEmail3" class="col-sm-2 control-label">Usuario</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control sesion" id="inUsuario" placeholder="Usuario" required name="inUsuario">
+          <input type="text" class="form-control sesion" id="inUsuario" placeholder="Usuario" required name="inUsuario" autofocus >
         </div>
       </div>
       <div class="form-group">

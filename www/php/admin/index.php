@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <?php session_start()?>
+  <?php session_start();
+  if ($_SESSION['perfil']!='admin') {
+    header("Location:../../");
+    session_destroy();
+    exit;
+  }
+  ?>
   <meta charset="UTF-8">
   <title>Admin</title>
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->
@@ -26,7 +32,6 @@
 
     </div>
   </div>
-
   <div class="container-fluid">
     <div class="row">
         <ul class="nav nav-tabs nav-justified">
@@ -78,9 +83,9 @@
         <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
       </div>
   </div>
-
   <!-- importar los scripts desde la ruta www/js y los js del admin-->
   <?php include '../scriptsPiePag.php';?>
   <script type="text/javascript" src="../../js/admin.js"></script>
+
 </body>
 </html>

@@ -12,13 +12,14 @@
         $_SESSION['logueado']=1;
         $_SESSION['numUsuario']=$fila['nombre_usuario'];
         $_SESSION['idusuario']=$fila['idusuario'];
-        $perfil=$fila['perfil'];
+        $_SESSION['perfil']=$fila['perfil'];
+        $perfil=$_SESSION['perfil'];
         switch ($perfil) {
           case 'admin':
               echo $perfil;
             break;
           case 'rh':
-
+              echo $perfil;
             break;
           case 'produccion':
             break;
