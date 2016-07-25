@@ -32,7 +32,7 @@ $(document).on('ready',function() {
     var numEmpleado=inputNumEmpleado.val() ;
     var nombreEmpleado=inputNomEmpleado.val();
     var apeEmpleado=inputApeEmpleado.val();
-    console.log(numEmpleado+" " + nombreEmpleado + apeEmpleado);
+    //console.log(numEmpleado+" " + nombreEmpleado +" "+ apeEmpleado);
     $.post('altasEmpleado.php',
       {
         pnumEmpleado:numEmpleado,
@@ -42,11 +42,11 @@ $(document).on('ready',function() {
       function(data,status) {
         var tipoMensaje=data.charAt(0);
         var mensajeMostrar=data.slice(1,data.length);
-        console.log(tipoMensaje +" : "+ mensajeMostrar);
+        //console.log(tipoMensaje +" : "+ mensajeMostrar);
         var mensaje=$('#formAltaEmpleados');
         var numeroHijos=mensaje.children('div').size();
         if (tipoMensaje=="E") {
-          console.log(mensaje);
+          //console.log(mensaje);
           var mensajeHtml='<div class="alert alert-danger alert-dismissible fade in" role="alert"><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span haria-hidden="true">&times;</span></button>'+mensajeMostrar+'</div>';
           if (numeroHijos<=3) {
             mensaje.append(mensajeHtml);
@@ -67,13 +67,27 @@ $(document).on('ready',function() {
             $('#formAltaEmpleados>div.alert.alert-success').remove();
             mensaje.append(mensajeHtml);
           }
+          inputTypeText.each(function() {
+            $(this).val("")
+            console.log(this);
+          });
         }
       }
     )
     e.preventDefault();
   });
+  //empieza el listado de los empleado
+  $('#btnListaE').on('click',function () {
+    $.post('empleadosME.php',
+      {
 
-})
+      }
+      ,function (data, status) {
+        $('#listaEmpleados').html(data)
+      }
+    )
+  })
+})// fin del documento
 
 //recorrer los elemento de un mismo tipo de selector
 //$('div>input[type="text"]').each(function (index) {

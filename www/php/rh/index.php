@@ -83,7 +83,11 @@
       </div>
       <!--tabla empleados-->
       <div class="row" id="divTablaEmpleados">
-       
+        <div class="container-fluid">
+          <div class="collapse col-md-12 text-center" id="listaEmpleados">
+          </div>
+        </div>
+      </div>
     </div>
     <!--Aquí termina el contenido de la pestaña empleados-->
 
