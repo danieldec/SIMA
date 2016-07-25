@@ -85,7 +85,7 @@
       <div class="row">
        <div class="container-fluid">
          <div class="collapse col-md-12 text-center" id="listaEmpleados">
-         <table class="table table-bordered table-responsive table-condensed table-reflow" id="tablaEmpleados">
+         <table class="table table-bordered table-responsive table-condensed table-reflow table-hover" id="tablaEmpleados">
            <caption>Lista Empleados</caption>
            <thead>
              <tr>

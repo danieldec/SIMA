@@ -8,6 +8,7 @@ $(document).on('ready',function() {
   $('.nav-tabs a').on('click',function() {
     $(this).tab('show');
   });
+
   //convertir cadena de texto en mayusculas del input
   inputTypeText.each(function () {
     $(this).bind('keyup blur focus',function() {
@@ -80,13 +81,84 @@ $(document).on('ready',function() {
   $('#btnListaE').on('click',function () {
     $.post('empleadosME.php',
       {
-
       }
-      ,function (data, status) {
-        $('#listaEmpleados').html(data)
+      ,function(data, status) {
+        $('#listaEmpleados').html(data,document);
+        funcionRegargar();
       }
     )
-  })
+  });
+  //esta función nos sirve para modificar o eliminar a un empleado
+  var funcionRegargar = function() {
+    var numEmpleadoE;
+    var nomEmpleadoE;
+    var apeEmpleadoE;
+    $("tr>td>button").on('click',function() {
+      var inputSelecionado=$(this).parent().prevAll();
+      // original var inputSelecionado=$(this).parent().prevAll().children('input');
+    	/*console.log($(this).attr("id"));
+    	console.log($(this).text()+"\nel método.html(): "+$(this).html());*/
+    	if ($(this).text()==" Modificar") {
+        numEmpleadoE=inputSelecionado.children('input:eq(2)').val();
+        nomEmpleadoE=inputSelecionado.children('input:eq(1)').val();
+        apeEmpleadoE=inputSelecionado.children('input:eq(0)').val();
+    		$(this).html('<span class="glyphicon glyphicon-floppy-disk"></span> Guardar');
+        inputSelecionado.children('input').removeAttr('disabled');
+    		return;
+    	}
+    	if ($(this).text()==" Guardar") {
+        var numEmpleadoAux=inputSelecionado.children('input:eq(2)').val().toUpperCase();
+        var nomEmpleadoAux=inputSelecionado.children('input:eq(1)').val().toUpperCase();
+        var apeEmpleadoAux=inputSelecionado.children('input:eq(0)').val().toUpperCase();
+        console.log(numEmpleadoAux + nomEmpleadoAux+ apeEmpleadoAux);
+        console.log(numEmpleadoE+nomEmpleadoE+apeEmpleadoE);
+        $.post('modElimEmpleado.php',
+        {
+          pNumEmpleado:numEmpleadoE,
+          pnumEmpleadoAux:numEmpleadoAux,
+          pNomEmpleado:nomEmpleadoE,
+          pApeEmpleado:apeEmpleadoE,
+          pModificar:"modificar"
+        }
+        ,function (data, status) {
+          window.alert('registro: '+ data + status)
+        }
+      );
+        inputSelecionado.children('input').attr('disabled','');
+        $(this).html('<span class="glyphicon glyphicon-pencil"></span> Modificar');
+    	}
+      //eliminar a un empleado
+      if ($(this).text()==" Eliminar") {
+        var numEmpleado=inputSelecionado.children('input:eq(2)').val().toUpperCase();
+        var confirmacion=window.confirm("¿estas seguro que quieres eliminar a este empleado?");
+        if (confirmacion) {
+          $.post('modElimEmpleado.php',
+          {
+            pnumEmpleado:numEmpleado,
+            pEliminar:"eliminar"
+          },function(data,status) {
+            if (data=="Eliminado") {
+              alert(data)
+              inputSelecionado.parent().remove();
+            }else{
+              alert(data)
+            }
+          })
+        }else{
+          return;
+        }
+      }
+
+    });
+  };
+  $('#aCerrarSesion').on('click',function(e) {
+    var r= window.confirm("¿Estas seguro que quieres salir?");
+    if (r==true) {
+      return true;
+    }else{
+      e.preventDefault();
+    }
+  });
 })// fin del documento
 
 //recorrer los elemento de un mismo tipo de selector

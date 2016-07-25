@@ -20,7 +20,13 @@ form>div.alert.alert-danger,div.alert.alert-success{
   letter-spacing: 3px;
   margin: 5px auto;
 }
+tbody>tr:hover{
+  background: rgb(140, 223, 228);
+}
 #spanMenErr{
   font-size: 22px;
   color:#df9525;
+}
+tr>td>input{
+  text-transform: uppercase;
 }
