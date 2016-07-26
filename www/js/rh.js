@@ -70,7 +70,7 @@ $(document).on('ready',function() {
           }
           inputTypeText.each(function() {
             $(this).val("")
-            console.log(this);
+            //console.log(this);
           });
         }
       }
@@ -100,8 +100,8 @@ $(document).on('ready',function() {
     	console.log($(this).text()+"\nel método.html(): "+$(this).html());*/
     	if ($(this).text()==" Modificar") {
         numEmpleadoE=inputSelecionado.children('input:eq(2)').val();
-        nomEmpleadoE=inputSelecionado.children('input:eq(1)').val();
-        apeEmpleadoE=inputSelecionado.children('input:eq(0)').val();
+        //nomEmpleadoE=inputSelecionado.children('input:eq(1)').val();
+        //apeEmpleadoE=inputSelecionado.children('input:eq(0)').val();
     		$(this).html('<span class="glyphicon glyphicon-floppy-disk"></span> Guardar');
         inputSelecionado.children('input').removeAttr('disabled');
     		return;
@@ -110,14 +110,14 @@ $(document).on('ready',function() {
         var numEmpleadoAux=inputSelecionado.children('input:eq(2)').val().toUpperCase();
         var nomEmpleadoAux=inputSelecionado.children('input:eq(1)').val().toUpperCase();
         var apeEmpleadoAux=inputSelecionado.children('input:eq(0)').val().toUpperCase();
-        console.log(numEmpleadoAux + nomEmpleadoAux+ apeEmpleadoAux);
-        console.log(numEmpleadoE+nomEmpleadoE+apeEmpleadoE);
+        //console.log(numEmpleadoAux + nomEmpleadoAux+ apeEmpleadoAux);
+        //console.log(numEmpleadoE+nomEmpleadoE+apeEmpleadoE);
         $.post('modElimEmpleado.php',
         {
           pNumEmpleado:numEmpleadoE,
           pnumEmpleadoAux:numEmpleadoAux,
-          pNomEmpleado:nomEmpleadoE,
-          pApeEmpleado:apeEmpleadoE,
+          pNomEmpleado:nomEmpleadoAux,
+          pApeEmpleado:apeEmpleadoAux,
           pModificar:"modificar"
         }
         ,function (data, status) {

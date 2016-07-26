@@ -10,7 +10,11 @@
       strtoupper($nomEmpleado=$_POST['pNomEmpleado']);
       strtoupper($apeEmpleado=$_POST['pApeEmpleado']);
       strtoupper($numEmpleadoA=$_POST['pnumEmpleadoAux']);
-      $consulta="update empleados set idempleados='$numEmpleadoA', nombre='$nomEmpleado', apellidos='$apeEmpleado' where idempleados='$numEmpleado'";
+      if ($numEmpleado==$numEmpleadoA) {
+        $consulta="update empleados set idempleados='$numEmpleado', nombre='$nomEmpleado', apellidos='$apeEmpleado' where idempleados='$numEmpleado'";
+      }else{
+        $consulta="update empleados set idempleados='$numEmpleadoA', nombre='$nomEmpleado', apellidos='$apeEmpleado' where idempleados='$numEmpleado'";
+      }
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         echo "error: ".mysqli_error($conexion);
