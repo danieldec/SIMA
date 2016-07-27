@@ -10,13 +10,109 @@
   <link rel="stylesheet" href="../../css/produccion.css" charset="utf-8">
 </head>
 <body>
-  <!-- Barra de navegación-->
-  <?php include '../nav.php'; ?>
-
+  <!-- Barra de navegación y conexión base de datso-->
+  <?php
+    include '../nav.php';
+    include '../conexion/conexion.php';
+   ?>
+   <!--consulta php para el número de orden-->
+   <?php
+    $fila;
+    $errorConsulta;
+    $tiempo=time();
+    $dia=date("Y-m-d");
+    $consulta="select MAX(idnum_orden) as id from num_orden";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      $errorConsulta=mysqli_error($conexion);
+    }else {
+      $fila=$resultado->fetch_array();
+    }
+    $conexion->close();
+   ?>
+  <!-- Tablas de navegación-->
+  <div class="container-fluid">
+    <div class="row">
+      <div role="tabpanel">
+        <ul class="nav nav-pills nav-justified" role="tablist">
+          <li role="presentation" class="active"><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
+          <li role="presentation"><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
+          <li role="presentation"><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
+          <li role="presentation"><a href="#divRequerimientos" aria-controls="divRequerimientos" role="tab" data-toggle="tab">REQUERIMIENTOS</a></li>
+        </ul>
+        <br>
+        <div class="tab-content">
+          <!--Aquí empieza el tab de número de parte-->
+          <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
+              <div class="container-fluid well">
+                <div class="row">
+                    <div class="col-xs-3 text-center"><label>Número de Orden</label></div>
+                    <div class="col-xs-3 text-center"><label>Número de Parte</label></div>
+                    <div class="col-xs-3 text-center"><label>Cantidad</label></div>
+                    <div class="col-xs-3 text-center"><label>Fecha</label></div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-3 text-center"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
+                    if (isset($fila)) {
+                      echo 1+$fila['id'];
+                    }else{
+                      echo '0';
+                    }
+                     ?>"/>
+                  </div>
+                  <div class="col-xs-3 text-center">
+                    <input class="form-control" name="numParte" id="inNumParte" required type="text"/>
+                  </div>
+                  <div class="col-xs-3 text-center"><input min="0" class="form-control" id="inCantReq"name="cantReq" required type="number"/></div>
+                  <div class="col-xs-3 text-center"><input class="form-control" name="fNumOrden" id="inFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-6 col-xs-offset-3 text-center">
+                    <input id="btnOrdPro"type="submit" class="text-center btn btn-primary" value="Generar Orden de producción">
+                    <div id="mensajeBD">
+                      <strong>ERROR: </strong><?php echo $errorConsulta; ?></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!--Aquí acaba el tab de número de parte -->
+          <!--Aquí empieza el tab de asistencia-->
+          <div role="tabpanel" class="tab-pane fade" id="divAsistencia">
+            <div class="row">
+              <div class="container-fluid">
+                <p>Estas en el tab de asistencia</p>
+              </div>
+            </div>
+          </div>
+          <!--Aquí termina el tab de asistencia| -->
+          <!--Aquí empieza el tab de captura-->
+          <div role="tabpanel" class="tab-pane fade" id="divCaptura">
+            <div class="row">
+              <div class="container-fluid">
+                <p>Estas en el tab de captura</p>
+              </div>
+            </div>
+          </div>
+          <!--Aquí termina el tab de captura| -->
+          <!--Aquí empieza el tab de captura-->
+          <div role="tabpanel" class="tab-pane fade" id="divRequerimientos">
+            <div class="row">
+              <div class="container-fluid">
+                <p>Estas en el tab de requerimientos</p>
+              </div>
+            </div>
+          </div>
+          <!--Aquí termina el tab de captura| -->
+        </div>
+      </div>
+    </div>
+  </div>
 
 
   <!--importar los scripts de la ruta www/js -->
-  <?php include '../js/scriptsPiePag.php'; ?>
+  <?php include '../scriptsPiePag.php'; ?>
   <script type="text/javascript" src="../../js/produccion.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ body{
   background-color: #f1f8e9;
 }
 label{
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 input{
   text-align: center;
@@ -58,7 +58,7 @@ div{
   padding: 2px 12px;
 }
 #aCerrarSesion{
-  margin-left: 40px;  
+  margin-left: 40px;
 }
 #tipoAlerta{
   font-size: 20px;

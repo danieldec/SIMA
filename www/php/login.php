@@ -22,6 +22,7 @@
               echo $perfil;
             break;
           case 'produccion':
+              echo $perfil;
             break;
 
           case 'materiales':
