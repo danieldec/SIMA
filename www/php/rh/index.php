@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <?php session_start() ?>
+  <?php session_start();
+    if ($_SESSION['perfil']!='rh') {
+      header("Location:../../");
+      session_destroy();
+      exit;
+    }
+   ?>
   <meta charset="UTF-8">
   <title>Recursos Humanos</title>
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->

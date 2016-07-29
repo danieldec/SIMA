@@ -4,3 +4,10 @@ body{
 #btnOrdPro{
   font-size: 1.3em;
 }
+#listaNumParte{
+  list-style: none;
+  background-color: white;
+}
+#listaNumParte>li:hover{
+  background-color: rgba(232, 227, 224, 0.36);
+}

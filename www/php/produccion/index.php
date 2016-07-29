@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <?php session_start(); ?>
+  <?php session_start();
+  if ($_SESSION['perfil']!='produccion') {
+    header("Location:../../");
+    session_destroy();
+    exit;
+  }
+   ?>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Producción</title>
@@ -44,7 +50,7 @@
         <div class="tab-content">
           <!--Aquí empieza el tab de número de parte-->
           <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">
-            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
               <div class="container-fluid well">
                 <div class="row">
                     <div class="col-xs-3 text-center"><label>Número de Orden</label></div>
@@ -54,6 +60,7 @@
                 </div>
                 <div class="row">
                   <div class="col-xs-3 text-center"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
+                  //Aquí vamos a insertar el último registro de el número de parte
                     if (isset($fila)) {
                       echo 1+$fila['id'];
                     }else{
@@ -62,20 +69,33 @@
                      ?>"/>
                   </div>
                   <div class="col-xs-3 text-center">
-                    <input class="form-control" name="numParte" id="inNumParte" required type="text"/>
+                    <input class="form-control" autocomplete="off" name="numParte" id="inpNumParte" required type="text"/>
+                    <ul id="listaNumParte" class="list-unstyled">
+                    </ul>
                   </div>
-                  <div class="col-xs-3 text-center"><input min="0" class="form-control" id="inCantReq"name="cantReq" required type="number"/></div>
-                  <div class="col-xs-3 text-center"><input class="form-control" name="fNumOrden" id="inFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
+                  <div class="col-xs-3 text-center"><input min="0" value="0" class="form-control" id="inpCantReq"name="cantReq" required type="number"/></div>
+                  <div class="col-xs-3 text-center"><input class="form-control" name="fNumOrden" id="inpFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
+                  <input type="text" name="numUsuario" id="inpNumUsuario" hidden="hidden"value="<?php echo $_SESSION['idusuario']; ?>">
                 </div>
                 <div class="row">
                   <div class="col-xs-6 col-xs-offset-3 text-center">
                     <input id="btnOrdPro"type="submit" class="text-center btn btn-primary" value="Generar Orden de producción">
+                    <!-- Aquí se muestra los errores-->
                     <div id="mensajeBD">
                       <strong>ERROR: </strong><?php echo $errorConsulta; ?></div>
                   </div>
                 </div>
               </div>
             </form>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="" id="registroOrden">
+
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!--Aquí acaba el tab de número de parte -->
           <!--Aquí empieza el tab de asistencia-->
