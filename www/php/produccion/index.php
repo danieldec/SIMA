@@ -41,25 +41,28 @@
     <div class="row">
       <div role="tabpanel">
         <ul class="nav nav-pills nav-justified" role="tablist">
-          <li role="presentation" class="active"><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
-          <li role="presentation"><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
+          <li role="presentation" class=""><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
+          <li role="presentation" class="active"><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
           <li role="presentation"><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
           <li role="presentation"><a href="#divRequerimientos" aria-controls="divRequerimientos" role="tab" data-toggle="tab">REQUERIMIENTOS</a></li>
         </ul>
         <br>
         <div class="tab-content">
           <!--Aquí empieza el tab de número de parte-->
-          <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">
+                                      <!--Cambiar cuando termine con las otras pestañas
+          <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">-->
+          <div role="tabpanel" class="tab-pane fade" id="divNumOrden">
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
               <div class="container-fluid well">
                 <div class="row">
-                    <div class="col-xs-3 text-center"><label>Número de Orden</label></div>
-                    <div class="col-xs-3 text-center"><label>Número de Parte</label></div>
-                    <div class="col-xs-3 text-center"><label>Cantidad</label></div>
-                    <div class="col-xs-3 text-center"><label>Fecha</label></div>
+                    <div class="col-xs-2 col-xs-offset-1 text-center"><label>Número de Orden</label></div>
+                    <div class="col-xs-2 text-center"><label>Número de Parte</label></div>
+                    <div class="col-xs-2 text-center"><label>Parcial</label></div>
+                    <div class="col-xs-2 text-center"><label>Cantidad</label></div>
+                    <div class="col-xs-2 text-center"><label>Fecha</label></div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-3 text-center"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
+                  <div class="col-xs-2 text-center col-xs-offset-1"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
                   //Aquí vamos a insertar el último registro de el número de parte
                     if (isset($fila)) {
                       echo 1+$fila['id'];
@@ -68,13 +71,14 @@
                     }
                      ?>"/>
                   </div>
-                  <div class="col-xs-3 text-center">
+                  <div class="col-xs-2 text-center">
                     <input class="form-control" autocomplete="off" name="numParte" id="inpNumParte" required type="text"/>
                     <ul id="listaNumParte" class="list-unstyled">
                     </ul>
                   </div>
-                  <div class="col-xs-3 text-center"><input min="0" value="0" class="form-control" id="inpCantReq"name="cantReq" required type="number"/></div>
-                  <div class="col-xs-3 text-center"><input class="form-control" name="fNumOrden" id="inpFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
+                  <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpParcial" name="parcial" required type="number"/></div>
+                  <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpCantReq" name="cantReq" required type="number"/></div>
+                  <div class="col-xs-2 text-center"><input class="form-control" name="fNumOrden" id="inpFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
                   <input type="text" name="numUsuario" id="inpNumUsuario" hidden="hidden"value="<?php echo $_SESSION['idusuario']; ?>">
                 </div>
                 <div class="row">
@@ -82,7 +86,12 @@
                     <input id="btnOrdPro"type="submit" class="text-center btn btn-primary" value="Generar Orden de producción">
                     <!-- Aquí se muestra los errores-->
                     <div id="mensajeBD">
-                      <strong>ERROR: </strong><?php echo $errorConsulta; ?></div>
+                      <strong>ERROR: </strong><?php
+                        if (isset($errorConsulta)){
+                          echo $errorConsulta;
+                        } ?>
+                      </div>
+                      <div id="mensajeNumOrden"> </div>
                   </div>
                 </div>
               </div>
@@ -90,8 +99,27 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-12">
-                  <div class="" id="registroOrden">
-
+                  <form action="numOrden.php" id="formMosNumOrd"method="post">
+                    <div class="col-sm-2">
+                      <label for="">De</label><input type="date" name="fechIni"class="form-control" id="inpFechIni" value="<?php echo $dia?>">
+                    </div>
+                    <div class="col-sm-2">
+                      <label for="">hasta</label><input type="date" name="fechFin"class="form-control" id="inpFechFin" value="<?php echo $dia?>">
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="button">Click</label>
+                      <input type="submit" name="" class="form-control" value="Mostrar" id="btnMostrarNumOrden">
+                    </div>
+                    <div class="col-sm-1">
+                      <label for="button">Click</label>
+                      <input type="button" name="" class="form-control" value="Ocultar" id="btnOcultarNumOrden">
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                  <div id="divTablaNumOrden">
                   </div>
                 </div>
               </div>
@@ -99,10 +127,14 @@
           </div>
           <!--Aquí acaba el tab de número de parte -->
           <!--Aquí empieza el tab de asistencia-->
-          <div role="tabpanel" class="tab-pane fade" id="divAsistencia">
+          <div role="tabpanel" class="tab-pane fade in active" id="divAsistencia">
             <div class="row">
               <div class="container-fluid">
-                <p>Estas en el tab de asistencia</p>
+                <div class="col-md-12">
+                  <div class="col-md-4 col-md-offset-4">
+                    <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="button">Agregar Nueva Asistencia</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

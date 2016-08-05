@@ -153,7 +153,7 @@ $(document).on('ready',function() {
   };
   $('#aCerrarSesion').on('click',function(e) {
     var r= window.confirm("¿Estas seguro que quieres salir?");
-    if (r==true) {
+    if (r) {
       return true;
     }else{
       e.preventDefault();

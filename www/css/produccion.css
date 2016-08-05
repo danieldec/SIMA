@@ -1,6 +1,17 @@
 body{
   background-color: #FFFFFF;
 }
+/*Aquí agregamos el color de la fuente en blanco de la etiqueta label*/
+label[for="button"]{
+  color: #ffffff;
+}
+thead{
+  background-color: #c5fe5b;
+}
+caption{
+  font-size: 20px;
+  text-align: center;
+}
 #btnOrdPro{
   font-size: 1.3em;
 }
@@ -9,5 +20,13 @@ body{
   background-color: white;
 }
 #listaNumParte>li:hover{
-  background-color: rgba(232, 227, 224, 0.36);
+  background-color: rgb(158, 219, 125);
+}
+#listaNumParte>li{
+  margin: 5px auto;
+  font-size: 15px;
+}
+#btnAsistencia{
+  background-color: #992a00;
+  font-size: 15px;
 }
