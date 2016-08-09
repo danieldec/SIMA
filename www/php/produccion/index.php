@@ -34,6 +34,13 @@
     }else {
       $fila=$resultado->fetch_array();
     }
+    $consultaFA="select MAX(asistencia.fecha) as fechaAsis from asistencia";
+    $resultadoFA=$conexion->query($consulta);
+    if (!$resultadoFA) {
+      echo "Error(".$conexion->errno.")$conexion->error";
+      return;
+    }
+    $filaFA=$resultadoFA->fetch_array();
     $conexion->close();
    ?>
   <!-- Tablas de navegación-->
@@ -101,7 +108,10 @@
                 <div class="col-sm-12">
                   <form action="numOrden.php" id="formMosNumOrd"method="post">
                     <div class="col-sm-2">
-                      <label for="">De</label><input type="date" name="fechIni"class="form-control" id="inpFechIni" value="<?php echo $dia?>">
+                      <label for="">De</label><input type="date" name="fechIni"class="form-control" id="inpFechIni" value="<?php
+                        $diaAnterior=strtotime('-1 day',strtotime($dia));
+                        $diaAnterior=date('Y-m-d',$diaAnterior);
+                        echo $diaAnterior;?>">
                     </div>
                     <div class="col-sm-2">
                       <label for="">hasta</label><input type="date" name="fechFin"class="form-control" id="inpFechFin" value="<?php echo $dia?>">
@@ -130,9 +140,18 @@
           <div role="tabpanel" class="tab-pane fade in active" id="divAsistencia">
             <div class="row">
               <div class="container-fluid">
-                <div class="col-md-12">
-                  <div class="col-md-4 col-md-offset-4">
-                    <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="button">Agregar Nueva Asistencia</button>
+                <div class="col-md-6">
+                  <div class="col-md-6">
+                    <input type="date" class="form-control" name="inpAsistencia" id="inpFechAsis" value="<?php echo $dia ?>"/>
+                  </div>
+                  <div class="col-md-6">
+                    <textarea class="form-control" rows="1" id="txtAreCom" placeholder="Comentario..."></textarea>
+                  </div><br><br>
+                  <div class="col-md-6 col-md-offset-3">
+                    <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="btnAsistencia">Agregar Nueva Fecha de Asistencia</button>
+                  </div>
+                  <div id="mensajeFechAsis">
+
                   </div>
                 </div>
               </div>
@@ -148,7 +167,7 @@
             </div>
           </div>
           <!--Aquí termina el tab de captura| -->
-          <!--Aquí empieza el tab de captura-->
+          <!--Aquí empieza el tab de Requerimientos-->
           <div role="tabpanel" class="tab-pane fade" id="divRequerimientos">
             <div class="row">
               <div class="container-fluid">

@@ -3,11 +3,31 @@
   if(!isset($_SESSION)){
     session_start();
   }
-  $num_parteParcial="";
-  $idParcial="";
+  $GLOBALS['idParcial']="";
+  $GLOBALS['parcialNumParte']="";
+  // $numParteParcial;
+  // $idParcial;
   if ($_SERVER['REQUEST_METHOD']=="POST") {
-    // $_GLOBAL['num_parteParcial'];
-    // $_GLOBAL['idParcial'];
+    //buscamos parcial para recuperarlo
+    if (isset($_POST['pParNumParte'])) {
+      $parcialNumParte=$_POST['pParNumParte'];
+      $consulta="select * from parcial where num_parte_num_parte = '$parcialNumParte'";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        echo "Error: ".mysqli_error($conexion);
+        return;
+      }
+      if ($resultado->num_rows<=0) {
+        echo 0;
+        return;
+      }
+      while ($fila=$resultado->fetch_array()) {
+        $GLOBALS['idParcial']=$fila['idparcial'];
+        $GLOBALS['parcialNumParte']=$fila['num_parte_num_parte'];
+        echo $fila['cantidad'];
+        //echo $fila['cantidad'].$fila['idparcial'].$fila['localizacion'];
+      }
+    }//fin del if Parcial
     if (isset($_POST['pVNumOrden'])) {
       $num_orden=$_POST['pVNumOrden'];
       $num_parte=$_POST['pVNumParte'];
@@ -29,31 +49,11 @@
         return;
       }
       echo "Registro Exitoso";
-    }
-    //buscamos parcial para recuperarlo
-    if (isset($_POST['pParNumParte'])) {
-      $parcialNumParte=$_POST['pParNumParte'];
-      $consulta="select * from parcial where num_parte_num_parte = '$parcialNumParte'";
-      $resultado=$conexion->query($consulta);
-      if (!$resultado) {
-        echo "Error: ".mysqli_error($conexion);
-        return;
-      }
-      if ($resultado->num_rows<=0) {
-        echo 0;
-        return;
-      }
-      while ($fila=$resultado->fetch_array()) {
-        $num_parteParcial=$fila['idparcial'];
-        $idParcial= $fila['num_parte_num_parte'];
-        echo $fila['cantidad'];
-        //echo $fila['cantidad'].$fila['idparcial'].$fila['localizacion'];
-      }
-    }
+    }//fin del if de numero de orden
     if (isset($_POST['pFechaInicial'])) {
       $fechaInicial=$_POST['pFechaInicial'];
       $fechaFinal=$_POST['pFechaFinal'];
-      $consulta="select num_orden.idnum_orden,num_orden.num_parte,num_orden.cantidad,num_orden.fecha, num_orden.fecha_generada from num_orden WHERE num_orden.fecha BETWEEN '$fechaInicial' and '$fechaFinal' ORDER BY num_orden.fecha_generada DESC";
+      $consulta="select num_orden.idnum_orden,num_orden.num_parte,num_orden.cantidad,num_orden.fecha, num_orden.fecha_generada from num_orden WHERE num_orden.fecha BETWEEN '$fechaInicial' and '$fechaFinal' ORDER BY num_orden.fecha DESC";
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         echo "Error".mysqli_error($conexion);
@@ -67,7 +67,7 @@
             <th>Número de orden</th>
             <th>Número de parte</th>
             <th>Cantidad</th>
-            <th>Fecha</th>
+            <th>Fecha_Requerimiento</th>
             <th>Fecha_Hora_Generada</th>
           </tr>
         </thead>";

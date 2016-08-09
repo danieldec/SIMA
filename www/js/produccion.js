@@ -120,7 +120,7 @@ $(document).on('ready',function() {
         data:{pVNumOrden:vNumOrden,pVNumParte:vNumParte,pVCantidadReq:vCantidadReq,pVFechaNumOrden:vFechaNumOrden,pVNumUsuario:vNumUsuario},
         success:function(data) {
           //agregar un mensaje de error, si pasa un error al momento de insertar un número de orden
-          $('#mensajeNumOrden').html(data).addClass('alert alert-success text-center').show().fadeOut(3000);
+          $('#mensajeNumOrden').html(data).addClass('alert alert-success text-center').show().fadeOut(5000);
           $.ajax({
             url:'numOrden.php',
             type:'POST',
@@ -154,7 +154,7 @@ $(document).on('ready',function() {
       canReq=parseInt(cantidadReq);
       console.log(canReq);
       if (cantidadReq===null||isNaN(canReq)||canReq<parcial) {
-        console.log(parseInt(cantidadReq) +""+cantidadReq);
+        console.log(parseInt(cantidadReq) +" "+cantidadReq);
         window.alert("Verifica la cantidad ingresada sea mayor que el parcial o que hayas ingresado un número");
         console.log("ingresa una cantidad");
         return;
@@ -186,7 +186,21 @@ $(document).on('ready',function() {
   }
   $('#btnOcultarNumOrden').on('click',function() {
     $('#divTablaNumOrden').hide();
-  })
+  });
+  //Asignar evento click del botón btnAsistencia
+  $('#btnAsistencia').on('click',Asistencia);
+  //función del botón de Asistencia
+  function Asistencia() {
+    var fechAsis=$("#inpFechAsis").val();
+    var comentAsis=$('#txtAreCom').val();
+    $.post('asistencia.php',{pFechAsis:fechAsis,pComentAsis:comentAsis},postAsistencia)
+  };
+  //función del $.post Asistencia
+  function postAsistencia(data,status) {
+    if (data=!"Exito") {
+
+    }
+  };
 });//fin del ready
 //función click de la lista de los número de parte #listaNumParte
 function set_item(item) {
