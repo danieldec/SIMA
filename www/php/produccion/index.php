@@ -20,6 +20,7 @@
   <?php
     include '../nav.php';
     include '../conexion/conexion.php';
+    include 'asistencia.php';
    ?>
    <!--consulta php para el número de orden-->
    <?php
@@ -147,15 +148,26 @@
                   <div class="col-md-6">
                     <textarea class="form-control" rows="1" id="txtAreCom" placeholder="Comentario..."></textarea>
                   </div><br><br>
-                  <div class="col-md-6 col-md-offset-3">
+                  <div class="col-md-6 col-md-offset-3" id="divBtnFecha">
                     <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="btnAsistencia">Agregar Nueva Fecha de Asistencia</button>
                   </div>
-                  <div id="mensajeFechAsis">
-
-                  </div>
+                </div>
+                <div class="col-md-6" id="divMosLista">
+                  <?php asignarEmpleados()?>
                 </div>
               </div>
+            </div><br>
+            <div class="row">
+              <div class="col-md-6">
+                <h1 class="text-center">Lista Asistencia</h1>
+                <form class="" id="formListAsis"action="#" method="post">
+                <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo$dia?>">
+                <input type="text" class="form-control" name="inpNumEmp" id="inpNumEmp" required value="" placeholder="# de empleado">
+                <input type="submit" class="form-control btn-success" name="inpBtnLista" id="inpBtnLista" value="Agregar"/>
+              </form>
+              </div>
             </div>
+            <!-- Aquí termina el row -->
           </div>
           <!--Aquí termina el tab de asistencia| -->
           <!--Aquí empieza el tab de captura-->

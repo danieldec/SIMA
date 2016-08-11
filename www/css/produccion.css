@@ -30,3 +30,9 @@ caption{
   background-color: #992a00;
   font-size: 15px;
 }
+#mensajeFechAsis{
+  border: 1px solid rgb(210, 219, 26);
+}
+div>a+strong{
+  font-size: 18px;
+}

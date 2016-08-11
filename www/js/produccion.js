@@ -8,6 +8,9 @@ $(document).on('ready',function() {
   var inpParcial=$('#inpParcial');
   var inpFechIni=$('#inpFechIni');
   var inpFechFin=$('#inpFechFin');
+  var formListAsis=$('#formListAsis');
+  var cadNumParte;
+  formListAsis.css('border','1px solid red')
   var parNumParte;
   inpParcial.attr('disabled','');
   inpNumParte.focus();
@@ -44,6 +47,7 @@ $(document).on('ready',function() {
     //   }
     // }
     if (e.type=="keyup"&&e.which!=219) {
+      cadNumParte=$(this).val().toUpperCase();
       var palabraC=$(this).val();
       //console.log(palabraC);
       if (palabraC.length>0) {
@@ -197,11 +201,52 @@ $(document).on('ready',function() {
   };
   //función del $.post Asistencia
   function postAsistencia(data,status) {
-    if (data=!"Exito") {
-
+    var divBtnFechAsis=$('#divBtnFecha');
+    var hermanosDiv=divBtnFechAsis.siblings().size();
+    console.log(data);
+    if (hermanosDiv==4) {
+        regresaMensaje(data,divBtnFechAsis);
+    }
+    if (hermanosDiv==5) {
+      var idDiv=divBtnFechAsis.siblings('div:last-child').attr('id');
+      if (idDiv=="divME"||idDiv=="divMERR") {
+        $('#divME').remove()
+        $('#divMERR').remove()
+      }
+      regresaMensaje(data,divBtnFechAsis);
     }
   };
+  //función que nos permite aventar un mensaje de alerta si existe o no la fecha registrada
+  function regresaMensaje(data,objeto) {
+    var divMensajeExito="<div class='alert alert-success col-md-12 text-center' id='divME'></div>";
+    var divMensajeError="<div class='alert alert-danger col-md-12 text-center' id='divMERR'></div>";
+    var mensajeExito='<a href="#" class="close" data-dismiss="alert"; aria-label="close">&times;</a><strong>'+data+' Fecha Registrada</strong>';
+    var mensajeError='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>'+"Ya existe esta fecha registrada"+'</strong>';
+    divBtnFechAsis=objeto;
+    if (data!=="Exito") {
+      //console.log(divBtnFechAsis.siblings().size());
+      return divBtnFechAsis.after(divMensajeError).siblings('div:last-child').html(mensajeError);
+    }else{
+      console.log(data);
+      console.log(divBtnFechAsis.siblings().size());
+      $('#txtAreCom').val('')
+      return divBtnFechAsis.after(divMensajeExito).siblings('div:last-child').append(mensajeExito);
+    }
+  }//fin de la función regresaMensaje
+  formListAsis.on('submit',listaEmpleados);
+  function listaEmpleados(e) {
+    e.preventDefault();
+    var inpFeAsis=$('#inpFeAsis').val();
+    var inpNumEmp=$('#inpNumEmp').val();
+    console.log(inpFeAsis + " " + inpNumEmp);
+    $.post('asistencia.php',{pInpFeAsis:inpFeAsis,pInpNumEmp:inpNumEmp},postLista)
+    function postLista(data,status) {
+      console.log("datos: "+data+"respuesta: "+status);
+      $('#divMosLista').html(data);
+    }
+  }
 });//fin del ready
+
 //función click de la lista de los número de parte #listaNumParte
 function set_item(item) {
   // change input value
