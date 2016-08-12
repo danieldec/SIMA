@@ -51,7 +51,7 @@
                     <div class="container-fluid">
                       <form action="altaEmpleados.php" method="post"class="" id="formAltaEmpleados">
                         <div class="form-group">
-                          <input type="text" name="numEmpleado" autocomplete class="form-control" placeholder="Número del empleado" autofocus required/>
+                          <input type="text" name="numEmpleado" id="inpNumEmpleado" autocomplete class="form-control" placeholder="Número del empleado" autofocus required/>
                         </div>
                         <div class="form-group">
                           <input type="text" name="nombreEmpleado" placeholder="Nombre" class="form-control" required/>

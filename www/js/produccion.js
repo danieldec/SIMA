@@ -9,13 +9,17 @@ $(document).on('ready',function() {
   var inpFechIni=$('#inpFechIni');
   var inpFechFin=$('#inpFechFin');
   var formListAsis=$('#formListAsis');
-  var cadNumParte;
-  formListAsis.css('border','1px solid red')
+  var inpFeAsis="";
+  var inpNumEmp="";
+  var inpNumEmpAsis=$('#inpNumEmpAsis');
+  var cadNumParte="";
+  var cadNumEmpList="";
   var parNumParte;
   inpParcial.attr('disabled','');
   inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
   var inpFNumOrden=$('#inpFNumOrden');
+  var hoy=$('#hoy').val();
   //vamos a comprobar que las fechas esten correctas en el servidor como en la computadora
   var fecha= new Date();
   var dia=fecha.getDate(),mes=fecha.getMonth()+1,ano=fecha.getFullYear(),fechaCompleta;
@@ -50,11 +54,11 @@ $(document).on('ready',function() {
       cadNumParte=$(this).val().toUpperCase();
       var palabraC=$(this).val();
       //console.log(palabraC);
-      if (palabraC.length>0) {
+      if (cadNumParte.length>0) {
         $.ajax({
           url:'numOrden.php',
           type:'POST',
-          data:{pPalabraC:palabraC},
+          data:{pPalabraC:cadNumParte},
           success:function(data) {
             $('#listaNumParte').show();
             $('#listaNumParte').html(data);
@@ -101,6 +105,7 @@ $(document).on('ready',function() {
     }
 
   });
+
   //formulario para generar número de parte
   formNumOrden.on('submit',function(e) {
     e.preventDefault();
@@ -186,7 +191,6 @@ $(document).on('ready',function() {
     modificarTabla();
   }
   function modificarTabla() {
-
   }
   $('#btnOcultarNumOrden').on('click',function() {
     $('#divTablaNumOrden').hide();
@@ -197,6 +201,7 @@ $(document).on('ready',function() {
   function Asistencia() {
     var fechAsis=$("#inpFechAsis").val();
     var comentAsis=$('#txtAreCom').val();
+    console.log(fechAsis+" "+comentAsis);
     $.post('asistencia.php',{pFechAsis:fechAsis,pComentAsis:comentAsis},postAsistencia)
   };
   //función del $.post Asistencia
@@ -233,13 +238,33 @@ $(document).on('ready',function() {
       return divBtnFechAsis.after(divMensajeExito).siblings('div:last-child').append(mensajeExito);
     }
   }//fin de la función regresaMensaje
+  //evento de click en el botón agregar
+  inpNumEmpAsis.bind('keyup blur focus',mayusNumEmple);
+  //con esta función vamos a convertir las letras en mayusculas
+  function mayusNumEmple(e) {
+    //console.log(e.type);
+    switch (e.type) {
+      case "keyup":
+      cadNumEmpList=$(this).val().toUpperCase();
+        break;
+      case "blur":
+      cadNumEmpList=$(this).val().toUpperCase();
+        break;
+      case "focus":
+      cadNumEmpList=$(this).val().toUpperCase();
+        break;
+      default:
+    }
+  }
+  //enviamos los datos de la lista a asistencia.php
   formListAsis.on('submit',listaEmpleados);
   function listaEmpleados(e) {
     e.preventDefault();
-    var inpFeAsis=$('#inpFeAsis').val();
-    var inpNumEmp=$('#inpNumEmp').val();
+    inpNumEmpAsis.val(cadNumEmpList);
+    inpFeAsis=$('#inpFeAsis').val();
+    inpNumEmp=inpNumEmpAsis.val();
     console.log(inpFeAsis + " " + inpNumEmp);
-    $.post('asistencia.php',{pInpFeAsis:inpFeAsis,pInpNumEmp:inpNumEmp},postLista)
+    $.post('asistencia.php',{pInpFeAsis:inpFeAsis,pInpNumEmp:inpNumEmp,pHoy:hoy},postLista);
     function postLista(data,status) {
       console.log("datos: "+data+"respuesta: "+status);
       $('#divMosLista').html(data);

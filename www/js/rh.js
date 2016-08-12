@@ -5,6 +5,7 @@ $(document).on('ready',function() {
   var inputNumEmpleado=$('input[name="numEmpleado"]');
   var inputNomEmpleado=$('input[name="nombreEmpleado"]');
   var inputApeEmpleado=$('input[name="apellidoEmpleado"]');
+  // var alertAltaEmple;
   $('.nav-tabs a').on('click',function() {
     $(this).tab('show');
   });
@@ -48,7 +49,7 @@ $(document).on('ready',function() {
         var numeroHijos=mensaje.children('div').size();
         if (tipoMensaje=="E") {
           //console.log(mensaje);
-          var mensajeHtml='<div class="alert alert-danger alert-dismissible fade in" role="alert"><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span haria-hidden="true">&times;</span></button>'+mensajeMostrar+'</div>';
+          var mensajeHtml='<div class="alert alert-danger alert-dismissible fade in" role="alert" id="alertAltaEmple"><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span haria-hidden="true">&times;</span></button>'+mensajeMostrar+'</div>';
           if (numeroHijos<=3) {
             mensaje.append(mensajeHtml);
           }
@@ -59,7 +60,7 @@ $(document).on('ready',function() {
           }
         }
         if (tipoMensaje=="S") {
-          var mensajeHtml='<div class="alert alert-success alert-dismissible fade in" role="alert"><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span haria-hidden="true">&times;</span></button>'+mensajeMostrar+'</div>';
+          var mensajeHtml='<div class="alert alert-success alert-dismissible fade in" role="alert" id="alertAltaEmple"><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span haria-hidden="true">&times;</span></button>'+mensajeMostrar+'</div>';
           if (numeroHijos<=3) {
             mensaje.append(mensajeHtml);
           }
@@ -69,14 +70,21 @@ $(document).on('ready',function() {
             mensaje.append(mensajeHtml);
           }
           inputTypeText.each(function() {
-            $(this).val("")
+            $(this).val("");
             //console.log(this);
           });
+          $('#inpNumEmpleado').focus();
+          //alertAltaEmple=$('#alertAltaEmple');
         }
       }
     )
     e.preventDefault();
   });
+  //evento cuando cerramos el alert No funciona
+  // $('#alertAltaEmple').on('close.bs.alert',function() {
+  //   $('#inpNumEmpleado').focus();
+  //   console.log($(this));
+  // });
   //empieza el listado de los empleado
   $('#btnListaE').on('click',function () {
     $.post('empleadosME.php',

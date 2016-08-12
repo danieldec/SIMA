@@ -12,6 +12,9 @@ caption{
   font-size: 20px;
   text-align: center;
 }
+div>a+strong{
+  font-size: 18px;
+}
 #btnOrdPro{
   font-size: 1.3em;
 }
@@ -33,6 +36,10 @@ caption{
 #mensajeFechAsis{
   border: 1px solid rgb(210, 219, 26);
 }
-div>a+strong{
-  font-size: 18px;
+/*div>div>div>div>div:hover{
+  border: 1px solid blue;
+  background-color: #c2eeb3;
+}*/
+#inpNumEmpAsis{
+  text-transform: uppercase;
 }

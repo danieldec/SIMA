@@ -45,6 +45,7 @@
     $conexion->close();
    ?>
   <!-- Tablas de navegación-->
+  <input type="date" name="hoy" id="hoy" value="<?php echo $dia?>" hidden='hidden'>
   <div class="container-fluid">
     <div class="row">
       <div role="tabpanel">
@@ -67,7 +68,7 @@
                     <div class="col-xs-2 text-center"><label>Número de Parte</label></div>
                     <div class="col-xs-2 text-center"><label>Parcial</label></div>
                     <div class="col-xs-2 text-center"><label>Cantidad</label></div>
-                    <div class="col-xs-2 text-center"><label>Fecha</label></div>
+                    <div class="col-xs-2 text-center"><label>Fecha Requerimiento</label></div>
                 </div>
                 <div class="row">
                   <div class="col-xs-2 text-center col-xs-offset-1"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
@@ -159,12 +160,22 @@
             </div><br>
             <div class="row">
               <div class="col-md-6">
-                <h1 class="text-center">Lista Asistencia</h1>
+                <h2 class="text-center">Lista Asistencia</h2>
                 <form class="" id="formListAsis"action="#" method="post">
                 <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo$dia?>">
-                <input type="text" class="form-control" name="inpNumEmp" id="inpNumEmp" required value="" placeholder="# de empleado">
+                <input type="text" class="form-control" name="inpNumEmpAsis" id="inpNumEmpAsis" required value="" placeholder="# de empleado">
                 <input type="submit" class="form-control btn-success" name="inpBtnLista" id="inpBtnLista" value="Agregar"/>
               </form>
+              </div>
+              <div class="col-md-6">
+                <div class="col-md-6">
+                  <div class="col-md-6">
+                    <button type="button" class="btn-primary form-control"name="button">Mostrar</button>
+                  </div>
+                  <div class="col-md-6">
+                    <button type="button" class="btn-primary form-control"name="button">Ocultar</button>
+                  </div>
+                </div>
               </div>
             </div>
             <!-- Aquí termina el row -->

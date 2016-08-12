@@ -2,7 +2,6 @@
   if (!isset($_SESSION)) {
     session_start();
   }
-
   $usuario="root";
   $contrasena="";
   $equipo="localhost";
