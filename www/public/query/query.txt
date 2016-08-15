@@ -1,0 +1,3 @@
+Este query se utilizo en el archivo de asistencia.php en la función mostrarListaEmpleados() en la línea 73
+SELECT e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='2016-08-12' and e.idempleados=da.empleados_idempleados ORDER by e.idempleados ASC
+$consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";

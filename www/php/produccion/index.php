@@ -141,41 +141,48 @@
           <!--Aquí empieza el tab de asistencia-->
           <div role="tabpanel" class="tab-pane fade in active" id="divAsistencia">
             <div class="row">
-              <div class="container-fluid">
-                <div class="col-md-6">
-                  <div class="col-md-6">
-                    <input type="date" class="form-control" name="inpAsistencia" id="inpFechAsis" value="<?php echo $dia ?>"/>
+              <div class="container-fluid col-md-12">
+                <div class="col-md-6 container-fluid" id="colPrim">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <input type="date" class="form-control" name="inpAsistencia" id="inpFechAsis" value="<?php echo $dia ?>"/>
+                    </div>
+                    <div class="col-md-6">
+                      <textarea class="form-control" rows="1" id="txtAreCom" placeholder="Comentario..."></textarea>
+                    </div><br><br>
+                    <div class="col-md-6 col-md-offset-3" id="divBtnFecha">
+                      <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="btnAsistencia">Agregar Nueva Fecha de Asistencia</button>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <textarea class="form-control" rows="1" id="txtAreCom" placeholder="Comentario..."></textarea>
-                  </div><br><br>
-                  <div class="col-md-6 col-md-offset-3" id="divBtnFecha">
-                    <button type="button" id="btnAsistencia"class="button btn-primary form-control" name="btnAsistencia">Agregar Nueva Fecha de Asistencia</button>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h2 class="text-center">Lista Asistencia</h2>
+                      <form class="" id="formListAsis"action="#" method="post">
+                        <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo$dia?>">
+                        <input type="text" class="form-control" name="inpNumEmpAsis" id="inpNumEmpAsis" required value="" placeholder="# de empleado">
+                        <input type="submit" class="form-control btn-success" name="inpBtnLista" id="inpBtnLista" value="Agregar lista"/>
+                      </form>
+                      <div id="menListNumOpe">
+
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6" id="divMosLista">
-                  <?php asignarEmpleados()?>
+                <div class="col-md-6 container-fluid" id="colSeg">
+                  <div class="row">
+                    <button type="button" class="btn-primary form-control"name="btnMosLisFecha" id="btnMosLisFecha">Mostrar Lista Asistencia</button>
+                    <div class="col-md-12" id="divMosLista">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <button type="button" class="btn-primary form-control"name="button">Mostrar Lista Empleados</button>
+                    <button type="button" class="btn-primary form-control"name="button">Ocultar</button>
+                  </div>
                 </div>
               </div>
             </div><br>
             <div class="row">
               <div class="col-md-6">
-                <h2 class="text-center">Lista Asistencia</h2>
-                <form class="" id="formListAsis"action="#" method="post">
-                <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo$dia?>">
-                <input type="text" class="form-control" name="inpNumEmpAsis" id="inpNumEmpAsis" required value="" placeholder="# de empleado">
-                <input type="submit" class="form-control btn-success" name="inpBtnLista" id="inpBtnLista" value="Agregar"/>
-              </form>
-              </div>
-              <div class="col-md-6">
-                <div class="col-md-6">
-                  <div class="col-md-6">
-                    <button type="button" class="btn-primary form-control"name="button">Mostrar</button>
-                  </div>
-                  <div class="col-md-6">
-                    <button type="button" class="btn-primary form-control"name="button">Ocultar</button>
-                  </div>
-                </div>
               </div>
             </div>
             <!-- Aquí termina el row -->

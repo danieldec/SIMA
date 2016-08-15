@@ -9,9 +9,11 @@ $(document).on('ready',function() {
   var inpFechIni=$('#inpFechIni');
   var inpFechFin=$('#inpFechFin');
   var formListAsis=$('#formListAsis');
+  var inpNumEmpAsis=$('#inpNumEmpAsis');
+  var btnMosLisFecha=$('#btnMosLisFecha');
+  var menListNumOpe=$('#menListNumOpe');
   var inpFeAsis="";
   var inpNumEmp="";
-  var inpNumEmpAsis=$('#inpNumEmpAsis');
   var cadNumParte="";
   var cadNumEmpList="";
   var parNumParte;
@@ -225,7 +227,7 @@ $(document).on('ready',function() {
   function regresaMensaje(data,objeto) {
     var divMensajeExito="<div class='alert alert-success col-md-12 text-center' id='divME'></div>";
     var divMensajeError="<div class='alert alert-danger col-md-12 text-center' id='divMERR'></div>";
-    var mensajeExito='<a href="#" class="close" data-dismiss="alert"; aria-label="close">&times;</a><strong>'+data+' Fecha Registrada</strong>';
+    var mensajeExito='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>'+data+' Fecha Registrada</strong>';
     var mensajeError='<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>'+"Ya existe esta fecha registrada"+'</strong>';
     divBtnFechAsis=objeto;
     if (data!=="Exito") {
@@ -264,11 +266,69 @@ $(document).on('ready',function() {
     inpFeAsis=$('#inpFeAsis').val();
     inpNumEmp=inpNumEmpAsis.val();
     console.log(inpFeAsis + " " + inpNumEmp);
+    //este $.post se encuentra en la línea 22 del archivo asistencia.php
     $.post('asistencia.php',{pInpFeAsis:inpFeAsis,pInpNumEmp:inpNumEmp,pHoy:hoy},postLista);
     function postLista(data,status) {
-      console.log("datos: "+data+"respuesta: "+status);
+      // comprobamos que datos nos arrojo el post
+      // console.log("datos: "+data+" respuesta: "+status);
+      var capError= data.substr(0,1);
+      console.log(capError);
+      var banBtnMos=true;
+      if (data.substr(1,2)=="YA") {
+        if (btnMosLisFecha.html()=="Mostrar Lista Asistencia") {
+          if ($('#tablaListaEmpleados').length<=0) {
+            $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
+          }
+        }
+      }
+      if (capError=="E") {
+        menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html(data.substr(1)).show().fadeOut(2200);
+        //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
+        $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
+        return;
+      }
+      btnMosLisFecha.html("Ocultar Lista Asistencia");
       $('#divMosLista').html(data);
     }
+  }//fin de la función listaEmpleados
+  //función buscar empleado tablaListaEmpleados
+  function busNumEmpTabla() {
+    // console.log("entramos aquí en la línea 296");
+    var numEmpTd=$(this).html();
+    if ($(this).css('background-color')=="rgb(137, 185, 235)") {
+      $(this).css('background-color','white').siblings().css({'background-color':$(this).css('background-color')});
+    }
+    if (numEmpTd==inpNumEmpAsis.val()) {
+      $('#btnMosLisFecha').html("Ocultar Lista Asistencia");
+      $('#tablaListaEmpleados').show();
+      $(this).css('background-color','rgb(137, 185, 235)').siblings().css({'background-color':$(this).css('background-color')});
+      var bgColor=$(this).css('background-color');
+    }
+  }//fin de la función busNumEmpTabla
+  //evento botón btnMosLisFecha
+  btnMosLisFecha.on('click',btnMostrarOcultar);
+  function btnMostrarOcultar() {
+    var banBtnMos=true;
+    var tituloBtn=$(this).html();
+    console.log(tituloBtn);
+    switch (tituloBtn) {
+      case 'Mostrar Lista Asistencia':
+        $('#tablaListaEmpleados').show();
+        $(this).html("Ocultar Lista Asistencia");
+        if ($('#tablaListaEmpleados').length<=0) {
+          $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
+        }
+        break;
+      default:
+        $('#tablaListaEmpleados').hide();
+        $(this).html('Mostrar Lista Asistencia');
+    }//fin del switch
+  }//fin de la función btnMostrarOcultar
+  function listEmplBtnLisFech(data,status){
+    //console.log(data);
+    $('#divMosLista').html(data);
+    //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
+    $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
   }
 });//fin del ready
 

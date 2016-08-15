@@ -43,3 +43,24 @@ div>a+strong{
 #inpNumEmpAsis{
   text-transform: uppercase;
 }
+/*#colPrim{
+  border: 5px solid rgb(122, 226, 65);
+}*/
+#colSeg{
+  border: 1px solid #982e2e;
+}
+#colPrim>div:first-child {
+  border-bottom: 2px solid rgb(231, 211, 73);
+  padding-bottom: 6px;
+}
+#divMERR,#divME{
+  margin-bottom: 0px;
+}
+#strIdEmp{
+  color: #0a55d5;
+  font-size: 16px;
+}
+/* seleccionar la segunda columna de la tablaListaEmpleados 
+#tablaListaEmpleados tr>td:nth-of-type(2){
+  color: rgb(193, 13, 40);
+}*/

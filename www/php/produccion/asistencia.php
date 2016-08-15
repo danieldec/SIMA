@@ -4,6 +4,7 @@
     session_start();
   }
   if ($_SERVER['REQUEST_METHOD']=="POST") {
+    //este .post es llama desde el archivo produccion.js en la línea 206
     if (isset($_POST['pFechAsis'])) {
       $fechaAsis=$_POST['pFechAsis'];
       $comentAsis=$_POST['pComentAsis'];
@@ -16,7 +17,8 @@
       echo "Exito";
       $conexion->close();
       exit();
-    }
+    }//fin del if $_POST['pFechAsis'])
+    //este .post es llama desde el archivo produccion.js en la línea 268
     if (isset($_POST['pInpFeAsis'])&&isset($_POST['pInpNumEmp'])&&isset($_POST['pHoy'])) {
       $error="";
       $inpFeAsis=$_POST['pInpFeAsis'];
@@ -31,10 +33,10 @@
         $resultado=$conexion->query($consulta);
         if (!$resultado) {
           //verificamos el tipo de error que nos arroja al momento de insertar un empleado
-          $error= "Error:(".$conexion->errno.")".$conexion->error;
+          $error= "EError:(".$conexion->errno.")".$conexion->error;
           //si el número de error es igual a 1452 quiere decir que no existe el número de empleado en la base de datos o es incorrecto el número de empleado que ingreso
           if ($conexion->errno==1452) {
-            $error="Número de empleado o Fecha Asistencia No Existe";
+            $error="EEl Número de empleado o la de Fecha Asistencia No Existe";
             echo $error;
           }else{
             echo $error;
@@ -54,33 +56,38 @@
         $consulta="select concat_ws(' ',e.nombre,e.apellidos) as Nombre, e.idempleados from empleados as e where e.idempleados='$inpNumEmp'";
         $resultado=$conexion->query($consulta);
         if (!$resultado) {
-          echo "Error: (".$conexion->errno.") $conexion->error";
+          echo "EError: (".$conexion->errno.") $conexion->error";
           exit();
         }
-         $fila=$resultado->fetch_array();
-         echo $fila['idempleados']." ". $fila['Nombre'];
         while ($fila=$resultado->fetch_array()) {
-          echo "YA INGRESASTE EL NUM DE EMPLEADO: ".$fila['idempleados']." ".$fila['idempleados']." ".$fila['Nombre'];
+          echo "EYA INGRESASTE EL NUM DE EMPLEADO: <strong id='strIdEmp'>".$fila['idempleados']."</strong> ".$fila['Nombre'];
         }
       }
 
     }
-  }
+    //este if se genera en la línea 296 del archivo produccion.js
+    if (isset($_POST['pHoy'])and isset($_POST['pBAnBtnMos'])) {
+      $fechaHoy=$_POST['pHoy'];
+      mostrarListaEmpleados($conexion,$fechaHoy);
+    }
+  }//$_SERVER['REQUEST_METHOD']=="POST"
+
+  //Aquí empiezan las funciones
   function asignarEmpleados(){
     echo "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto, quas, in! Magnam error, quas ipsum facere necessitatibus, nemo aperiam iusto possimus voluptates cupiditate sunt excepturi dolore ea numquam veniam rerum.</p>";
   }
   function mostrarListaEmpleados($conexion,$hoy){
-    $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by e.idempleados ASC";
+    $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
     $resultado=$conexion->query($consulta);
     //echo "Exito mostrarListaEmpleados".$conexion->client_info." ".$hoy;
     echo "<table class='table table-bordered table-responsive table-condensed table-reflow' id='tablaListaEmpleados'>
-      <caption>Lista de $hoy</caption>
+      <caption>Lista de <strong>$hoy</strong></caption>
       <thead>
         <tr>
           <th>#</th>
           <th># Empleado</th>
           <th>Nombre</th>
-          <th># detalle_asistencia</th>
+          <th># det_asis</th>
           <th>Acción</th>
         </tr>
       </thead>";
