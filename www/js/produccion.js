@@ -17,6 +17,7 @@ $(document).on('ready',function() {
   var cadNumParte="";
   var cadNumEmpList="";
   var parNumParte;
+  var auxNumEmpl;
   inpParcial.attr('disabled','');
   inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
@@ -277,14 +278,17 @@ $(document).on('ready',function() {
       if (data.substr(1,2)=="YA") {
         if (btnMosLisFecha.html()=="Mostrar Lista Asistencia") {
           if ($('#tablaListaEmpleados').length<=0) {
+            //Aquí mostramos la tabla de lista para mostrar el # de operador duplicado
             $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
           }
         }
       }
       if (capError=="E") {
-        menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html(data.substr(1)).show().fadeOut(2200);
+        menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html('<span>'+data.substr(1)+'</span>').show().fadeOut(2200);
         //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
+        auxNumEmpl=inpNumEmpAsis.val();
         $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
+        inpNumEmpAsis.val("");
         return;
       }
       btnMosLisFecha.html("Ocultar Lista Asistencia");
@@ -297,8 +301,10 @@ $(document).on('ready',function() {
     var numEmpTd=$(this).html();
     if ($(this).css('background-color')=="rgb(137, 185, 235)") {
       $(this).css('background-color','white').siblings().css({'background-color':$(this).css('background-color')});
+      console.log("dentro de la función busNumEmpTabla");
+      return;
     }
-    if (numEmpTd==inpNumEmpAsis.val()) {
+    if (numEmpTd==auxNumEmpl) {
       $('#btnMosLisFecha').html("Ocultar Lista Asistencia");
       $('#tablaListaEmpleados').show();
       $(this).css('background-color','rgb(137, 185, 235)').siblings().css({'background-color':$(this).css('background-color')});
@@ -318,6 +324,7 @@ $(document).on('ready',function() {
         if ($('#tablaListaEmpleados').length<=0) {
           $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
         }
+        // $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
         break;
       default:
         $('#tablaListaEmpleados').hide();

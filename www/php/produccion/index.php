@@ -175,8 +175,7 @@
                     </div>
                   </div>
                   <div class="row">
-                    <button type="button" class="btn-primary form-control"name="button">Mostrar Lista Empleados</button>
-                    <button type="button" class="btn-primary form-control"name="button">Ocultar</button>
+                    <button type="button" id="btnMosLisEmpl" class="btn-success form-control"name="button">Mostrar Lista Empleados</button>
                   </div>
                 </div>
               </div>

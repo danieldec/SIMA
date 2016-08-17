@@ -47,7 +47,7 @@ div>a+strong{
   border: 5px solid rgb(122, 226, 65);
 }*/
 #colSeg{
-  border: 1px solid #982e2e;
+  /*border: 1px solid #982e2e;*/
 }
 #colPrim>div:first-child {
   border-bottom: 2px solid rgb(231, 211, 73);
@@ -60,7 +60,11 @@ div>a+strong{
   color: #0a55d5;
   font-size: 16px;
 }
-/* seleccionar la segunda columna de la tablaListaEmpleados 
+/* seleccionar la segunda columna de la tablaListaEmpleados
 #tablaListaEmpleados tr>td:nth-of-type(2){
   color: rgb(193, 13, 40);
 }*/
+#btnMosLisEmpl{
+  color: white;
+  background-color: rgb(255, 88, 6);
+}

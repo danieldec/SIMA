@@ -53,7 +53,7 @@
     if (isset($_POST['pFechaInicial'])) {
       $fechaInicial=$_POST['pFechaInicial'];
       $fechaFinal=$_POST['pFechaFinal'];
-      $consulta="select num_orden.idnum_orden,num_orden.num_parte,num_orden.cantidad,num_orden.fecha, num_orden.fecha_generada from num_orden WHERE num_orden.fecha BETWEEN '$fechaInicial' and '$fechaFinal' ORDER BY num_orden.fecha DESC";
+      $consulta="select num_orden.idnum_orden,num_orden.num_parte,num_orden.cantidad,num_orden.fecha, num_orden.fecha_generada from num_orden WHERE num_orden.fecha BETWEEN '$fechaInicial' and '$fechaFinal' ORDER BY num_orden.fecha_generada DESC";
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         echo "Error".mysqli_error($conexion);
