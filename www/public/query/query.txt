@@ -1,3 +1,6 @@
 Este query se utilizo en el archivo de asistencia.php en la función mostrarListaEmpleados() en la línea 73
 SELECT e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='2016-08-12' and e.idempleados=da.empleados_idempleados ORDER by e.idempleados ASC
 $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
+
+otro query que selecciona el número de parte apartir de detalle_Lista_NumOrden
+SELECT * from detalle_Lista_NumOrden dln, detalle_asistencia as dt, empleados e, num_orden nm, num_parte np WHERE dln.iddetalle_asistenciaDetList=dt.iddetalle_asistencia and dt.empleados_idempleados = e.idempleados and dln.idnum_ordenDetLis=nm.idnum_orden and nm.num_parte=np.num_parte and np.num_parte=10048

@@ -51,14 +51,14 @@
       <div role="tabpanel">
         <ul class="nav nav-pills nav-justified" role="tablist">
           <li role="presentation" class=""><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
-          <li role="presentation" class="active"><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
-          <li role="presentation"><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
+          <li role="presentation" ><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
+          <li role="presentation" class="active"><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
           <li role="presentation"><a href="#divRequerimientos" aria-controls="divRequerimientos" role="tab" data-toggle="tab">REQUERIMIENTOS</a></li>
         </ul>
         <br>
         <div class="tab-content">
           <!--Aquí empieza el tab de número de parte-->
-                                      <!--Cambiar cuando termine con las otras pestañas
+          <!--Cambiar cuando termine con las otras pestañas
           <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">-->
           <div role="tabpanel" class="tab-pane fade" id="divNumOrden">
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
@@ -139,7 +139,7 @@
           </div>
           <!--Aquí acaba el tab de número de parte -->
           <!--Aquí empieza el tab de asistencia-->
-          <div role="tabpanel" class="tab-pane fade in active" id="divAsistencia">
+          <div role="tabpanel" class="tab-pane fade" id="divAsistencia">
             <div class="row">
               <div class="container-fluid col-md-12">
                 <div class="col-md-6 container-fluid" id="colPrim">
@@ -188,10 +188,24 @@
           </div>
           <!--Aquí termina el tab de asistencia| -->
           <!--Aquí empieza el tab de captura-->
-          <div role="tabpanel" class="tab-pane fade" id="divCaptura">
+          <div role="tabpanel" class="tab-pane fade in active" id="divCaptura">
             <div class="row">
-              <div class="container-fluid">
-                <p>Estas en el tab de captura</p>
+              <div class="col-md-12 container-fluid">
+                <div class="col-md-6">
+                  <div class="row">
+                    <h2 class="text-center">Lista Numero de Ordenes</h2>
+                    <button class="btn-primary btn-lg" id="mosListNumOrden">Mostrar</button>
+                  </div>
+                  <div class="row">
+                    <div id="divChBoxNumParte">
+                      <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte"><span>Mostrar Número de parte</span>
+                    </div>
+                    <div class=""id="tablaNumOrden"></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h2 class="text-center">Lista Numero de Ordenes</h2>
+                </div>
               </div>
             </div>
           </div>

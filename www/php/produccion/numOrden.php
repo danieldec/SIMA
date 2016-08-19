@@ -78,8 +78,12 @@
           echo "<td>".$fila['idnum_orden']."</td>";
           echo "<td>".$fila['num_parte']."</td>";
           echo "<td>".$fila['cantidad']."</td>";
-          echo "<td>".$fila['fecha']."</td>";
-          echo "<td>".$fila['fecha_generada']."</td></tr>";
+          $fecha=$fila['fecha'];
+          $fechaFormat=date("d-m-Y",strtotime($fecha));
+          echo "<td>".$fechaFormat."</td>";
+          $fecha=$fila['fecha_generada'];
+          $fechaFormat=date("l d-m-Y H:i:sA ",strtotime($fecha));
+          echo "<td>".$fechaFormat."</td></tr>";
         }//fin del while
     }//fin del if Fecha
   }//fin del if del $_POST es igual a post

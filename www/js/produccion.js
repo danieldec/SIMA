@@ -12,6 +12,8 @@ $(document).on('ready',function() {
   var inpNumEmpAsis=$('#inpNumEmpAsis');
   var btnMosLisFecha=$('#btnMosLisFecha');
   var menListNumOpe=$('#menListNumOpe');
+  var spanNumOrd=$('#spanNumOrd');
+  var tablaNumOrden=$('#tablaNumOrden');
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
@@ -334,9 +336,71 @@ $(document).on('ready',function() {
   function listEmplBtnLisFech(data,status){
     //console.log(data);
     $('#divMosLista').html(data);
+    //damos formato a la fecha
+    var cadFechaListAsi=$('#fechaListaAsis').html();
+    $('#fechaListaAsis').html(cadFechaListAsi.split('-').reverse().join('-'));
     //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
     $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
   }
+  //Aquí empieza el código de la pestaña captura.
+  $('#mosListNumOrden').on('click',btnMosList);
+  function btnMosList() {
+    var titButon=$(this).text();
+    if (titButon=="Mostrar") {
+      $(this).text("Ocultar");
+      var fecha=hoy;
+      $.post('captura.php',{pFecha:fecha},postBtnMosList);
+    }else{
+      $(this).text("Mostrar");
+      tablaNumOrden.hide();
+      $('#divChBoxNumParte').hide();
+    }
+
+  }
+  function postBtnMosList(data,status) {
+    tablaNumOrden.html(data);
+    $('#divChBoxNumParte').show();
+    tablaNumOrden.show(200);
+    // console.log(data);
+  }
+  //asignar evento al span de la lista que contiene el num orden
+  tablaNumOrden.on('click mouseover mouseout','#spanNumOrd',funSpanNuOr);
+  //nos permite ocultar o mostrar el número de parte de numero de orden
+  function funSpanNuOr(e) {
+    //obtenemos el tipo de evento.
+    var tipoEvento=e.type;
+    switch (e.type) {
+      case 'click':
+        var atriDispLiNuPa=$(this).next().children("li").css('display');
+        if (atriDispLiNuPa=="none") {
+          // console.log(atriDispLiNuPa);
+          $(this).next().children('li').show();
+        }else{
+          // console.log(atriDispLiNuPa);
+          $(this).next().children('li').hide();
+        }
+        break;
+      case 'mouseover':
+        break;
+      case 'mouseout':
+        break;
+      default:
+    }//fin del switch
+  }
+  //mostrar y ocultar numPartes
+  $('#chMostrarNumParte').on('click',cheMosNumParte);
+  function cheMosNumParte() {
+    var chBoxPropCheck=$('#chMostrarNumParte').prop('checked')
+    if (chBoxPropCheck) {
+      $('.lisNumPart').each(function () {
+        $(this).show();
+      });
+    }else{
+      $('.lisNumPart').each(function () {
+        $(this).hide();
+      });
+    }
+  }//fin de la función numParte
 });//fin del ready
 
 //función click de la lista de los número de parte #listaNumParte

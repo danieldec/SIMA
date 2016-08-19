@@ -81,7 +81,7 @@
     $resultado=$conexion->query($consulta);
     //echo "Exito mostrarListaEmpleados".$conexion->client_info." ".$hoy;
     echo "<table class='table table-bordered table-responsive table-condensed table-reflow' id='tablaListaEmpleados'>
-      <caption>Lista de <strong>$hoy</strong></caption>
+      <caption>Lista de <strong id='fechaListaAsis'>$hoy</strong></caption>
       <thead>
         <tr>
           <th>#</th>
