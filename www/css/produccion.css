@@ -24,6 +24,9 @@ div.row>div>input[type="checkbox"]{
 div.row>div>span{
   font-size: 20px;
 }
+datalist{
+  color: rgb(148, 244, 41);
+}
 #btnOrdPro{
   font-size: 1.3em;
 }
@@ -77,16 +80,16 @@ div.row>div>span{
   color: white;
   background-color: rgb(255, 88, 6);
 }
-#mosListNumOrden{
+#btnMosListNumOrden{
   margin: 0 50%;
 }
 
-#tablaNumOrden>ul>li>ul li{
+#divListNumOrden>ul>li>ul>.lisNumPart{
   display: none;
-  border: 1px solid rgb(249, 148, 152);
+  /*border: 1px solid rgb(249, 148, 152);*/
 }
-#tablaNumOrden>ul>li>span{
-  border: 1px solid rgb(23, 7, 195);
+#divListNumOrden>ul>li>span{
+  /*border: 1px solid rgb(23, 7, 195);*/
   cursor: pointer;
 }
 #divChBoxNumParte{
@@ -95,3 +98,9 @@ div.row>div>span{
 /*#divCaptura>div>div div{
   border: 1px solid #0e75bf;
 }*/
+#divChBoxNumParte{
+  /*border: 2px solid red;*/
+}
+#listaNumOrd li{
+  list-style-type:none;
+}

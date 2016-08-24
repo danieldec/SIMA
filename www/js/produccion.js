@@ -13,7 +13,9 @@ $(document).on('ready',function() {
   var btnMosLisFecha=$('#btnMosLisFecha');
   var menListNumOpe=$('#menListNumOpe');
   var spanNumOrd=$('#spanNumOrd');
-  var tablaNumOrden=$('#tablaNumOrden');
+  var divListNumOrden=$('#divListNumOrden');
+  var btnMosListNumOrden=$('#btnMosListNumOrden')
+  var divListNumOrden=$('#divListNumOrden');
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
@@ -342,9 +344,13 @@ $(document).on('ready',function() {
     //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
     $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
   }
+
   //Aquí empieza el código de la pestaña captura.
-  $('#mosListNumOrden').on('click',btnMosList);
+  btnMosListNumOrden.on('click',btnMosList);
+  //función del evento click del buton con id=btnMosListNumOrden
   function btnMosList() {
+    console.log(divListNumOrden.length);
+    console.log(divListNumOrden);
     var titButon=$(this).text();
     if (titButon=="Mostrar") {
       $(this).text("Ocultar");
@@ -352,19 +358,20 @@ $(document).on('ready',function() {
       $.post('captura.php',{pFecha:fecha},postBtnMosList);
     }else{
       $(this).text("Mostrar");
-      tablaNumOrden.hide();
+      divListNumOrden.hide();
+      $('#chMostrarNumParte').removeAttr('checked');
       $('#divChBoxNumParte').hide();
     }
 
   }
   function postBtnMosList(data,status) {
-    tablaNumOrden.html(data);
+    divListNumOrden.html(data);
     $('#divChBoxNumParte').show();
-    tablaNumOrden.show(200);
+    divListNumOrden.show(200);
     // console.log(data);
   }
   //asignar evento al span de la lista que contiene el num orden
-  tablaNumOrden.on('click mouseover mouseout','#spanNumOrd',funSpanNuOr);
+  divListNumOrden.on('click mouseover mouseout','.spanNumOrd',funSpanNuOr);
   //nos permite ocultar o mostrar el número de parte de numero de orden
   function funSpanNuOr(e) {
     //obtenemos el tipo de evento.
@@ -379,6 +386,8 @@ $(document).on('ready',function() {
           // console.log(atriDispLiNuPa);
           $(this).next().children('li').hide();
         }
+        // $(this).next().children('li').css('color','rgb(140, 38, 156)');
+        // $(this).next().children('li').append("<p>Lorem ipsum dolor sit.</p>");
         break;
       case 'mouseover':
         break;
@@ -390,7 +399,7 @@ $(document).on('ready',function() {
   //mostrar y ocultar numPartes
   $('#chMostrarNumParte').on('click',cheMosNumParte);
   function cheMosNumParte() {
-    var chBoxPropCheck=$('#chMostrarNumParte').prop('checked')
+      var chBoxPropCheck=$('#chMostrarNumParte').prop('checked')
     if (chBoxPropCheck) {
       $('.lisNumPart').each(function () {
         $(this).show();
@@ -401,6 +410,24 @@ $(document).on('ready',function() {
       });
     }
   }//fin de la función numParte
+  //estamos asignando a el evento click al componente creado en el archivo captura.php en la línea 36 de la función mostrarListaNumOrden
+  $('')
+  divListNumOrden.on('click','.inpBtnLisNumEmp',liNumParte);
+  function liNumParte(e) {
+    var btnPresionado=$(this);
+    console.log(btnPresionado);
+
+
+    var valInpNumEmp=$(this).prev().prev();
+    var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
+    btnPresionado.prev().prev().prev().append(x);
+    var optionNumEmp=$(this).prev().children();
+    optionNumEmp.each(function(index, value) {
+      if ($(this).val()==valInpNumEmp.val()) {
+        $(this).remove();
+      }
+    })
+  }
 });//fin del ready
 
 //función click de la lista de los número de parte #listaNumParte

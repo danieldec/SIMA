@@ -193,14 +193,17 @@
               <div class="col-md-12 container-fluid">
                 <div class="col-md-6">
                   <div class="row">
-                    <h2 class="text-center">Lista Numero de Ordenes</h2>
-                    <button class="btn-primary btn-lg" id="mosListNumOrden">Mostrar</button>
+                    <h3 class="text-center">Asignar Número de Empleado a Número de Orden</h3>
+                    <button class="btn-primary btn-lg" id="btnMosListNumOrden">Mostrar</button>
                   </div>
                   <div class="row">
-                    <div id="divChBoxNumParte">
-                      <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte"><span>Mostrar Número de parte</span>
+                    <div id="divChBoxNumParte" class="col-md-12">
+                      <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte" ><span>Mostrar Número de parte</span>
                     </div>
-                    <div class=""id="tablaNumOrden"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6" id="divListNumOrden">
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">

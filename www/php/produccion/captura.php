@@ -29,10 +29,30 @@
       echo "Error: (".$conexion->errno.").".$conexion->error;
       return;
     }
+    echo "<ul class='list-group' id='listaNumOrd'>";
+    $contador=0;
     while ($fila=$resultado->fetch_array()) {
-      echo "<ul class='list-group' id='listaNumOrd'>";
-      echo "<li><span id='spanNumOrd'>".$numOrden=$fila[0]."</span>";
-      echo "<ul class='list-group'><li class='list-group-item lisNumPart' id=''>".$numParte=$fila[1]."</li></ul></ul>";
+      echo "<li class='list-group-item'><span class='spanNumOrd'>".$numOrden=$fila[0]."</span>";
+      echo "<ul class='list-group'><li class='lisNumPart list-group-item'><span id='spanNumPart$contador'>".$numParte=$fila[1]."</span>";
+      echo "<ul class='list-group'><li class='list-group-item'><ul class='lNumEmpCNumOrd'></ul><input class='form-control' list='inpLisNumParte$contador' name='inpLisNumParte'><datalist id='inpLisNumParte$contador'>".optionNumEmpl($fechas['fechaHoy'],$conexion)."</datalist><input type='button' class='btn-primary form-control inpBtnLisNumEmp' value='Agregar'></li></ul>";
+      echo "</ul></li>";
+      $contador++;
+    }
+    echo "</ul>";
+  }
+  function optionNumEmpl($fecha,$conexion)
+  {
+    $option="";
+    $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$fecha' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      $option="<option value='$conexion->error'>";
+      return $option;
+    }else{
+      while ($fila=$resultado->fetch_array()) {
+        $option=$option."<option value='".$fila['idempleados']."'>";
+      }
+      return $option;
     }
   }
 ?>
