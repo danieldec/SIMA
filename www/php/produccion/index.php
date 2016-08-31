@@ -20,7 +20,7 @@
   <?php
     include '../nav.php';
     include '../conexion/conexion.php';
-    include 'asistencia.php';
+    // include 'asistencia.php';
    ?>
    <!--consulta php para el número de orden-->
    <?php
@@ -44,8 +44,18 @@
     $filaFA=$resultadoFA->fetch_array();
     $conexion->close();
    ?>
+   <input type="date" name="hoy" id="hoy" value="<?php echo $dia?>" hidden='hidden'>
+  <div class="row">
+    <div id="divFechaPagina" class="col-sm-12 text-right well">
+      <?php include '../diaSemana.php';
+      $fecha="";
+      $diaSem=diaSemana();
+      $fecha="Hoy es ".$diaSem." ".date('d/m/Y');
+      echo "<span id='spanFechaPagina'>$fecha</span>";
+      ?>
+    </div>
+  </div>
   <!-- Tablas de navegación-->
-  <input type="date" name="hoy" id="hoy" value="<?php echo $dia?>" hidden='hidden'>
   <div class="container-fluid">
     <div class="row">
       <div role="tabpanel">
@@ -202,7 +212,7 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-6" id="divListNumOrden">
+                    <div class="col-md-8" id="divListNumOrden">
                     </div>
                   </div>
                 </div>

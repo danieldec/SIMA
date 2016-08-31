@@ -14,14 +14,17 @@ $(document).on('ready',function() {
   var menListNumOpe=$('#menListNumOpe');
   var spanNumOrd=$('#spanNumOrd');
   var divListNumOrden=$('#divListNumOrden');
-  var btnMosListNumOrden=$('#btnMosListNumOrden')
-  var divListNumOrden=$('#divListNumOrden');
+  var btnMosListNumOrden=$('#btnMosListNumOrden');
+  var navPill=$('.nav-pills>li>a');
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
   var cadNumEmpList="";
   var parNumParte;
   var auxNumEmpl;
+  navPill.on('shown.bs.tab',function() {
+    console.log($(this));
+  })
   inpParcial.attr('disabled','');
   inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
@@ -48,6 +51,8 @@ $(document).on('ready',function() {
   }else{
     mensaBD.addClass('alert alert-danger text-center').hide().fadeOut(10000);
   }
+  //función para mostrar hora con javascript
+
   //busqueda de los número de parte en el input NumParte
   inpNumParte.bind('keyup keydown keypressed blur',function(e) {
     // e.which=38 flecha para abajo
@@ -288,7 +293,7 @@ $(document).on('ready',function() {
         }
       }
       if (capError=="E") {
-        menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html('<span>'+data.substr(1)+'</span>').show().fadeOut(2200);
+        menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html('<span>'+data.substr(1)+'</span>').show().fadeOut(5000);
         //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
         auxNumEmpl=inpNumEmpAsis.val();
         $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
@@ -344,19 +349,21 @@ $(document).on('ready',function() {
     //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
     $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
   }
-
   //Aquí empieza el código de la pestaña captura.
   btnMosListNumOrden.on('click',btnMosList);
   //función del evento click del buton con id=btnMosListNumOrden
-  function btnMosList() {
-    console.log(divListNumOrden.length);
-    console.log(divListNumOrden);
+  console.log(divListNumOrden.html());
+  function btnMosList(e) {
     var titButon=$(this).text();
     if (titButon=="Mostrar") {
+      console.log(divListNumOrden.children().length);
+      console.log(divListNumOrden);
       $(this).text("Ocultar");
       var fecha=hoy;
       $.post('captura.php',{pFecha:fecha},postBtnMosList);
     }else{
+      console.log(divListNumOrden.html());
+      console.log(divListNumOrden.children().length);
       $(this).text("Mostrar");
       divListNumOrden.hide();
       $('#chMostrarNumParte').removeAttr('checked');
@@ -366,7 +373,7 @@ $(document).on('ready',function() {
   }
   function postBtnMosList(data,status) {
     divListNumOrden.html(data);
-    $('#divChBoxNumParte').show();
+    $('#divChBoxNumParte').show(200);
     divListNumOrden.show(200);
     // console.log(data);
   }
@@ -410,23 +417,54 @@ $(document).on('ready',function() {
       });
     }
   }//fin de la función numParte
-  //estamos asignando a el evento click al componente creado en el archivo captura.php en la línea 36 de la función mostrarListaNumOrden
-  $('')
+  //estamos asignando  el evento click al componente creado en el archivo captura.php en la línea 36 de la función mostrarListaNumOrden
+  var cont=0;
   divListNumOrden.on('click','.inpBtnLisNumEmp',liNumParte);
   function liNumParte(e) {
+    cont++;
+    console.log(cont);
     var btnPresionado=$(this);
     console.log(btnPresionado);
-
-
+    //guardamos el objeto del input
     var valInpNumEmp=$(this).prev().prev();
-    var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
-    btnPresionado.prev().prev().prev().append(x);
+    //guardamos el número de orden de nuestra lista
+    var valNumOrden=$(this).parent().parent().parent().parent().parent().children('span.spanNumOrd').text();
     var optionNumEmp=$(this).prev().children();
-    optionNumEmp.each(function(index, value) {
-      if ($(this).val()==valInpNumEmp.val()) {
-        $(this).remove();
+    //aquí comprobamos si el input donde vamos a ingresar el número de empleado es diferente de una cadena vacia y vamos a insertar el registro a la base de datos en la tabla
+    if (!(valInpNumEmp.val()==="")) {
+      $('[data-toggle="popover"]').popover('destroy');
+      $.post('captura.php',{pHoy:fechaCompleta,pNumOrd:valNumOrden,pNumEmp:valInpNumEmp.val()},insertDetListNumOrd);
+      var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
+      btnPresionado.prev().prev().prev().append(x);
+      optionNumEmp.each(function(index, value) {
+        if ($(this).val()==valInpNumEmp.val()) {
+          $(this).remove();
+        }
+      });
+    }else{
+      if (!(btnPresionado.attr('data-trigger')==="focus")) {
+        btnPresionado.attr({'data-trigger':"focus", 'title':"Alerta",'data-content':"Ingresa un # Empleado"})
+        $('[data-toggle="popover"]').popover('show');
+      }else{
+        $('[data-toggle="popover"]').popover('show');
       }
-    })
+    }
+    function insertDetListNumOrd(data,status) {
+      if (data=="Exito") {
+        console.log($(this));
+      }
+      console.log(data);
+    }
+  }//fin de la función liNumParte
+  //evento blur de input <input class="form-control inpCLNE" list="inpLisNumParte0" name="inpLisNumParte">
+  divListNumOrden.on('focus blur','.inpCLNE',blurListNumParte);
+  function blurListNumParte(e) {
+    $('[data-toggle="popover"]').popover('destroy');
+    if (e.type=='focusin') {
+      var numOrdenL=$(this).parent().parent().parent().parent().parent().children('span').text();
+      var fechaHoy=$('#hoy').val();
+      console.log(numOrdenL+" fecha:"+fechaHoy);
+    }
   }
 });//fin del ready
 
@@ -438,3 +476,11 @@ function set_item(item) {
   $('#listaNumParte').hide();
   $('#inpCantReq').focus();
 }
+// (function imprimeHora() {
+//   var d= new Date();
+//   var horas=d.getHours();
+//   var minutos=d.getMinutes();
+//   var segundos=d.getSeconds();
+//   document.getElementById('spanHora').innerHTML=horas+":"+minutos+":"+segundos;
+//   setInterval(imprimeHora,1000);
+// })();

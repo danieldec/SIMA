@@ -24,8 +24,8 @@ div.row>div>input[type="checkbox"]{
 div.row>div>span{
   font-size: 20px;
 }
-datalist{
-  color: rgb(148, 244, 41);
+body>.navbar{
+  margin-bottom: 0px;
 }
 #btnOrdPro{
   font-size: 1.3em;
@@ -103,4 +103,31 @@ datalist{
 }
 #listaNumOrd li{
   list-style-type:none;
+}
+#pDia{
+  font-size: 17px;
+  margin-bottom: 0px;
+}
+#divFechaPagina{
+  padding: 5px 15px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+#pFechaPagina{
+  margin-bottom: 0px;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+.popover-content{
+  width: 170px;
+  padding: 0px;
+  font-size: 16px;
+}
+.popover-title{
+  text-align: center;
+  background-color: #cc1f00;
+  color: white;
+}
+.form-control.inpCLNE{
+  background-color: rgb(242, 244, 209);
 }
