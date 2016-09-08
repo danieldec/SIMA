@@ -10,7 +10,7 @@
     $fechaHoy=date('Y-m-d',strtotime($fecha));
     $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
     $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
-    $fechas=$arrayName = array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
+    $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
     //echo "dia de hoy = ".$fechaHoy." día de ayer: ".$fechaAyer." día de mañana: ".$fechaManana;
       mostrarListaNumOrden($conexion,$fechas);
     }//fin del if isset($_POST['pFecha'])
@@ -53,7 +53,43 @@
       $resultado=$conexion->query($consulta);
       errorConsulta($resultado,$conexion);
       echo "Exito";
-    }//fin del if isset($_POST['pHoy'])&&isset($_POST['pNumOrd'])&&isset($_POST['pNumEmp'])
+    }//fin del if  isset($_POST['pHoy'])&&isset($_POST['pNumOrd'])&&isset($_POST['pNumEmp'])
+    if (isset($_POST['pActBadNumOrdn'])&&isset($_POST['pNumOrdenBadge'])&&isset($_POST['pHoy'])) {
+      $numOrden=$_POST['pNumOrdenBadge'];
+      $fechaHoy=$_POST['pHoy'];
+      $numFilas=cantEmplNumOrd($conexion,$numOrden,$fechaHoy);
+      echo "$numFilas";
+    }
+    //este if comprobamos que si se enviaron los datos de la función $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,phoy:hoy},listCapNumOrd)
+    if (isset($_POST['pBandListaNumOrd'])&&isset($_POST['pHoy'])) {
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      if (isset($_POST['pInicio'])) {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $fechas=fechaActual();
+      $consulta="SELECT DATE_FORMAT(MAX(a.fecha),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy from asistencia a";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']='Error';
+        $arreglo['Datos']="Error: (".$conexion->errno.").".$conexion->error;
+        echo json_encode($arreglo);
+        exit();
+      }
+      $fila=$resultado->fetch_array();
+      $fechaDia=$fila['hoy'];
+      if (!($fechaDia==$fechas['fechaHoy'])) {
+        $arreglo['Validacion']='Error';
+        $arreglo['Datos']="Por favor ingresa la asistencia del Día ".$fila['hoyF'];
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']='Exito';
+      $respuesta=listaCaptura($conexion,$fechaDia);
+      $arreglo['Datos']=$respuesta;
+      echo json_encode($arreglo);
+      // echo json_encode($fechas);
+    }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
@@ -70,6 +106,7 @@
     $contador=0;
     while ($fila=$resultado->fetch_array()) {
       echo "<li class='list-group-item'><span class='spanNumOrd'>".$numOrden=$fila[0]."</span>";
+      echo "<span class='badge'>".cantEmplNumOrd($conexion,$numOrden,$fechas['fechaHoy'])."</span>";
       echo "<ul class='list-group'><li class='lisNumPart list-group-item'><span id='spanNumPart$contador'>".$numParte=$fila[1]."</span>";
       $listNumEmpEnNumOrdenRes=listNumEmpEnNumOrden($conexion,$numOrden,$fechas['fechaHoy']);
       echo "<ul class='list-group'><li class='list-group-item'><ul class='lNumEmpCNumOrd'>".$listNumEmpEnNumOrdenRes."</ul>";
@@ -131,6 +168,61 @@
         }
         return $li;
       }
+    }
+  }//fin de la función listNumEmpEnNumOrden
+  function cantEmplNumOrd($conexion,$numOrden,$fecha)
+  {
+    $consulta="select dln.iddetalle_Lista_NumOrden, da.empleados_idempleados from detalle_Lista_NumOrden dln inner join detalle_asistencia da on dln.iddetalle_asistenciaDetList=da.iddetalle_asistencia where da.asistencia_fecha='$fecha' and dln.idnum_ordenDetLis='$numOrden'";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      echo "Error consulta(".$conexion->errno.")".$conexion->error;
+      exit();
+    }else{
+      $fila=$resultado->num_rows;
+      return $fila;
+    }
+  }
+  function listaCaptura($conexion,$dia)
+  {
+    //aquí obtenemos la fecha de ayer y de mañana para la consulta en la base de datos
+    $diaAyer=strtotime('-1 day',strtotime($dia));
+    $diaAyer=date('Y-m-d',$diaAyer);
+    $diaManana=strtotime('+1 day',strtotime($dia));
+    $diaManana=date('Y-m-d',$diaManana);
+    $consulta="select nm.idnum_orden, nm.num_parte, nm.fecha, nm.STATUS FROM num_orden nm, num_parte np WHERE nm.fecha BETWEEN '".$diaAyer."' and '".$diaManana."' and nm.num_parte=np.num_parte and nm.cantidad_realizada<=nm.cantidad and nm.STATUS='PRODUCCION' ORDER BY nm.fecha_generada DESC";
+    $resultado=$conexion->query($consulta);
+    $tbody='';
+    if (!$resultado) {
+      $tbody="Error:($conexion->errno)"."$conexion->error";
+      exit();
+    }
+    $contador=1;
+    while ($fila=$resultado->fetch_array()) {
+      $tbody=$tbody.'<tr><td>'.$contador.'</td>';
+      $tbody=$tbody.'<td>'.$fila['idnum_orden'].'</td>';
+      $tbody=$tbody.'<td>'.$fila['num_parte'].'</td>';
+      $tbody=$tbody.'<td>'.$fila['STATUS'].'</td>';
+      $tbody=$tbody.'<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
+      $tbody=$tbody.'<td>'.'<button class="btn btn-default detalleNumOrden form-control"><span class="glyphicon glyphicon-list-alt" aria-hidden="true">Detalle</button>'.'</td></tr>';
+      $contador++;
+    }
+    return $tbody;
+  }
+  function fechaActual()
+  {
+    include '../conexion/conexion.php';
+    $fecha=date('Y-m-d');
+    $fechaHoy=date('Y-m-d',strtotime($fecha));
+    $consulta="SELECT MAX(a.fecha) hoy from asistencia a";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      errorConsulta($resultado,$conexion);
+    }
+    $fila=$resultado->fetch_array();
+    if ($fila['hoy']==$fechaHoy) {
+      $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
+      $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
+      return $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
     }
   }
 ?>

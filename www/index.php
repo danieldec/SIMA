@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>SIMA</title>
-  <?php include('php/hojasEstiloIndex.php');?>
+  <?php include'php/hojasEstiloIndex.php';?>
 </head>
 <body>
-  <?php include 'php/navIndex.php'; ?>
+  <?php include 'php/navIndex.php';?>
   <br>
   <br>
   <br>

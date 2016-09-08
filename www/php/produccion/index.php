@@ -13,6 +13,7 @@
   <title>Producción</title>
   <!-- Hojas de estilos que estan en la ruta www/css-->
   <?php include '../hojasEstilo.php'; ?>
+  <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="../../css/produccion.css" charset="utf-8">
 </head>
 <body>
@@ -50,8 +51,8 @@
       <?php include '../diaSemana.php';
       $fecha="";
       $diaSem=diaSemana();
-      $fecha="Hoy es ".$diaSem." ".date('d/m/Y');
-      echo "<span id='spanFechaPagina'>$fecha</span>";
+      $fecha="Hoy es ".$diaSem." ".date('d/M/Y');
+      echo "<span id='spanFechaPagina'>".$fecha."</span>";
       ?>
     </div>
   </div>
@@ -187,6 +188,29 @@
                   <div class="row">
                     <button type="button" id="btnMosLisEmpl" class="btn-success form-control"name="button">Mostrar Lista Empleados</button>
                   </div>
+                  <div class="row">
+                    <div class="col-md-12" id='divTablaEmpleados'>
+                      <table class="table table-bordered" id="tableEmplAsis">
+                      <?php
+                      include '../conexion/conexion.php';
+                      $consulta1="SELECT concat_ws(' ',e.nombre,e.apellidos) as Nombre, e.idempleados  from empleados e";
+                      $resultado1=$conexion->query($consulta1);
+                      if (!$resultado1) {
+                        echo "Error(".$conexion->errno.")$conexion->error";
+                      }else{
+                        $tabla ='';
+                        $tabla=$tabla.'<thead><tr><th>#</th><th># empleado</th><th>Nombre</th></tr></thead>';
+                        $contador=0;
+                        while ($fila=$resultado1->fetch_array()) {
+                          $tabla=$tabla."<tr><td>$contador</td><td>".$fila['idempleados']."</td><td>".$fila['Nombre']."</td></tr>";
+                          $contador++;
+                      }
+                      echo $tabla;
+                    }
+                       ?>
+                       </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div><br>
@@ -208,7 +232,7 @@
                   </div>
                   <div class="row">
                     <div id="divChBoxNumParte" class="col-md-12">
-                      <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte" ><span>Mostrar Número de parte</span>
+                      <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte" ><span>Ver Número de parte</span>
                     </div>
                   </div>
                   <div class="row">
@@ -218,6 +242,53 @@
                 </div>
                 <div class="col-md-6">
                   <h2 class="text-center">Lista Numero de Ordenes</h2>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="table-responsive">
+                        <table id="tablaCaptura"class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>No. de Orden</th>
+                              <th>No. de Parte</th>
+                              <th>ESTATUS</th>
+                              <th>Captura</th>
+                              <th>Detalle</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php
+                            function listaCaptura($conexion,$dia)
+                            {
+                              //aquí obtenemos la fecha de ayer y de mañana para la consulta en la base de datos
+                              $diaAyer=strtotime('-1 day',strtotime($dia));
+                              $diaAyer=date('Y-m-d',$diaAyer);
+                              $diaManana=strtotime('+1 day',strtotime($dia));
+                              $diaManana=date('Y-m-d',$diaManana);
+                              $consulta="select nm.idnum_orden, nm.num_parte, nm.fecha, nm.STATUS FROM num_orden nm, num_parte np WHERE nm.fecha BETWEEN '".$diaAyer."' and '".$diaManana."' and nm.num_parte=np.num_parte and nm.cantidad_realizada<=nm.cantidad and nm.STATUS='PRODUCCION' ORDER BY nm.fecha_generada DESC";
+                              $resultado=$conexion->query($consulta);
+                              if (!$resultado) {
+                                echo "Error:($conexion->errno)"."$conexion->error";
+                                exit();
+                              }
+                              $contador=1;
+                              while ($fila=$resultado->fetch_array()) {
+                                echo '<tr><td>'.$contador.'</td>';
+                                  echo '<td>'.$fila['idnum_orden'].'</td>';
+                                  echo '<td>'.$fila['num_parte'].'</td>';
+                                  echo '<td>'.$fila['STATUS'].'</td>';
+                                  echo '<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
+                                    echo '<td>'.'<button class="btn btn-default detalleNumOrden form-control"><span class="glyphicon glyphicon-list-alt" aria-hidden="true">Detalle</button>'.'</td></tr>';
+                                      $contador++;
+                                    }
+                                  }
+                                  listaCaptura($conexion,$dia);
+                            ?>
+                          </tbody>
+                        </table>
+                      </div><!--Aquí termina el div de tabla responsiva-->
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -240,6 +311,7 @@
 
   <!--importar los scripts de la ruta www/js -->
   <?php include '../scriptsPiePag.php'; ?>
+  <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
 </body>
 </html>

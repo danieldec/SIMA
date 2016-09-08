@@ -1,4 +1,4 @@
-$(document).on('ready',function() {
+  $(document).on('ready',function() {
   var numOrden=$('#inpNumOrden').val();
   var inpNumOrden=$("#inpNumOrden");
   var inpNumParte=$("#inpNumParte");
@@ -16,14 +16,27 @@ $(document).on('ready',function() {
   var divListNumOrden=$('#divListNumOrden');
   var btnMosListNumOrden=$('#btnMosListNumOrden');
   var navPill=$('.nav-pills>li>a');
+  var btnMosLisEmpl=$('#btnMosLisEmpl');
+  var divTablaEmpleados=$('#divTablaEmpleados');
+  var capturaEmpleados=$('.capturaEmpleados');
+  var bandListaNumOrd=true;
+  var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><a href="#" class="close" data-dismiss="alert" aria-label="close">×</a></div>';
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
   var cadNumEmpList="";
   var parNumParte;
   var auxNumEmpl;
+  //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
-    console.log($(this));
+    var nombreTab=$(this).text();
+    switch (nombreTab) {
+      case "CAPTURA":
+      //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
+      $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
+        break;
+      default:
+    }
   })
   inpParcial.attr('disabled','');
   inpNumParte.focus();
@@ -302,6 +315,8 @@ $(document).on('ready',function() {
       }
       btnMosLisFecha.html("Ocultar Lista Asistencia");
       $('#divMosLista').html(data);
+      inpNumEmpAsis.val("");
+      inpNumEmpAsis.focus();
     }
   }//fin de la función listaEmpleados
   //función buscar empleado tablaListaEmpleados
@@ -349,10 +364,31 @@ $(document).on('ready',function() {
     //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
     $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
   }
+  //Aquí asígnamos el plug-in de dataTable
+  $('#tableEmplAsis').DataTable({
+    "language":{
+      "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+    }
+  });
+  //evento del botón con id=btnMosLisEmpl para mostrar la lista de empleados
+  btnMosLisEmpl.on('click',tablaEmpleados);
+  function tablaEmpleados() {
+    var textoBoton=$(this).text();
+    if (textoBoton=="Mostrar Lista Empleados") {
+      $(this).text("Ocultar Lista Empleados");
+      divTablaEmpleados.show();
+    }else if(textoBoton=="Ocultar Lista Empleados"){
+      divTablaEmpleados.hide();
+      $(this).text("Mostrar Lista Empleados");
+    }
+  }
+  function postTablaEmpleados(data,status) {
+    $('#tableEmplAsis').html(data);
+  }
   //Aquí empieza el código de la pestaña captura.
   btnMosListNumOrden.on('click',btnMosList);
   //función del evento click del buton con id=btnMosListNumOrden
-  console.log(divListNumOrden.html());
+  // console.log(divListNumOrden.html());
   function btnMosList(e) {
     var titButon=$(this).text();
     if (titButon=="Mostrar") {
@@ -362,8 +398,8 @@ $(document).on('ready',function() {
       var fecha=hoy;
       $.post('captura.php',{pFecha:fecha},postBtnMosList);
     }else{
-      console.log(divListNumOrden.html());
-      console.log(divListNumOrden.children().length);
+      // console.log(divListNumOrden.html());
+      // console.log(divListNumOrden.children().length);
       $(this).text("Mostrar");
       divListNumOrden.hide();
       $('#chMostrarNumParte').removeAttr('checked');
@@ -373,8 +409,8 @@ $(document).on('ready',function() {
   }
   function postBtnMosList(data,status) {
     divListNumOrden.html(data);
-    $('#divChBoxNumParte').show(200);
-    divListNumOrden.show(200);
+    $('#divChBoxNumParte').show(100);
+    divListNumOrden.show(100);
     // console.log(data);
   }
   //asignar evento al span de la lista que contiene el num orden
@@ -385,16 +421,17 @@ $(document).on('ready',function() {
     var tipoEvento=e.type;
     switch (e.type) {
       case 'click':
-        var atriDispLiNuPa=$(this).next().children("li").css('display');
+        var atriDispLiNuPa=$(this).siblings("ul").children("li").css('display');
         if (atriDispLiNuPa=="none") {
           // console.log(atriDispLiNuPa);
-          $(this).next().children('li').show();
+          $(this).siblings('ul').children('li').show();
         }else{
           // console.log(atriDispLiNuPa);
-          $(this).next().children('li').hide();
+          $(this).siblings('ul').children('li').hide();
         }
         // $(this).next().children('li').css('color','rgb(140, 38, 156)');
         // $(this).next().children('li').append("<p>Lorem ipsum dolor sit.</p>");
+
         break;
       case 'mouseover':
         break;
@@ -418,11 +455,8 @@ $(document).on('ready',function() {
     }
   }//fin de la función numParte
   //estamos asignando  el evento click al componente creado en el archivo captura.php en la línea 36 de la función mostrarListaNumOrden
-  var cont=0;
   divListNumOrden.on('click','.inpBtnLisNumEmp',liNumParte);
   function liNumParte(e) {
-    cont++;
-    console.log(cont);
     var btnPresionado=$(this);
     console.log(btnPresionado);
     //guardamos el objeto del input
@@ -434,13 +468,6 @@ $(document).on('ready',function() {
     if (!(valInpNumEmp.val()==="")) {
       $('[data-toggle="popover"]').popover('destroy');
       $.post('captura.php',{pHoy:fechaCompleta,pNumOrd:valNumOrden,pNumEmp:valInpNumEmp.val()},insertDetListNumOrd);
-      var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
-      btnPresionado.prev().prev().prev().append(x);
-      optionNumEmp.each(function(index, value) {
-        if ($(this).val()==valInpNumEmp.val()) {
-          $(this).remove();
-        }
-      });
     }else{
       if (!(btnPresionado.attr('data-trigger')==="focus")) {
         btnPresionado.attr({'data-trigger':"focus", 'title':"Alerta",'data-content':"Ingresa un # Empleado"})
@@ -451,7 +478,38 @@ $(document).on('ready',function() {
     }
     function insertDetListNumOrd(data,status) {
       if (data=="Exito") {
+        var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
         console.log($(this));
+        btnPresionado.prev().prev().prev().append(x);
+        optionNumEmp.each(function(index, value) {
+          if ($(this).val()==valInpNumEmp.val()) {
+            $(this).remove();
+          }
+        });
+        //si fue exitoso dejamos en blanco el input
+        btnPresionado.prev().prev().val("");
+        var lengthMenList = $('#menListNumOrdNumOp').length;
+        (lengthMenList==1) ? $('#menListNumOrdNumOp').remove():"";
+        //buscamos el número de orden de donde agregamos el empleado y lo guardamos en la variable numOrdenBadge.
+        var numOrdenBadge=btnPresionado.parent().parent().parent().parent().parent().children("span.spanNumOrd").text();
+        var diaHoy=$('#hoy').val();
+        //  console.log(numOrdenBadge);
+        //vamos a actualizar el badge del número de parte
+        $.post('captura.php',{pActBadNumOrdn:"",pNumOrdenBadge:numOrdenBadge,pHoy:diaHoy},function(data,status) {
+          btnPresionado.parent().parent().parent().parent().parent().children("span.badge").text(data);
+        })
+      }else{
+        //si ocurrio un error dejamos en blanco el input
+        btnPresionado.prev().prev().val("");
+        //desplegamos el error ocurrido en un alert
+        console.log($('#menListNumOrdNumOp'));
+        var mensaje="<div id='menListNumOrdNumOp'class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+data+"</div>";
+        if (!($('#menListNumOrdNumOp').length==1)) {
+          btnPresionado.after(mensaje);
+        }else {
+          $('#menListNumOrdNumOp').remove()
+          btnPresionado.after(mensaje);
+        }
       }
       console.log(data);
     }
@@ -460,12 +518,39 @@ $(document).on('ready',function() {
   divListNumOrden.on('focus blur','.inpCLNE',blurListNumParte);
   function blurListNumParte(e) {
     $('[data-toggle="popover"]').popover('destroy');
-    if (e.type=='focusin') {
-      var numOrdenL=$(this).parent().parent().parent().parent().parent().children('span').text();
-      var fechaHoy=$('#hoy').val();
-      console.log(numOrdenL+" fecha:"+fechaHoy);
+  }
+  capturaEmpleados.on('click',clickCaptura);
+  function clickCaptura() {
+    console.log(this);
+  }
+  //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
+  $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy,pInicio:true},listCapNumOrd);
+  function listCapNumOrd(data,status) {
+    //converir los string en datos Json.
+    var jsonDatos=$.parseJSON(data);
+    // console.log(jsonDatos);
+    if (jsonDatos.Validacion=="Error") {
+      var dia=jsonDatos.Datos;
+      console.log(dia);
+      // console.log($(mensajeErrorGenerico));
+      mensajeErrorGenerico=$(mensajeErrorGenerico);
+      mensajeErrorGenerico.addClass('alert-danger');
+      mensajeErrorGenerico.append(dia);
+      $('body').append(mensajeErrorGenerico);
+      // alert(jsonDatos.Datos)
+    }else if (jsonDatos.Validacion=="Exito") {
+      var tbody=$.parseJSON(data);
+      // console.log(tbody.Datos);
+      $('#tablaCaptura>tbody').empty();
+      $('#tablaCaptura>tbody').append(tbody.Datos);
     }
   }
+  //asínamos la API de dataTable
+  $('#tablaCaptura').DataTable({
+    "language":{
+      "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+    }
+  });
 });//fin del ready
 
 //función click de la lista de los número de parte #listaNumParte
