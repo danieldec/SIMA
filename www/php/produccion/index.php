@@ -225,7 +225,7 @@
           <div role="tabpanel" class="tab-pane fade in active" id="divCaptura">
             <div class="row">
               <div class="col-md-12 container-fluid">
-                <div class="col-md-6">
+                <div class="col-md-5">
                   <div class="row">
                     <h3 class="text-center">Asignar Número de Empleado a Número de Orden</h3>
                     <button class="btn-primary btn-lg" id="btnMosListNumOrden">Mostrar</button>
@@ -240,7 +240,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-7">
                   <h2 class="text-center">Lista Numero de Ordenes</h2>
                   <div class="row">
                     <div class="col-md-12">
