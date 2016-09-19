@@ -90,9 +90,63 @@
       echo json_encode($arreglo);
       // echo json_encode($fechas);
     }
+    if (isset($_POST['pTabCapNumEmp'])) {
+      $fecha=fechaActual();
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $arreglo=mostrarListaEmpleados($conexion,$fecha['fechaHoy'],$arreglo);
+      echo json_encode($arreglo);
+    }
+    if (isset($_POST['pcapNumOrden'])) {
+      $fecha=fechaActual();
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $numOrden=$_POST['pcapNumOrden'];
+      $consulta="SELECT dln.iddetalle_Lista_NumOrden, da.iddetalle_asistencia,e.idempleados, concat_ws(' ',e.nombre,e.apellidos ) as Nombre FROM detalle_Lista_NumOrden dln, detalle_asistencia da,empleados e WHERE dln.idnum_ordenDetLis='$numOrden' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND e.idempleados=da.empleados_idempleados AND da.asistencia_fecha='".$fecha['fechaHoy']."'";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']='Exito';
+      $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl' list='capListNumEmp' name='inpNumEmpl'><datalist id='capListNumEmp'>";
+      while ($fila=$resultado->fetch_array()) {
+        $inpDatListEmpleados=$inpDatListEmpleados."<option value='".$fila['idempleados']."'>".$fila['Nombre']."</option>";
+        $inpDatListEmpleados=$inpDatListEmpleados."<input type='hidden' value='".$fila['iddetalle_Lista_NumOrden']."' id='".$fila['idempleados']."'>";
+      }
+      $inpDatListEmpleados=$inpDatListEmpleados.'</datalist><button type="button" class="btn btn-success form-control" id="capturaC">Captura</button>';
+      $arreglo['Datos']=$inpDatListEmpleados;
+      echo json_encode($arreglo);
+    }
+    //
+    if (isset($_POST['pTipoTM'])) {
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $consulta="SELECT * from tiempo_muerto tm";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']='Exito';
+      $dataListTipoTM="";
+      while ($fila=$resultado->fetch_array()) {
+        $dataListTipoTM=$dataListTipoTM."<option value=".$fila['idtiempo_muerto'].">".$fila['descripcion']."</option> ";
+      }
+      $arreglo['Datos']=$dataListTipoTM;
+      echo json_encode($arreglo);
+    }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
+  }
+  function errorConsultaJSON($resultado,$conexion,$arreglo)
+  {
+    if (!$resultado){
+      $arreglo['Validacion']="Error";
+      $arreglo['Datos']="(".$conexion->errno.").".$conexion->error;
+      $conexion->close();
+      return $arreglo;
+    }
   }
   function mostrarListaNumOrden($conexion,$fechas)
   {
@@ -199,7 +253,7 @@
     $contador=1;
     while ($fila=$resultado->fetch_array()) {
       $tbody=$tbody.'<tr><td>'.$contador.'</td>';
-      $tbody=$tbody.'<td>'.$fila['idnum_orden'].'</td>';
+      $tbody=$tbody.'<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
       $tbody=$tbody.'<td>'.$fila['num_parte'].'</td>';
       $tbody=$tbody.'<td>'.$fila['STATUS'].'</td>';
       $tbody=$tbody.'<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
@@ -224,5 +278,25 @@
       $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
       return $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
     }
+  }
+  function mostrarListaEmpleados($conexion,$hoy,$arreglo){
+    $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
+    $resultado=$conexion->query($consulta);
+    $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+    if ($arreglo['Validacion']=='Error') {
+      return $arreglo;
+    }
+    $arreglo['Validacion']="Exito";
+    $datos="";
+    while ($fila=$resultado->fetch_array()) {
+      $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
+      $datos=$datos."<td>".$fila['Nombre']."</td>";
+      for ($i=0; $i <12 ; $i++) {
+        $datos=$datos."<td></td>";
+      }
+      $datos=$datos."<td class='detAsisCap'>".$fila['iddetalle_asistencia']."</td></tr>";
+    }
+    $arreglo['Datos']=$datos;
+    return $arreglo;
   }
 ?>

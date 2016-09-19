@@ -19,14 +19,34 @@
   var btnMosLisEmpl=$('#btnMosLisEmpl');
   var divTablaEmpleados=$('#divTablaEmpleados');
   var capturaEmpleados=$('.capturaEmpleados');
+  var uLTabCaptura=$('#uLTabCaptura');
+  var modCapNumOrd = $('#modCapNumOrd');
+  var capturaC=$('#capturaC');
+  var modalCaptura= $('#modalCaptura');
+  var inpRadioTM=$("input[name=tm]");
+  var modalTiempoMuerto=$('#modalTiempoMuerto');
+  var inpTiempoMuerto=$('.inpTiempoMuerto');
+  var tTM=$('#tTM');
+  var btnTM=$('#btnTM');
+  var inpCantidadTTM=$('.inpCantidadTTM');
+  var btnAgregarTTM=$('#btnAgregarTTM');
+  var divFormTTM=$('.divFormTTM');
+  var cuerpoModalTTM=$('#modalTiempoMuerto .modal-body').children();
+  console.log(cuerpoModalTTM);
   var bandListaNumOrd=true;
-  var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><a href="#" class="close" data-dismiss="alert" aria-label="close">×</a></div>';
+  var arregloTiempoMuerto=[[],[]];
+  var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
   var cadNumEmpList="";
   var parNumParte;
   var auxNumEmpl;
+  var tabCapNumEmp=true;
+  var numEmpleadoC="";
+  var idTiempoMuerto="";
+  var tiempoMuerto="";
+  var clonDivFormTTM=0;
   //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
     var nombreTab=$(this).text();
@@ -35,9 +55,14 @@
       //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
       $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
         break;
+      case "NÚMERO DE ORDEN":
+        inpNumParte.focus();
+        break;
+      case "ASISTENCIA":
+      $("#txtAreCom").focus();
       default:
     }
-  })
+  });
   inpParcial.attr('disabled','');
   inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
@@ -233,7 +258,7 @@
   function postAsistencia(data,status) {
     var divBtnFechAsis=$('#divBtnFecha');
     var hermanosDiv=divBtnFechAsis.siblings().size();
-    console.log(data);
+    // console.log(data);
     if (hermanosDiv==4) {
         regresaMensaje(data,divBtnFechAsis);
     }
@@ -255,6 +280,7 @@
     divBtnFechAsis=objeto;
     if (data!=="Exito") {
       //console.log(divBtnFechAsis.siblings().size());
+      $('#txtAreCom').val('');
       return divBtnFechAsis.after(divMensajeError).siblings('div:last-child').html(mensajeError);
     }else{
       console.log(data);
@@ -311,6 +337,7 @@
         auxNumEmpl=inpNumEmpAsis.val();
         $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
         inpNumEmpAsis.val("");
+        inpNumEmpAsis.focus();
         return;
       }
       btnMosLisFecha.html("Ocultar Lista Asistencia");
@@ -519,10 +546,20 @@
   function blurListNumParte(e) {
     $('[data-toggle="popover"]').popover('destroy');
   }
-  capturaEmpleados.on('click',clickCaptura);
+  $('#tablaCaptura').on('click','.capturaEmpleados',clickCaptura);
+  // capturaEmpleados.on('click',clickCaptura);
   function clickCaptura() {
-    console.log(this);
+    modCapNumOrd.modal({backdrop: "static"});
+    $(this).parent().siblings();
+    var capNumOrden=$(this).parent().siblings('.tdCapNumOrd').html();
+    $.post('captura.php',{pcapNumOrden:capNumOrden},funCapNumOrde);
   }
+  function funCapNumOrde(data,status) {
+    var modDatos=$.parseJSON(data);
+    $('#modCapNumOrd .modal-body').empty().append(modDatos.Datos);
+    // console.log(modDatos.Datos);
+  }
+  //evento Buton para realizar la captura
   //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
   $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy,pInicio:true},listCapNumOrd);
   function listCapNumOrd(data,status) {
@@ -533,15 +570,26 @@
       var dia=jsonDatos.Datos;
       console.log(dia);
       // console.log($(mensajeErrorGenerico));
-      mensajeErrorGenerico=$(mensajeErrorGenerico);
-      mensajeErrorGenerico.addClass('alert-danger');
-      mensajeErrorGenerico.append(dia);
-      $('body').append(mensajeErrorGenerico);
+      mensajeErrorGenericoAux=$(mensajeErrorGenerico);
+      var numHijosMenErr=mensajeErrorGenericoAux[0].childNodes.length
+      if (numHijosMenErr==1) {
+        mensajeErrorGenericoAux.addClass('alert-danger');
+        mensajeErrorGenericoAux.append(dia);
+        $('body').append(mensajeErrorGenericoAux);
+      }else if (numHijosMenErr==1) {
+        mensajeErrorGenericoAux2=$(mensajeErrorGenerico);
+        mensajeErrorGenericoAux2.addClass('alert-danger');
+        mensajeErrorGenericoAux2.append(dia);
+        $('body').append(mensajeErrorGenericoAux2);
+      }
       // alert(jsonDatos.Datos)
+      // console.log(mensajeErrorGenerico['0'].childNodes.length);
+      // console.log(mensajeErrorGenerico);
     }else if (jsonDatos.Validacion=="Exito") {
       var tbody=$.parseJSON(data);
       // console.log(tbody.Datos);
       $('#tablaCaptura>tbody').empty();
+      // console.log(tbody.Datos);
       $('#tablaCaptura>tbody').append(tbody.Datos);
     }
   }
@@ -551,6 +599,182 @@
       "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
     }
   });
+  //Aquí vamos asignar eventos a las pestañas de la pestaña de CAPTURA cada vez que damos click.
+  uLTabCaptura.children('li').each(iteracionUlTabCaptura);
+  function iteracionUlTabCaptura() {
+    $(this).on('shown.bs.tab',function(e) {
+      var titLiA= $(this).children('a').html();
+      var tabCapNumEmp=true;
+      switch (titLiA) {
+        case 'Captura Numero Orden':
+        break;
+        case 'Captura Numero de Empleado':
+        $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+        break;
+        case 'Asignar Número de Empleado a Número de Orden':
+        break;
+      }
+    })
+  }
+  function tablaCapNumEmple(datos,estatus) {
+    var tbody=$.parseJSON(datos);
+    // console.log(datos);
+    if (tbody.Validacion=="Exito") {
+      $('#tableCapNumEmp>tbody').empty();
+      $('#tableCapNumEmp>tbody').append(tbody.Datos)
+    }
+  }
+  modCapNumOrd.on('click','#capturaC',modalCapturaC);
+  function modalCapturaC() {
+    // console.log($(this));
+    numEmpleadoC=$('.inpNumEmpl').val();
+    if (numEmpleadoC.length==0) {
+      alert("Por favor ingresa un número de empleado");
+      return;
+    }
+    // console.log(numEmpleadoC);
+    modalCaptura.modal({backdrop: "static"});
+  }
+  //evento del modal #modalCaptura
+  $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
+  function cargComplModalCaptura() {
+    var fechaServidor=$('#hoy').val();
+    if (fechaServidor=!fechaCompleta) {
+      alert("Verificar fecha");
+      return;
+    }
+    $('#cantidadC').focus().select();
+    $('#fechaC').val(fechaCompleta);
+    console.log($('#fechaC').val());
+    var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getMinutes();
+    if (hora<10) {
+      hora="0"+hora;
+      minutos="0"+minutos;
+      segundos="0"+segundos;
+    }
+    horaComplet=hora+":"+minutos+":"+segundos;
+    if (horaComplet>="07:00"&&horaComplet<"09:00") {
+      $('#horaInicioC').val('07:00');
+      $('#horaFinalC').val('08:00');
+    }
+    if (horaComplet>="09:00"&&horaComplet<"10:00") {
+      $('#horaInicioC').val('08:00');
+      $('#horaFinalC').val('09:00');
+    }
+    if (horaComplet>="10:00"&&horaComplet<"11:00") {
+      $('#horaInicioC').val('09:00');
+      $('#horaFinalC').val('10:00');
+    }
+    if (horaComplet>="11:00"&&horaComplet<"12:00") {
+      $('#horaInicioC').val('10:00');
+      $('#horaFinalC').val('11:00');
+    }
+    if (horaComplet>="12:00"&&horaComplet<"13:00") {
+      $('#horaInicioC').val('11:00');
+      $('#horaFinalC').val('12:00');
+    }
+    if (horaComplet>="13:00"&&horaComplet<"14:00") {
+      $('#horaInicioC').val('12:00');
+      $('#horaFinalC').val('13:00');
+    }
+    if (horaComplet>="14:00"&&horaComplet<"15:00") {
+      $('#horaInicioC').val('13:00');
+      $('#horaFinalC').val('14:00');
+    }
+    if (horaComplet>="15:00"&&horaComplet<"15:40") {
+      $('#horaInicioC').val('14:00');
+      $('#horaFinalC').val('15:00');
+    }
+    if (horaComplet>="15:40"&&horaComplet<"14:30") {
+      $('#horaInicioC').val('15:00');
+      $('#horaFinalC').val('16:00');
+    }
+    var idDetListaNumOrden=$('#'+numEmpleadoC).val();
+  }
+  //Aquí abrimos el modal cuando hay tiempo muerto
+  inpRadioTM.change(function() {
+    var valorRadioTT=$(this).val();
+    // console.log(valorRadioTT);
+    //le quitamos el atributo data-dismiss
+    btnTM.removeAttr('data-dismiss');
+    if (valorRadioTT=="si") {
+      modalTiempoMuerto.modal({backdrop:'static'});
+      // var idModalTiempoMuerto=modalTiempoMuerto.attr('id');
+      // $('#'+idModalTiempoMuerto+' .modal-body').css('background-color','green');
+      // $.post('ttm.php.formCaptura').serialize(),respuestaTiempoM)
+    };
+    // $('#modalTiempoMuerto .modal-body').empty();
+
+    // $('#modalTiempoMuerto .modal-body').append(divFormTTM);
+  });
+  function respuestaTiempoM(data, status) {
+    // console.log(data);
+  }
+  //evento del modal cuando carga el modal #modCapNumOr
+  modCapNumOrd.on('shown.bs.modal',function() {
+    //le damos el foco al input .inpNumEmpl.
+    $('.inpNumEmpl').focus();
+  });
+  modalTiempoMuerto.on('shown.bs.modal',function() {
+    inpTiempoMuerto.focus();
+    $.post('captura.php',{pTipoTM:true},dataListTTM);
+  });
+  function dataListTTM(datos,status) {
+    var dataListTipoTM=$.parseJSON(datos);
+    if (dataListTipoTM.Validacion=="Exito") {
+      tTM.empty();
+      tTM.append(dataListTipoTM.Datos);
+    }
+    inpTiempoMuerto.change(function(e) {
+      // console.log(e.target.value);
+      switch (parseInt(e.target.value)) {
+        case 1:
+        $(e.target).siblings('.inpCantidadTTM').val(20);
+        break;
+        case 2:
+        $(e.target).siblings('.inpCantidadTTM').val(40);
+        break;
+        case 3:
+        $(e.target).siblings('.inpCantidadTTM').val(5);
+        break;
+        default:
+        $(e.target).siblings('.inpCantidadTTM').val(0);
+      }
+    });
+    // console.log(dataListTipoTM);
+  }
+  //evento click al pulsar al boton guardar del modal Tiempo Muerto
+  btnTM.on('click',function() {
+    var tiempoMuertosDiv=$('#modalTiempoMuerto .modal-body>.divFormTTM');
+    tiempoMuertosDiv.each(function(index,element) {
+      // console.log("indice: "+index);
+      // console.log("elemento: ");
+      // console.log($(element));
+      var i=$(this).children('.inpTiempoMuerto').val();
+      var j=$(this).children('.inpCantidadTTM').val();
+      console.log("idTiempoMuerto: "+i+" Cantidad Minutos: "+j);
+    });
+    $(this).attr('data-dismiss','modal');
+    console.log($('#modalTiempoMuerto .modal-body')[0].childNodes.length);
+    if ($('#modalTiempoMuerto .modal-body')[0].childNodes.lengt>5) {
+      $('#modalTiempoMuerto .modal-body').empty();
+      $('#modalTiempoMuerto .modal-body').append(cuerpoModalTTM)
+    }
+    // console.log($('#modalTiempoMuerto .modal-body')[0].childNodes.length);
+    // $(this).removeAttr('data-dismiss');
+    // console.log(tiempoMuertosDiv);
+  });
+  var clon;
+  $('#modalTiempoMuerto .modal-body').on('click','#btnAgregarTTM',function() {
+    clon=divFormTTM.clone('true');
+    clon.children('.inpTiempoMuerto').val("");
+    clon.children('.inpCantidadTTM').val("");
+    btnAgregarTTM.before(clon);
+    clon.children('.inpTiempoMuerto').focus();
+  });
+  //sección de POST
+  $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+
 });//fin del ready
 
 //función click de la lista de los número de parte #listaNumParte
@@ -559,7 +783,7 @@ function set_item(item) {
   $('#inpNumParte').val(item);
   // hide proposition list
   $('#listaNumParte').hide();
-  $('#inpCantReq').focus();
+  $('#inpCantReq').focus().select();
 }
 // (function imprimeHora() {
 //   var d= new Date();

@@ -94,6 +94,7 @@ body>.navbar{
 }
 #divChBoxNumParte{
   display: none;
+  text-align: center;
 }
 /*#divCaptura>div>div div{
   border: 1px solid #0e75bf;
@@ -103,6 +104,7 @@ body>.navbar{
 }
 #listaNumOrd li{
   list-style-type:none;
+  text-align: left;
 }
 #pDia{
   font-size: 17px;
@@ -128,7 +130,7 @@ body>.navbar{
   display: none;
 }
 #tablaCaptura>thead>tr>th:first-child{
-  width: 15px;
+  /*width: 15px;*/
 }
 #tablaCaptura>thead th{
   /*width: 100%;*/
@@ -137,9 +139,9 @@ body>.navbar{
   background-color: #fff;
 }
 #tablaCaptura{
-  table-layout: fixed;
+  /*table-layout: fixed;
   width: 100%;
-  font-size: 15px;
+  font-size: 15px;*/
 }
 #mensajeAlerta{
   position: absolute;
@@ -150,11 +152,61 @@ body>.navbar{
   transform: translate(-50%, -50%);
 }
 #tablaCaptura>tbody td{
-  text-align: center;
-  vertical-align: middle;
+  /*text-align: center;
+  vertical-align: middle;*/
 }
 #tablaCaptura_filter>label>input{
   height: inherit;
+}
+#tablaCaptura>tbody>tr>td:nth-of-type(2),#tablaCaptura>tbody>tr>td:nth-of-type(3),#tablaCaptura>tbody>tr>td:nth-of-type(4){
+  width: 70px;
+  background-color: rgb(217, 213, 190);
+}
+#tablaCaptura>tbody>tr>td:nth-of-type(1){
+  width: 20px;
+  align-content: center;
+}
+#tableCapNumEmp,#tableCapNumEmp{
+  table-layout: auto;
+}
+#tableCapNumEmp>tbody>tr>td:nth-of-type(1){
+  background-color:rgb(12, 232, 205);
+  width: 7.3%;
+}
+#tableCapNumEmp>tbody>tr>td:nth-of-type(2){
+  width: 27%;
+}
+/*Aquí calculamos el ancho de cada celda, es la siguiente formula width= 7.3%+27% = 34.3%
+totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
+*/
+#tableCapNumEmp>tbody>tr>td:nth-of-type(+n+3){
+  /*background-color: rgb(113, 91, 158);*/
+  width: 5.47%;
+}
+#modCapNumOrd{
+  top: 25%;
+}
+#modCapNumOrd>div>div>div>h4{
+  letter-spacing: 2px;
+  font-size: 20px;
+}
+#modalCaptura{
+  top: 20%;
+}
+#cantidadC{
+  width: 100px;
+}
+#tmC,#eficienciaC{
+  width: 80px;
+}
+.divFormTTM>input.inpTiempoMuerto{
+  width: 35%;
+}
+.divFormTTM>input.inpCantidadTTM{
+  width: 100px;
+}
+#modalTiempoMuerto .modal-content{
+  width: 400px;
 }
 .popover-content{
   width: 170px;
@@ -182,4 +234,7 @@ body>.navbar{
 }
 td>.capturaEmpleados, .detalleNumOrden{
   letter-spacing: 2px;
+}
+.detAsisCap{
+  display: none;
 }

@@ -223,24 +223,34 @@
           <!--Aquí termina el tab de asistencia| -->
           <!--Aquí empieza el tab de captura-->
           <div role="tabpanel" class="tab-pane fade in active" id="divCaptura">
-            <div class="row">
-              <div class="col-md-12 container-fluid">
-                <div class="col-md-5">
+            <!--Pestañas o tabs de la captura-->
+            <ul class="nav nav-tabs" id="uLTabCaptura">
+              <li><a href="#tabAsigNumOrden" data-toggle="tab">Asignar Número de Empleado a Número de Orden</a></li>
+              <li><a href="#capNumOrd" data-toggle="tab">Captura Numero Orden</a></li>
+              <li class="active"><a href="#capNumEmp" data-toggle="tab">Captura Numero de Empleado</a></li>
+            </ul>
+
+            <!-- Aquí empieza el contenido de la pestaña o tab -->
+            <div class="tab-content">
+              <div class="tab-pane fade" id="tabAsigNumOrden">
+                <div class="col-md-12 container-fluid text-center">
                   <div class="row">
                     <h3 class="text-center">Asignar Número de Empleado a Número de Orden</h3>
                     <button class="btn-primary btn-lg" id="btnMosListNumOrden">Mostrar</button>
                   </div>
                   <div class="row">
-                    <div id="divChBoxNumParte" class="col-md-12">
+                    <div id="divChBoxNumParte" class="col-md-8">
                       <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte" ><span>Ver Número de parte</span>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-8" id="divListNumOrden">
+                    <div class="col-md-6 col-md-offset-3" id="divListNumOrden">
                     </div>
                   </div>
                 </div>
-                <div class="col-md-7">
+              </div>
+              <div class="tab-pane fade" id="capNumOrd">
+                <div class="col-md-8 col-md-offset-2 container-fluid">
                   <h2 class="text-center">Lista Numero de Ordenes</h2>
                   <div class="row">
                     <div class="col-md-12">
@@ -274,7 +284,7 @@
                               $contador=1;
                               while ($fila=$resultado->fetch_array()) {
                                 echo '<tr><td>'.$contador.'</td>';
-                                  echo '<td>'.$fila['idnum_orden'].'</td>';
+                                  echo '<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
                                   echo '<td>'.$fila['num_parte'].'</td>';
                                   echo '<td>'.$fila['STATUS'].'</td>';
                                   echo '<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
@@ -283,15 +293,49 @@
                                     }
                                   }
                                   listaCaptura($conexion,$dia);
-                            ?>
+                                  ?>
                           </tbody>
                         </table>
                       </div><!--Aquí termina el div de tabla responsiva-->
                     </div>
+                  </div><!-- Aquí termina el div con clase row-->
+                </div>
+                <!--Aquí termina el div de la col-md-12.-->
+              </div>
+              <!--Aquí termina el div con id capNumOrd-->
+              <!--Aquí empieza el tab del id=capNumEmp-->
+              <div class="tab-pane fade in active" id="capNumEmp">
+                <div class="col-md-12">
+                  <div id="divTabCapNumEmp"class="container-fluid">
+                    <table class="table table-bordered" id="tableCapNumEmp">
+                      <caption>Captura</caption>
+                      <thead>
+                        <tr>
+                          <th># Empleado</th>
+                          <th>Nombre</th>
+                          <th>7-8</th>
+                          <th>8-9</th>
+                          <th>9-10</th>
+                          <th>10-11</th>
+                          <th>11-12</th>
+                          <th>12-1</th>
+                          <th>1-2</th>
+                          <th>2-3</th>
+                          <th>3-4</th>
+                          <th>4-5</th>
+                          <th>5-6</th>
+                          <th>6-7</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tBodyCapNumEmp">
+
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
+            <!-- Aquí termina el contenido de la pestaña o tab -->
           </div>
           <!--Aquí termina el tab de captura| -->
           <!--Aquí empieza el tab de Requerimientos-->
@@ -307,6 +351,113 @@
       </div>
     </div>
   </div>
+  <!--  Modal para la captura de número de orden -->
+  <div class="modal fade" id="modCapNumOrd" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" data-dismiss="modal" class="close">&times</button>
+          <h4 class="text-center">Captura por número de orden</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-default">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  Modal de la captura -->
+  <div class="modal fade" tabindex="-1" id="modalCaptura" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" data-dismiss="modal" class="close">&times</button>
+          <h3 class="text-center">Captura</h4>
+        </div>
+          <div class="modal-body">
+            <form id='formCaptura' class="form-inline" action="#" method="post" role="form">
+              <div class="form-group">
+                <label for="fechaC">Fecha</label>
+                <input type="date" id="fechaC"name="fechaC" value="" class="form-control">
+              </div>
+              <div class="form-group">
+              <label for="cantidadC">Cantidad</label>
+              <input type="number" id="cantidadC" name="cantidadC"  value="0" class="form-control" required>
+              </div>
+              <label for="horaInicioC">Hora Inicio<input type="time" id='horaInicioC' name="horaInicioC" value="" class="form-control" required></label>
+              <label for="horaFinalC">Hora Final<input type="time" id="horaFinalC" name="horaFinalC" value="" class="form-control" required></label>
+              <div class="form-group">TTM
+                <label>
+                  <input type="radio" name="tm" value="no" checked>No
+                </label>
+                <label>
+                  <input type="radio" name="tm" value="si">Si
+                </label>
+              </div>
+              <!-- <label for="">No<input type="radio" name="tiempo" value="No"></label>
+              <label for="">SI<input type="radio" name="tiempo" value="Si"></label> -->
+              <div class="form-group">
+                <label for="">Tiempo Muerto</label>
+                <input type="number" name="tmC" id='tmC'value="0" class="form-control" required>
+              </div>
+              <label for="">Eficiencia<input type="text" name="eficienciaC" id='eficienciaC'value="0" class="form-control" required></label>
+              <div class="row">
+                <div class="col-md-12">
+                  <input type="submit" name="capturarC" id="capturarC" value="CAPTURAR" class="form-control btn btn-primary btn-block">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" data-dismiss="modal" class="btn btn-default">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin del modal de captura-->
+    <!--Modal Tiempo Muerto-->
+    <div class="modal fade" tab-index="-1" role="dialog" id="modalTiempoMuerto">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" data-dismiss="modal" class="close">&times</button>
+            <h4>Tiempo Muerto</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group form-inline divFormTTM">
+              <input placeholder="tipo tiempo muerto" class="form-control inpTiempoMuerto" list="tTM" name="inpTiempoMuerto"/>
+              <datalist id="tTM">
+              </datalist>
+              <input placeholder="Minutos" type="number" min="0" name="inpCantidadTTM" class="form-control inpCantidadTTM" value="0">
+            </div>
+            <input class="btn btn-default form-control" type="button" name="btnAgregarTTM" value="Agregar" id="btnAgregarTTM">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btnTM">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!--  Modal para la captura de número de empleado-->
+  <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
+  <!-- <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog"> -->
+      <!-- Modal -->
+        <!-- <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog"> -->
+            <!-- Modal content-->
+            <!-- <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Options</h4>
+              </div>
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div> -->
 
 
   <!--importar los scripts de la ruta www/js -->
