@@ -6,3 +6,6 @@ otro query que selecciona el número de parte apartir de detalle_Lista_NumOrden
 SELECT * from detalle_Lista_NumOrden dln, detalle_asistencia as dt, empleados e, num_orden nm, num_parte np WHERE dln.iddetalle_asistenciaDetList=dt.iddetalle_asistencia and dt.empleados_idempleados = e.idempleados and dln.idnum_ordenDetLis=nm.idnum_orden and nm.num_parte=np.num_parte and np.num_parte=10048
 -- otro query que nos va a mostrar los empleados que estan en un un número de parte con la fecha de asistencia del día.
 SELECT * from detalle_asistencia da where (da.asistencia_fecha='$hoy') and ( da.iddetalle_asistencia IN (SELECT dln.iddetalle_asistenciaDetList from detalle_Lista_NumOrden dln WHERE dln.idnum_ordenDetLis='$numOrden' and dln.iddetalle_asistenciaDetList=da.iddetalle_asistencia ))
+
+/*seleccionamos de la tabla detalle lista númerp de orden los empleados que estan en la tabla de asistencia de tal fecha y de tal número de orden*/
+SELECT * from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList IN(SELECT da.iddetalle_asistencia from detalle_asistencia da where da.asistencia_fecha='2016-09-19') and (dln.idnum_ordenDetLis='50008')

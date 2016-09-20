@@ -32,9 +32,10 @@
   var btnAgregarTTM=$('#btnAgregarTTM');
   var divFormTTM=$('.divFormTTM');
   var cuerpoModalTTM=$('#modalTiempoMuerto .modal-body').children();
-  console.log(cuerpoModalTTM);
+  var btnEliminarTTM=$('#btnEliminarTTM');
+  var formCaptura=$('#formCaptura');
   var bandListaNumOrd=true;
-  var arregloTiempoMuerto=[[],[]];
+  var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
   var inpFeAsis="";
   var inpNumEmp="";
@@ -47,6 +48,9 @@
   var idTiempoMuerto="";
   var tiempoMuerto="";
   var clonDivFormTTM=0;
+  var sumaMin=0;
+  var idEmpleado="";
+  var idDetAsis="";
   //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
     var nombreTab=$(this).text();
@@ -639,6 +643,9 @@
   $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura() {
     var fechaServidor=$('#hoy').val();
+    idEmpleado=$('.inpNumEmpl','#modCapNumOrd').val();
+    idDetAsis=$('#'+idEmpleado).val();
+    console.log(idEmpleado+" "+idDetAsis);
     if (fechaServidor=!fechaCompleta) {
       alert("Verificar fecha");
       return;
@@ -685,7 +692,7 @@
       $('#horaInicioC').val('14:00');
       $('#horaFinalC').val('15:00');
     }
-    if (horaComplet>="15:40"&&horaComplet<"14:30") {
+    if (horaComplet>="15:40"&&horaComplet<"16:30") {
       $('#horaInicioC').val('15:00');
       $('#horaFinalC').val('16:00');
     }
@@ -715,8 +722,13 @@
     //le damos el foco al input .inpNumEmpl.
     $('.inpNumEmpl').focus();
   });
+  //evento modal cuando se abre el modal de Tiempo muerto
   modalTiempoMuerto.on('shown.bs.modal',function() {
+    inpTiempoMuerto.val('');
+    inpCantidadTTM.val('');
     inpTiempoMuerto.focus();
+    arregloTiempoMuerto=[];
+    sumaMin=0;
     $.post('captura.php',{pTipoTM:true},dataListTTM);
   });
   function dataListTTM(datos,status) {
@@ -747,22 +759,28 @@
   btnTM.on('click',function() {
     var tiempoMuertosDiv=$('#modalTiempoMuerto .modal-body>.divFormTTM');
     tiempoMuertosDiv.each(function(index,element) {
-      // console.log("indice: "+index);
-      // console.log("elemento: ");
-      // console.log($(element));
       var i=$(this).children('.inpTiempoMuerto').val();
       var j=$(this).children('.inpCantidadTTM').val();
-      console.log("idTiempoMuerto: "+i+" Cantidad Minutos: "+j);
+      arregloTiempoMuerto.push([['idTTM'],['min']]);
+      arregloTiempoMuerto[index]['idTTM']=i;
+      arregloTiempoMuerto[index]['min']=j;
+      // console.log("idTiempoMuerto: "+i+" Cantidad Minutos: "+j);
     });
-    $(this).attr('data-dismiss','modal');
-    console.log($('#modalTiempoMuerto .modal-body')[0].childNodes.length);
-    if ($('#modalTiempoMuerto .modal-body')[0].childNodes.lengt>5) {
-      $('#modalTiempoMuerto .modal-body').empty();
-      $('#modalTiempoMuerto .modal-body').append(cuerpoModalTTM)
-    }
+    // console.log(arregloTiempoMuerto);
     // console.log($('#modalTiempoMuerto .modal-body')[0].childNodes.length);
-    // $(this).removeAttr('data-dismiss');
-    // console.log(tiempoMuertosDiv);
+    if ($('#modalTiempoMuerto .modal-body')[0].childNodes.length>5) {
+      // console.log(cuerpoModalTTM);
+      $('#modalTiempoMuerto .modal-body').empty();
+      $('#modalTiempoMuerto .modal-body').append(cuerpoModalTTM);
+      $('#modalTiempoMuerto .modal-body').children('.inpTiempoMuerto').val('');
+      $('#modalTiempoMuerto .modal-body').children('.inpCantidadTTM').val('');
+    }
+    $.each(arregloTiempoMuerto,function (key,value) {
+      console.log(value.min);
+      sumaMin=parseInt(sumaMin)+parseInt(value.min);
+    });
+    $('#tmC').val(sumaMin);
+    $(this).attr('data-dismiss','modal');
   });
   var clon;
   $('#modalTiempoMuerto .modal-body').on('click','#btnAgregarTTM',function() {
@@ -772,6 +790,42 @@
     btnAgregarTTM.before(clon);
     clon.children('.inpTiempoMuerto').focus();
   });
+
+    // if ($(this).parent().children('.divFormTTM').length==1) {
+    //   return;
+    // }
+    divFormTTM.on('dblclick',function() {
+    $(this).toggleClass('divSelecionadoElim');
+  });
+  btnEliminarTTM.on('click',function() {
+    var divTTM=$('#modalTiempoMuerto .modal-body>.divFormTTM');
+    console.log(divTTM);
+    divTTM.each(function(index,elemento) {
+      console.log($(this).attr('class'));
+      console.log(index);
+      if (index==0) {
+        $(this).removeClass('divSelecionadoElim');
+      }
+      if ($(this).attr('class')=='form-group form-inline divFormTTM divSelecionadoElim') {
+        $(this).remove();
+      }
+    })
+  });
+  formCaptura.on('submit',formularioCaptura);
+  function formularioCaptura(e) {
+    e.preventDefault();
+    console.log(e);
+    console.log($(this).serialize());
+    var datosForm=$(this).serialize();
+    $.post('ttm.php',{pIdEmpleado:idEmpleado,pSumaMin:sumaMin,pIdDetAsis:idDetAsis,datosForm},postFormCaptura)
+  };
+  function postFormCaptura(data,status) {
+    datos=data.trim();
+    console.log(data);
+    console.log(datos);
+    console.log(datos.length);
+    console.log(status);
+  }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
 
@@ -793,3 +847,8 @@ function set_item(item) {
 //   document.getElementById('spanHora').innerHTML=horas+":"+minutos+":"+segundos;
 //   setInterval(imprimeHora,1000);
 // })();
+/*Este ejemplo nos muestra los valores de un arreglo
+$.each(arregloTiempoMuerto,function (key,value) {
+  console.log(value.min);
+  console.log(value.idTTM);
+});*/

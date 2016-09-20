@@ -430,6 +430,7 @@
               <input placeholder="Minutos" type="number" min="0" name="inpCantidadTTM" class="form-control inpCantidadTTM" value="0">
             </div>
             <input class="btn btn-default form-control" type="button" name="btnAgregarTTM" value="Agregar" id="btnAgregarTTM">
+            <input class="btn btn-default form-control" type="button" name="btnEliminarTTM" value="Eliminar" id="btnEliminarTTM">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="btnTM">Guardar</button>

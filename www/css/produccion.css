@@ -238,3 +238,9 @@ td>.capturaEmpleados, .detalleNumOrden{
 .detAsisCap{
   display: none;
 }
+/*.divFormTTM:hover{
+  background: rgb(111, 86, 209);
+}*/
+.divSelecionadoElim{
+  background: rgb(111, 86, 209);
+}
