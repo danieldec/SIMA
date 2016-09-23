@@ -285,7 +285,7 @@
                               while ($fila=$resultado->fetch_array()) {
                                 echo '<tr><td>'.$contador.'</td>';
                                   echo '<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
-                                  echo '<td>'.$fila['num_parte'].'</td>';
+                                  echo '<td class="tdCapNumPart">'.$fila['num_parte'].'</td>';
                                   echo '<td>'.$fila['STATUS'].'</td>';
                                   echo '<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
                                     echo '<td>'.'<button class="btn btn-default detalleNumOrden form-control"><span class="glyphicon glyphicon-list-alt" aria-hidden="true">Detalle</button>'.'</td></tr>';
@@ -387,22 +387,22 @@
               <label for="horaFinalC">Hora Final<input type="time" id="horaFinalC" name="horaFinalC" value="" class="form-control" required></label>
               <div class="form-group">TTM
                 <label>
-                  <input type="radio" name="tm" value="no" checked>No
+                  <input type="radio" id='tm1'name="tm" value="no" required checked="checked"/>No
                 </label>
                 <label>
-                  <input type="radio" name="tm" value="si">Si
+                  <input type="radio" id='tm2'name="tm" value="si" required>Si
                 </label>
               </div>
               <!-- <label for="">No<input type="radio" name="tiempo" value="No"></label>
               <label for="">SI<input type="radio" name="tiempo" value="Si"></label> -->
               <div class="form-group">
                 <label for="">Tiempo Muerto</label>
-                <input type="number" name="tmC" id='tmC'value="0" class="form-control" required>
+                <input type="number" name="tmC" id='tmC'value="0" class="form-control" required readonly>
               </div>
-              <label for="">Eficiencia<input type="text" name="eficienciaC" id='eficienciaC'value="0" class="form-control" required></label>
+              <label for="">Eficiencia<input type="text" name="eficienciaC" id='eficienciaC'value="" class="form-control" required disabled></label>
               <div class="row">
                 <div class="col-md-12">
-                  <input type="submit" name="capturarC" id="capturarC" value="CAPTURAR" class="form-control btn btn-primary btn-block">
+                  <input type="submit" name="capturarC" id="capturarC" value="CAPTURAR" class="form-control btn btn-default btn-block disabled" disabled>
                 </div>
               </div>
             </form>
@@ -434,6 +434,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="btnTM">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss='modal' id="btnCanTTM">Cancelar</button>
           </div>
         </div>
       </div>

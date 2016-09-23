@@ -9,3 +9,5 @@ SELECT * from detalle_asistencia da where (da.asistencia_fecha='$hoy') and ( da.
 
 /*seleccionamos de la tabla detalle lista númerp de orden los empleados que estan en la tabla de asistencia de tal fecha y de tal número de orden*/
 SELECT * from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList IN(SELECT da.iddetalle_asistencia from detalle_asistencia da where da.asistencia_fecha='2016-09-19') and (dln.idnum_ordenDetLis='50008')
+//lo que hacemos es obtener el último día y le sumamos un día para que nos arroje el día de hoy porque la última asistencia es de un día anterior y le damos formato 
+SELECT DATE_FORMAT(DATE_ADD(MAX(a.fecha), INTERVAL 1 DAY),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy, DATE_ADD( MAX(a.fecha),INTERVAL 1 DAY) from asistencia a

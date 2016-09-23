@@ -68,7 +68,7 @@
         exit();
       }
       $fechas=fechaActual();
-      $consulta="SELECT DATE_FORMAT(MAX(a.fecha),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy from asistencia a";
+        $consulta="SELECT DATE_FORMAT(DATE_ADD(MAX(a.fecha), INTERVAL 1 DAY),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy from asistencia a";
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         $arreglo['Validacion']='Error';
@@ -108,7 +108,7 @@
         exit();
       }
       $arreglo['Validacion']='Exito';
-      $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl' list='capListNumEmp' name='inpNumEmpl'><datalist id='capListNumEmp'>";
+      $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl' list='capListNumEmp' name='inpNumEmpl' autocomplete='off'><datalist id='capListNumEmp'>";
       while ($fila=$resultado->fetch_array()) {
         $inpDatListEmpleados=$inpDatListEmpleados."<option value='".$fila['idempleados']."'>".$fila['Nombre']."</option>";
         $inpDatListEmpleados=$inpDatListEmpleados."<input type='hidden' value='".$fila['iddetalle_Lista_NumOrden']."' id='".$fila['idempleados']."'>";
@@ -133,6 +133,21 @@
         $dataListTipoTM=$dataListTipoTM."<option value=".$fila['idtiempo_muerto'].">".$fila['descripcion']."</option> ";
       }
       $arreglo['Datos']=$dataListTipoTM;
+      echo json_encode($arreglo);
+    }
+    if (isset($_POST['capNumParte'])) {
+      $arreglo= array('Validacion'=>'','Datos'=>'');
+      $numParte=$_POST['capNumParte'];
+      $consulta="SELECT np.rate from num_parte np WHERE np.num_parte='".$numParte."'";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']=="Exito";
+      $fila=$resultado->fetch_array();
+      $arreglo['Datos']=$fila['rate'];
       echo json_encode($arreglo);
     }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
@@ -254,7 +269,7 @@
     while ($fila=$resultado->fetch_array()) {
       $tbody=$tbody.'<tr><td>'.$contador.'</td>';
       $tbody=$tbody.'<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
-      $tbody=$tbody.'<td>'.$fila['num_parte'].'</td>';
+      $tbody=$tbody.'<td class="tdCapNumPart">'.$fila['num_parte'].'</td>';
       $tbody=$tbody.'<td>'.$fila['STATUS'].'</td>';
       $tbody=$tbody.'<td>'.'<button class="btn btn-default capturaEmpleados form-control"><span class="glyphicon glyphicon-camera" aria-hidden="true">Captura</button>'.'</td>';
       $tbody=$tbody.'<td>'.'<button class="btn btn-default detalleNumOrden form-control"><span class="glyphicon glyphicon-list-alt" aria-hidden="true">Detalle</button>'.'</td></tr>';

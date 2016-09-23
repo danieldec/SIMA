@@ -34,6 +34,9 @@
   var cuerpoModalTTM=$('#modalTiempoMuerto .modal-body').children();
   var btnEliminarTTM=$('#btnEliminarTTM');
   var formCaptura=$('#formCaptura');
+  var tmC=$('#tmC');
+  var cantidadC=$('#cantidadC');
+  var capturarC=$('#capturarC');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -51,12 +54,19 @@
   var sumaMin=0;
   var idEmpleado="";
   var idDetAsis="";
+  var capNumParte="";
+  var capNumOrden="";
+  var eficiencia="";
+  var cantProg="";
+  var cantidad="";
+  var minTM="";
   //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
     var nombreTab=$(this).text();
     switch (nombreTab) {
       case "CAPTURA":
       //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
+      console.log(hoy);
       $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
         break;
       case "NÚMERO DE ORDEN":
@@ -554,8 +564,9 @@
   // capturaEmpleados.on('click',clickCaptura);
   function clickCaptura() {
     modCapNumOrd.modal({backdrop: "static"});
-    $(this).parent().siblings();
-    var capNumOrden=$(this).parent().siblings('.tdCapNumOrd').html();
+    //guardamos el número de parte para extraer el rate
+    capNumParte=$(this).parent().siblings('.tdCapNumPart').html();
+    capNumOrden=$(this).parent().siblings('.tdCapNumOrd').html();
     $.post('captura.php',{pcapNumOrden:capNumOrden},funCapNumOrde);
   }
   function funCapNumOrde(data,status) {
@@ -628,24 +639,30 @@
       $('#tableCapNumEmp>tbody').append(tbody.Datos)
     }
   }
+  //evento Boton del modal, Captura por número de orden.
   modCapNumOrd.on('click','#capturaC',modalCapturaC);
   function modalCapturaC() {
-    // console.log($(this));
+    idEmpleado=$('.inpNumEmpl','#modCapNumOrd').val();
+    idDetAsis=$('#'+idEmpleado).val();
+    // console.log(idEmpleado+" "+idDetAsis);
     numEmpleadoC=$('.inpNumEmpl').val();
     if (numEmpleadoC.length==0) {
       alert("Por favor ingresa un número de empleado");
       return;
     }
+    $('.inpNumEmpl').val('');
     // console.log(numEmpleadoC);
     modalCaptura.modal({backdrop: "static"});
   }
-  //evento del modal #modalCaptura
+  //evento del modal cuando se abre por completo #modalCaptura
   $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura() {
+    $('input[name=tm]').removeAttr('checked');
+    $('#cantidadC').val('0');
     var fechaServidor=$('#hoy').val();
-    idEmpleado=$('.inpNumEmpl','#modCapNumOrd').val();
-    idDetAsis=$('#'+idEmpleado).val();
-    console.log(idEmpleado+" "+idDetAsis);
+    tmC.val('0');
+    $('#tm1').prop('checked','checked');
+    $('#eficienciaC').val('').css('background-color','#eee');
     if (fechaServidor=!fechaCompleta) {
       alert("Verificar fecha");
       return;
@@ -698,18 +715,25 @@
     }
     var idDetListaNumOrden=$('#'+numEmpleadoC).val();
   }
+  //se dispara este evento del modal al momento de cerrar la ventana
+  $('#modalTiempoMuerto').on('hidden.bs.modal',function(e) {
+    // console.log(e);
+  });
   //Aquí abrimos el modal cuando hay tiempo muerto
-  inpRadioTM.change(function() {
+  inpRadioTM.change(function(e) {
     var valorRadioTT=$(this).val();
-    // console.log(valorRadioTT);
     //le quitamos el atributo data-dismiss
-    btnTM.removeAttr('data-dismiss');
     if (valorRadioTT=="si") {
+      btnTM.removeAttr('data-dismiss');
       modalTiempoMuerto.modal({backdrop:'static'});
       // var idModalTiempoMuerto=modalTiempoMuerto.attr('id');
       // $('#'+idModalTiempoMuerto+' .modal-body').css('background-color','green');
-      // $.post('ttm.php.formCaptura').serialize(),respuestaTiempoM)
-    };
+      // $.post('ttm.php.formCaptura').serialize(),respuestaTiempoM);
+    }else if (valorRadioTT=="no") {
+      console.log("entraste Aquí al radio button de no");
+      $('#tmC').val('0');
+      $.post('captura.php',{capNumParte},calcEficiencia);
+    }
     // $('#modalTiempoMuerto .modal-body').empty();
 
     // $('#modalTiempoMuerto .modal-body').append(divFormTTM);
@@ -749,6 +773,9 @@
         case 3:
         $(e.target).siblings('.inpCantidadTTM').val(5);
         break;
+        case 0:
+        $(e.target).siblings('.inpCantidadTTM').val('');
+        break;
         default:
         $(e.target).siblings('.inpCantidadTTM').val(0);
       }
@@ -757,14 +784,20 @@
   }
   //evento click al pulsar al boton guardar del modal Tiempo Muerto
   btnTM.on('click',function() {
+    var cantidadInpTiempoMuerto=$('.inpTiempoMuerto').val();
+    var cantidadInpCantidadTTM=$('.inpCantidadTTM').val();
+    if (cantidadInpTiempoMuerto==""||cantidadInpCantidadTTM=="") {
+      window.alert('No puedes guardar sin antes agregar un tiempo muerto');
+      return false;
+    }
     var tiempoMuertosDiv=$('#modalTiempoMuerto .modal-body>.divFormTTM');
     tiempoMuertosDiv.each(function(index,element) {
       var i=$(this).children('.inpTiempoMuerto').val();
       var j=$(this).children('.inpCantidadTTM').val();
-      arregloTiempoMuerto.push([['idTTM'],['min']]);
-      arregloTiempoMuerto[index]['idTTM']=i;
-      arregloTiempoMuerto[index]['min']=j;
+      arregloTiempoMuerto.push([i,j]);
+      // console.log(arregloTiempoMuerto);
       // console.log("idTiempoMuerto: "+i+" Cantidad Minutos: "+j);
+      // $.post('captura.php',{capNumParte},calcEficiencia);
     });
     // console.log(arregloTiempoMuerto);
     // console.log($('#modalTiempoMuerto .modal-body')[0].childNodes.length);
@@ -775,13 +808,22 @@
       $('#modalTiempoMuerto .modal-body').children('.inpTiempoMuerto').val('');
       $('#modalTiempoMuerto .modal-body').children('.inpCantidadTTM').val('');
     }
+    //Aquí sumamos el total del tiempo muerto
     $.each(arregloTiempoMuerto,function (key,value) {
-      console.log(value.min);
-      sumaMin=parseInt(sumaMin)+parseInt(value.min);
+      // console.log(value.min);
+      sumaMin=parseInt(sumaMin)+parseInt(value[1]);
     });
     $('#tmC').val(sumaMin);
     $(this).attr('data-dismiss','modal');
+    cantidadC.focus();
+    $.post('captura.php',{capNumParte},calcEficiencia);
   });
+  //evento del boton cancelar del modal tiempo muerto
+  $('#btnCanTTM').on('click',function() {
+    //lo que hacemos aquí es que los input tipo radio button queden deseleccionados.
+    $('input[name=tm]:checked').removeAttr('checked');
+    $('#tm1').prop('checked','checked');
+  })
   var clon;
   $('#modalTiempoMuerto .modal-body').on('click','#btnAgregarTTM',function() {
     clon=divFormTTM.clone('true');
@@ -794,10 +836,10 @@
     // if ($(this).parent().children('.divFormTTM').length==1) {
     //   return;
     // }
-    divFormTTM.on('dblclick',function() {
+    modalTiempoMuerto.on('dblclick','.divFormTTM',function() {
     $(this).toggleClass('divSelecionadoElim');
   });
-  btnEliminarTTM.on('click',function() {
+  modalTiempoMuerto.on('click','#btnEliminarTTM',function() {
     var divTTM=$('#modalTiempoMuerto .modal-body>.divFormTTM');
     console.log(divTTM);
     divTTM.each(function(index,elemento) {
@@ -811,20 +853,111 @@
       }
     })
   });
+
   formCaptura.on('submit',formularioCaptura);
   function formularioCaptura(e) {
     e.preventDefault();
     console.log(e);
     console.log($(this).serialize());
     var datosForm=$(this).serialize();
-    $.post('ttm.php',{pIdEmpleado:idEmpleado,pSumaMin:sumaMin,pIdDetAsis:idDetAsis,datosForm},postFormCaptura)
+    $.post('ttm.php',{pIdEmpleado:idEmpleado,pSumaMin:sumaMin,pIdDetAsis:idDetAsis,datosForm,arregloTiempoMuerto},postFormCaptura)
   };
   function postFormCaptura(data,status) {
     datos=data.trim();
     console.log(data);
-    console.log(datos);
-    console.log(datos.length);
-    console.log(status);
+    // console.log(datos);
+    // console.log(datos.length);
+    // console.log(status);
+  }
+  //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
+  cantidadC.on('keydown',function(e) {
+    console.log(e.key);
+    // la tecla tab es el key='Tab', la tecla derecha ArrowRight
+    if (e.key=="ArrowRight") {
+      $.post('captura.php',{capNumParte},calcEficiencia);
+      // $('#tm1').focus();
+    }
+    if (e.key=="Tab") {
+      // e.preventDefault();
+    }
+    if (e.key=="Enter") {
+
+    }
+    // console.log(e);
+  });
+  function calcEficiencia(data,status) {
+    //aquí solamente vamos a obtener el rate del número de parte.
+    var datos,rateNP,horaInicio,horaFinal,inpHoraInicio,inpHoraFinal, minTrab,minNP;
+    datos=$.parseJSON(data);
+    rateNP=datos.Datos;
+    minTM=$('#tmC').val();
+    cantidad=$('#cantidadC').val();
+    horaInicio= new Date();
+    horaFinal= new Date();
+    inpHoraInicio=$('#horaInicioC').val().split(':');
+    inpHoraFinal=$('#horaFinalC').val().split(':');
+    horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1]);
+    horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1]);
+    if (horaInicio>=horaFinal) {
+      window.alert("La hora inicio debe ser mayor a la hora final");
+      return;
+    }
+    if (cantidad==""||cantidad<=0||isNaN(cantidad)) {
+      window.alert('Ingresa un número entero o una cantidad en la caja de texto CANTIDAD');
+      // $('input[name=tm]:checked').removeAttr('checked');
+      $('#cantidadC').focus();
+      return false;
+    }
+    minNP=((horaFinal-horaInicio)/1000)/60;
+    console.log("Minutos totales: "+ minNP);
+    minTrab=minNP-minTM;
+    console.log("Minutos Trabajados: "+ minTrab);
+    cantProg=(rateNP/60)*minTrab;
+    eficiencia=(cantidad/cantProg)*100;
+    eficienciaM=eficiencia.toFixed(2);
+    eficiencia=eficienciaM;
+    eficienciaColor(eficiencia);
+  }
+  //esta función cambia de color el input de la eficiencia
+  function eficienciaColor(eficiencia) {
+    if (eficiencia<85) {
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#fbf900','color':'white'});
+      capturarC.removeClass("disabled btn-default").removeAttr('disabled').addClass('btn-primary');
+    }
+    if (eficiencia>=85&&eficiencia<90) {
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#0500ff','color':'white'});
+      capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
+    }
+    if (eficiencia>=90&&eficiencia<=100) {
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#4eff06','color':'white'});
+      capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
+    }
+    if (eficiencia>100||eficiencia<50) {
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'black'});
+      capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
+      // window.alert("verificar el tiempo muerto o la cantidad, eficiencia no valida");
+      // $('#cantidadC').val("");
+      // $('input[name=tm]:checked').removeAttr('checked');
+      // $('#tm1').prop('checked','checked');
+      // eficiencia=="";
+      // cantProg=="";
+      // cantidad=="";
+      // minTM="";
+      // tmC.val(0);
+      // capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      if (eficiencia>150) {
+        window.alert("verificar el tiempo muerto o la cantidad, eficiencia no valida");
+        $('#cantidadC').val("");
+        $('input[name=tm]:checked').removeAttr('checked');
+        $('#tm1').prop('checked','checked');
+        eficiencia=="";
+        cantProg=="";
+        cantidad=="";
+        minTM="";
+        tmC.val(0);
+        capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      }
+    }
   }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);

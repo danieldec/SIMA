@@ -199,14 +199,20 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #tmC,#eficienciaC{
   width: 80px;
 }
+#modalTiempoMuerto .modal-content{
+  width: 400px;
+}
+#tableCapNumEmp th{
+  text-align: center;
+}
+#capturaC{
+  background-color: #337ab7;
+}
 .divFormTTM>input.inpTiempoMuerto{
   width: 35%;
 }
 .divFormTTM>input.inpCantidadTTM{
   width: 100px;
-}
-#modalTiempoMuerto .modal-content{
-  width: 400px;
 }
 .popover-content{
   width: 170px;
