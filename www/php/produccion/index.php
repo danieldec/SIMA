@@ -353,13 +353,23 @@
   </div>
   <!--  Modal para la captura de número de orden -->
   <div class="modal fade" id="modCapNumOrd" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" data-dismiss="modal" class="close">&times</button>
           <h4 class="text-center">Captura por número de orden</h4>
         </div>
-        <div class="modal-body"></div>
+        <div class="modal-body">
+          <div class="row" id="divNMNP">
+            <div class="col-md-12">
+              <div class="row col-md-5"><span id="spanNOMC">Número de Orden: </span></div>
+              <div class="row col-md-7"><span id="spanNPMC">Número de Parte: </span></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
+          </div>
+        </div>
         <div class="modal-footer"><button type="button" data-dismiss="modal" class="btn btn-default">Cerrar</button>
         </div>
       </div>
@@ -374,6 +384,7 @@
           <h3 class="text-center">Captura</h4>
         </div>
           <div class="modal-body">
+            <p><h4><span id='spanNumEmp'></span></h4></p>
             <form id='formCaptura' class="form-inline" action="#" method="post" role="form">
               <div class="form-group">
                 <label for="fechaC">Fecha</label>
@@ -399,7 +410,7 @@
                 <label for="">Tiempo Muerto</label>
                 <input type="number" name="tmC" id='tmC'value="0" class="form-control" required readonly>
               </div>
-              <label for="">Eficiencia<input type="text" name="eficienciaC" id='eficienciaC'value="" class="form-control" required disabled></label>
+              <label for="">Eficiencia<input type="text" name="eficienciaC" id='eficienciaC'value="" class="form-control" required readonly></label>
               <div class="row">
                 <div class="col-md-12">
                   <input type="submit" name="capturarC" id="capturarC" value="CAPTURAR" class="form-control btn btn-default btn-block disabled" disabled>

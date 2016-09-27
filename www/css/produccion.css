@@ -191,13 +191,17 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
   font-size: 20px;
 }
 #modalCaptura{
-  top: 20%;
+  top: 25%;
 }
 #cantidadC{
   width: 100px;
 }
 #tmC,#eficienciaC{
   width: 80px;
+}
+#modalTiempoMuerto{
+  top:25%;
+  left: 16%;
 }
 #modalTiempoMuerto .modal-content{
   width: 400px;
@@ -207,6 +211,12 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 }
 #capturaC{
   background-color: #337ab7;
+}
+#spanNOMC,#spanNPMC{
+  font-size: 15px;
+}
+#modalCaptura>.modal-dialog.modal-lg{
+  width: 100%;
 }
 .divFormTTM>input.inpTiempoMuerto{
   width: 35%;
@@ -249,4 +259,10 @@ td>.capturaEmpleados, .detalleNumOrden{
 }*/
 .divSelecionadoElim{
   background: rgb(111, 86, 209);
+}
+.capListNumEmp{
+  text-transform: uppercase;
+}
+.inpNumEmpl{
+  text-transform: uppercase;
 }

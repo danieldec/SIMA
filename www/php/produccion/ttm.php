@@ -37,21 +37,25 @@ print_r(fechaActual());*/
   fechaC=2016-09-19&cantidadC=900&horaInicioC=23%3A00&horaFinalC=00%3A00&tm=no&tmC=0&eficienciaC=0
    */
   //  echo var_dump($_POST['arregloTiempoMuerto']);
-   foreach ($_POST['arregloTiempoMuerto'] as $valor) {
-     foreach ($valor as $k=>$v) {
-       if ($k==0) {
-         echo "idTiempoM: ".$valor[$k];
-       }
-       if ($k==1) {
-         if ($valor[$k]>0) {
-           echo " MinutosTM ".$valor[$k]."\n";
-         }
-       }
-     }
-   }
+  if (isset($_POST['arregloTiempoMuerto'])) {
+    foreach ($_POST['arregloTiempoMuerto'] as $valor) {
+      foreach ($valor as $k=>$v) {
+        if ($k==0) {
+          echo "idTiempoM: ".$valor[$k];
+        }
+        if ($k==1) {
+          if ($valor[$k]>0) {
+            echo " MinutosTM ".$valor[$k]."\n";
+          }
+        }
+      }
+    }
+  }
    parse_str($_POST['datosForm'],$formData);
    echo "\n".var_dump($formData);
-  // echo count($_POST['arregloTiempoMuerto']);
+   echo "\n".$_POST['pIdEmpleado'];
+   echo "\n".$_POST['pIdDetAsis'];
+   // echo count($_POST['arregloTiempoMuerto']);
   //  parse_str($_POST['arregloTiempoMuerto'],$arreglo);
   //  echo $arreglo['0'];
   // parse_str($_POST['arregloTiempoMuerto'],$tiempoMuerto);

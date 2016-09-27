@@ -60,6 +60,13 @@
   var cantProg="";
   var cantidad="";
   var minTM="";
+  var numOMODCAP=$('#spanNOMC').html();
+  var numPMODCAP=$('#spanNPMC').html();
+  var cantModCaptura="";
+  //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
+  cantidadC.focus(function() {
+    $(this).select();
+  });
   //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
     var nombreTab=$(this).text();
@@ -433,8 +440,8 @@
   function btnMosList(e) {
     var titButon=$(this).text();
     if (titButon=="Mostrar") {
-      console.log(divListNumOrden.children().length);
-      console.log(divListNumOrden);
+      // console.log(divListNumOrden.children().length);
+      // console.log(divListNumOrden);
       $(this).text("Ocultar");
       var fecha=hoy;
       $.post('captura.php',{pFecha:fecha},postBtnMosList);
@@ -571,7 +578,11 @@
   }
   function funCapNumOrde(data,status) {
     var modDatos=$.parseJSON(data);
-    $('#modCapNumOrd .modal-body').empty().append(modDatos.Datos);
+    $('#spanNOMC').html(numOMODCAP);
+    $('#spanNPMC').html(numPMODCAP);
+    $('#spanNOMC').html($('#spanNOMC').html()+capNumOrden);
+    $('#spanNPMC').html($('#spanNPMC').html()+capNumParte);
+    $('#divColListEmp').empty().append(modDatos.Datos);
     // console.log(modDatos.Datos);
   }
   //evento Buton para realizar la captura
@@ -648,6 +659,19 @@
     numEmpleadoC=$('.inpNumEmpl').val();
     if (numEmpleadoC.length==0) {
       alert("Por favor ingresa un número de empleado");
+      $('.inpNumEmpl').focus().select();
+      return;
+    }
+    var encontrado=false;
+    $('datalist>option').each(function(indice,objeto) {
+      console.log($(objeto).val()+" "+idEmpleado);
+      if ($(objeto).val()==idEmpleado) {
+        encontrado=true;
+      }
+    });
+    if (!encontrado) {
+      window.alert("número de empleado no valido");
+      $('.inpNumEmpl').focus().select();
       return;
     }
     $('.inpNumEmpl').val('');
@@ -657,6 +681,9 @@
   //evento del modal cuando se abre por completo #modalCaptura
   $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura() {
+    $('#spanNumEmp','#modalCaptura').empty();
+    $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado)
+    $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'})
     $('input[name=tm]').removeAttr('checked');
     $('#cantidadC').val('0');
     var fechaServidor=$('#hoy').val();
@@ -677,41 +704,41 @@
       segundos="0"+segundos;
     }
     horaComplet=hora+":"+minutos+":"+segundos;
-    if (horaComplet>="07:00"&&horaComplet<"09:00") {
-      $('#horaInicioC').val('07:00');
-      $('#horaFinalC').val('08:00');
+    if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
+      $('#horaInicioC').val('07:00:00');
+      $('#horaFinalC').val('08:00:00');
     }
-    if (horaComplet>="09:00"&&horaComplet<"10:00") {
-      $('#horaInicioC').val('08:00');
-      $('#horaFinalC').val('09:00');
+    if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
+      $('#horaInicioC').val('08:00:00');
+      $('#horaFinalC').val('09:00:00');
     }
-    if (horaComplet>="10:00"&&horaComplet<"11:00") {
-      $('#horaInicioC').val('09:00');
-      $('#horaFinalC').val('10:00');
+    if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
+      $('#horaInicioC').val('09:00:00');
+      $('#horaFinalC').val('10:00:00');
     }
-    if (horaComplet>="11:00"&&horaComplet<"12:00") {
-      $('#horaInicioC').val('10:00');
-      $('#horaFinalC').val('11:00');
+    if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
+      $('#horaInicioC').val('10:00:00');
+      $('#horaFinalC').val('11:00:00');
     }
-    if (horaComplet>="12:00"&&horaComplet<"13:00") {
-      $('#horaInicioC').val('11:00');
-      $('#horaFinalC').val('12:00');
+    if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
+      $('#horaInicioC').val('11:00:00');
+      $('#horaFinalC').val('12:00:00');
     }
-    if (horaComplet>="13:00"&&horaComplet<"14:00") {
-      $('#horaInicioC').val('12:00');
-      $('#horaFinalC').val('13:00');
+    if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
+      $('#horaInicioC').val('12:00:00');
+      $('#horaFinalC').val('13:00:00');
     }
-    if (horaComplet>="14:00"&&horaComplet<"15:00") {
-      $('#horaInicioC').val('13:00');
-      $('#horaFinalC').val('14:00');
+    if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
+      $('#horaInicioC').val('13:00:00');
+      $('#horaFinalC').val('14:00:00');
     }
-    if (horaComplet>="15:00"&&horaComplet<"15:40") {
-      $('#horaInicioC').val('14:00');
-      $('#horaFinalC').val('15:00');
+    if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
+      $('#horaInicioC').val('14:00:00');
+      $('#horaFinalC').val('15:00:00');
     }
-    if (horaComplet>="15:40"&&horaComplet<"16:30") {
-      $('#horaInicioC').val('15:00');
-      $('#horaFinalC').val('16:00');
+    if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
+      $('#horaInicioC').val('15:00:00');
+      $('#horaFinalC').val('16:00:00');
     }
     var idDetListaNumOrden=$('#'+numEmpleadoC).val();
   }
@@ -732,6 +759,7 @@
     }else if (valorRadioTT=="no") {
       console.log("entraste Aquí al radio button de no");
       $('#tmC').val('0');
+      arregloTiempoMuerto=[];
       $.post('captura.php',{capNumParte},calcEficiencia);
     }
     // $('#modalTiempoMuerto .modal-body').empty();
@@ -857,23 +885,43 @@
   formCaptura.on('submit',formularioCaptura);
   function formularioCaptura(e) {
     e.preventDefault();
-    console.log(e);
-    console.log($(this).serialize());
+    var cantValid=$('#cantidadC').val();
+    if (cantValid!=cantidad) {
+      window.alert("Vuelve a calcular eficiencia");
+      cantidadC.focus().select();
+      return false;
+    }
+    //se implementa esto para google chrome porque al momento de obtener los datos de la hora de inicio y fin solamente trae las horas y minutos y necesitamos lo segundos también para insertar en la base de datos.
+    var horaI,HoraF;
+    horaI=$(e.target).find('#horaInicioC');
+    horaF=$(e.target).find('#horaFinalC');
+    if (horaI.val().length==5) {
+      horaI.val($(e.target).find('#horaInicioC').val()+":00");
+    }else if (horaF.val().length==5) {
+      horaF.val($(e.target).find('#horaFinalC').val()+":00");
+    }
     var datosForm=$(this).serialize();
-    $.post('ttm.php',{pIdEmpleado:idEmpleado,pSumaMin:sumaMin,pIdDetAsis:idDetAsis,datosForm,arregloTiempoMuerto},postFormCaptura)
+    //cuando no haya tiempo muerto. no se envia el arregloTiempoMuerto
+    if ($('#tm1').prop('checked')) {
+      console.log(datosForm);
+      $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,},postFormCaptura);
+      return false;
+    }
+    console.log(datosForm);
+    $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto},postFormCaptura)
   };
   function postFormCaptura(data,status) {
-    datos=data.trim();
+    // dat=$.parseJSON(data);
+    // console.log(dat);
     console.log(data);
-    // console.log(datos);
-    // console.log(datos.length);
-    // console.log(status);
   }
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
   cantidadC.on('keydown',function(e) {
-    console.log(e.key);
+    // console.log(e.key);
+    // console.log(e.type);
     // la tecla tab es el key='Tab', la tecla derecha ArrowRight
     if (e.key=="ArrowRight") {
+      cantModCaptura=$(this).val();
       $.post('captura.php',{capNumParte},calcEficiencia);
       // $('#tm1').focus();
     }
@@ -921,18 +969,18 @@
   //esta función cambia de color el input de la eficiencia
   function eficienciaColor(eficiencia) {
     if (eficiencia<85) {
-      $('#eficienciaC').val(eficiencia).css({'background-color':'#fbf900','color':'white'});
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'white'});
       capturarC.removeClass("disabled btn-default").removeAttr('disabled').addClass('btn-primary');
     }
-    if (eficiencia>=85&&eficiencia<90) {
+    if (eficiencia>=85&&eficiencia<95) {
       $('#eficienciaC').val(eficiencia).css({'background-color':'#0500ff','color':'white'});
       capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
     }
-    if (eficiencia>=90&&eficiencia<=100) {
+    if (eficiencia>=95&&eficiencia<=100) {
       $('#eficienciaC').val(eficiencia).css({'background-color':'#4eff06','color':'white'});
       capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
     }
-    if (eficiencia>100||eficiencia<50) {
+    if (eficiencia>100) {
       $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'black'});
       capturarC.removeClass('disabled btn-default').removeAttr('disabled').addClass('btn-primary');
       // window.alert("verificar el tiempo muerto o la cantidad, eficiencia no valida");

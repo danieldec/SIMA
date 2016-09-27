@@ -1,4 +1,4 @@
-<?php
+f<?php
   include '../conexion/conexion.php';
   if(!isset($_SESSION)){
     session_start();
@@ -150,6 +150,89 @@
       $arreglo['Datos']=$fila['rate'];
       echo json_encode($arreglo);
     }
+    /*{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto}
+    fechaC=2016-09-19&cantidadC=900&horaInicioC=23%3A00&horaFinalC=00%3A00&tm=no&tmC=0&eficienciaC=0*/
+    //Captura de la eficiencia número de empleado
+    if (isset($_POST['pIdEmpleado'])&&isset($_POST['pIdDetAsis'])) {
+      //Aquí inicializamos el un arreglo, y obtenemos los datos que pasamos atraves del post.
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $numEmpleado=$_POST['pIdEmpleado'];
+      $iddetalle_Lista_NumOrden=$_POST['pIdDetAsis'];
+      parse_str($_POST['pDatosForm'],$datosForm);
+      $fechaC=$datosForm['fechaC'];
+      $cantidadC=$datosForm['cantidadC'];
+      $horaInicioC=$datosForm['horaInicioC'];
+      $horaFinalC=$datosForm['horaFinalC'];
+      $tmC=$datosForm['tmC'];
+      $tm=$datosForm['tm'];
+      $eficienciaC=$datosForm['eficienciaC'];
+      //aquí buscamos si existe un captura con el id de iddetalle_Lista_NumOrden, para buscar si hay una captura con la misma hora de inicio.
+      $consulta="select c.idcaptura,c.hora_inicio,c.hora_final,c.eficiencia from captura c where c.iddetalle_Lista_NumOrdenCap=$iddetalle_Lista_NumOrden";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']="Exito1";
+      $fila=$resultado->num_rows;
+      if ($fila==0) {
+        $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+        if ($arreglo['Validacion']=="Error") {
+          echo json_encode($arreglo);
+          exit();
+        }
+        $arreglo['Validacion']="Exito2";
+        echo json_encode($arreglo);
+      }
+      //aquí si el resultado que nos arroja es mayor de 0, quiere decir que existe una captura con el iddetalle_Lista_NumOrden que mandamos en el formulario. y vamos a buscar los errores que pueden surgir.
+      elseif ($fila>0) {
+        $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden'";
+        $resultado=$conexion->query($consulta);
+        $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+        if ($arreglo['Validacion']=="Error") {
+          echo json_encode($arreglo);
+          exit();
+        }
+        // while ($fila=$resultado->fetch_array()) {
+        //   if ($horaInicioC==$fila['hora_inicio']) {
+        //   $arreglo['Datos']=['idcaptura'=>$fila['idcaptura'],'fecha'=>$fila['fecha'],'cantidad'=>$fila['cantidad'],'hora_inicio'=>$fila['hora_inicio'],'hora_final'=>$fila['hora_final'],'tiempo_muerto'=>$fila['tiempo_muerto'],'eficiencia'=>$fila['eficiencia']];
+        //   $arreglo['Validacion']="Error";
+        //   echo json_encode($arreglo);
+        //   exit();
+        //   }
+        // }
+        while ($fila=$resultado->fetch_array()) {
+          if ($horaInicioC!=$fila['hora_final']) {
+            $arreglo['Datos']=['idcaptura'=>$fila['idcaptura'],'fecha'=>$fila['fecha'],'cantidad'=>$fila['cantidad'],'hora_inicio'=>$fila['hora_inicio'],'hora_final'=>$fila['hora_final'],'tiempo_muerto'=>$fila['tiempo_muerto'],'eficiencia'=>$fila['eficiencia']];
+            $arreglo['Validacion']="Error";
+            echo json_encode($arreglo);
+            exit();
+          }
+        }
+        $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+        if ($arreglo['Validacion']=="Error") {
+          echo json_encode($arreglo);
+          exit();
+        }
+        $arreglo['Validacion']="Exito3";
+        echo json_encode($arreglo);
+      }
+      if (isset($_POST['pArregloTiempoMuerto'])) {
+        foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
+          foreach ($valor as $k=>$v) {
+            if ($k==0) {
+              echo "idTiempoM: ".$valor[$k];
+            }
+            if ($k==1) {
+              if ($valor[$k]>0) {
+                echo " MinutosTM ".$valor[$k]."\n";
+              }
+            }
+          }//fin del for each
+        }//fin del for each
+      }//aquí acaba el if de arrelgo tiempo muerto
+    }//aquí acaba el if de la captura
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
@@ -313,5 +396,16 @@
     }
     $arreglo['Datos']=$datos;
     return $arreglo;
+  }
+  function captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC)
+  {
+    $consulta="INSERT INTO captura (idcaptura, fecha, cantidad, hora_inicio, hora_final, tiempo_muerto, eficiencia, usuarios_idusuario, iddetalle_Lista_NumOrdenCap, horaCaptura) VALUES (NULL,'$fechaC','$cantidadC','$horaInicioC','$horaFinalC','$tmC','$eficienciaC','".$_SESSION['idusuario']."','$iddetalle_Lista_NumOrden',CURRENT_TIMESTAMP)";
+    $resultado=$conexion->query($consulta);
+    $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+    return $arreglo;
+  }
+  function capturaTM()
+  {
+
   }
 ?>
