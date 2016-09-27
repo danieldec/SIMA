@@ -914,6 +914,7 @@
     // dat=$.parseJSON(data);
     // console.log(dat);
     console.log(data);
+
   }
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
   cantidadC.on('keydown',function(e) {
@@ -950,7 +951,7 @@
       window.alert("La hora inicio debe ser mayor a la hora final");
       return;
     }
-    if (cantidad==""||cantidad<=0||isNaN(cantidad)) {
+    if (cantidad==""||cantidad<0||isNaN(cantidad)) {
       window.alert('Ingresa un número entero o una cantidad en la caja de texto CANTIDAD');
       // $('input[name=tm]:checked').removeAttr('checked');
       $('#cantidadC').focus();
@@ -1020,6 +1021,10 @@ function set_item(item) {
   $('#listaNumParte').hide();
   $('#inpCantReq').focus().select();
 }
+/*Recorrer el arreglo cuando tenemos mas de una fila en la consulta que nos envian desde el servidor
+for (var i = 0; i < dat.Datos.length; i++) {
+  console.log(dat.Datos[i].cantidad);
+}*/
 // (function imprimeHora() {
 //   var d= new Date();
 //   var horas=d.getHours();

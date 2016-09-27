@@ -213,7 +213,7 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
   background-color: #337ab7;
 }
 #spanNOMC,#spanNPMC{
-  font-size: 15px;
+  font-size: 18px;
 }
 #modalCaptura>.modal-dialog.modal-lg{
   width: 100%;

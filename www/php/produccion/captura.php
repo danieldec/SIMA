@@ -1,4 +1,4 @@
-f<?php
+<?php
   include '../conexion/conexion.php';
   if(!isset($_SESSION)){
     session_start();
@@ -174,7 +174,7 @@ f<?php
         echo json_encode($arreglo);
         exit();
       }
-      $arreglo['Validacion']="Exito1";
+      $arreglo['Validacion']="Exito";
       $fila=$resultado->num_rows;
       if ($fila==0) {
         $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
@@ -187,37 +187,42 @@ f<?php
       }
       //aquí si el resultado que nos arroja es mayor de 0, quiere decir que existe una captura con el iddetalle_Lista_NumOrden que mandamos en el formulario. y vamos a buscar los errores que pueden surgir.
       elseif ($fila>0) {
-        $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden'";
+        $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='".$iddetalle_Lista_NumOrden."' and c.hora_final=(select MAX(c.hora_final)from captura c where c.iddetalle_Lista_NumOrdenCap='".$iddetalle_Lista_NumOrden."');";
         $resultado=$conexion->query($consulta);
         $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
         if ($arreglo['Validacion']=="Error") {
           echo json_encode($arreglo);
           exit();
         }
-        // while ($fila=$resultado->fetch_array()) {
-        //   if ($horaInicioC==$fila['hora_inicio']) {
-        //   $arreglo['Datos']=['idcaptura'=>$fila['idcaptura'],'fecha'=>$fila['fecha'],'cantidad'=>$fila['cantidad'],'hora_inicio'=>$fila['hora_inicio'],'hora_final'=>$fila['hora_final'],'tiempo_muerto'=>$fila['tiempo_muerto'],'eficiencia'=>$fila['eficiencia']];
-        //   $arreglo['Validacion']="Error";
-        //   echo json_encode($arreglo);
-        //   exit();
-        //   }
-        // }
-        while ($fila=$resultado->fetch_array()) {
-          if ($horaInicioC!=$fila['hora_final']) {
-            $arreglo['Datos']=['idcaptura'=>$fila['idcaptura'],'fecha'=>$fila['fecha'],'cantidad'=>$fila['cantidad'],'hora_inicio'=>$fila['hora_inicio'],'hora_final'=>$fila['hora_final'],'tiempo_muerto'=>$fila['tiempo_muerto'],'eficiencia'=>$fila['eficiencia']];
-            $arreglo['Validacion']="Error";
-            echo json_encode($arreglo);
-            exit();
-          }
-        }
-        $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
-        if ($arreglo['Validacion']=="Error") {
+        $fila=$resultado->fetch_object();
+        if ($fila->hora_inicio==$horaInicioC) {
+          $arreglo['Validacion']="Error HIHI";
+          $arreglo['Datos']=$fila;
           echo json_encode($arreglo);
           exit();
         }
-        $arreglo['Validacion']="Exito3";
-        echo json_encode($arreglo);
+        // if ($horaInicioC=!$fila->hora_final) {
+        //   $arreglo['Validacion']="Error HIHF";
+        //   $arreglo['Datos']=$fila;
+        //   echo json_encode($arreglo);
+        //   exit();
+        // }
+        if ($fila->hora_final==$horaInicioC) {
+          $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+          if ($arreglo['Validacion']=="Error") {
+            echo json_encode($arreglo);
+            exit();
+          }
+          $arreglo['Validacion']="Exito3";
+          echo json_encode($arreglo);
       }
+      else{
+        $arreglo['Validacion']="ErrorHFHI";
+        $arreglo['Datos']=$fila;
+        echo json_encode($arreglo);
+        exit();
+      }
+      }//Acaba el elseif fila>0
       if (isset($_POST['pArregloTiempoMuerto'])) {
         foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
           foreach ($valor as $k=>$v) {
@@ -237,6 +242,9 @@ f<?php
   else{
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
   }
+
+/*--------------------------------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-----------------------------------*/
+
   function errorConsultaJSON($resultado,$conexion,$arreglo)
   {
     if (!$resultado){
@@ -408,4 +416,9 @@ f<?php
   {
 
   }
+  //serve para enviar mas de una fila en la consulta y enviarlas a javascript
+  /*while ($fila=$resultado->fetch_object()) {
+    $arreglo['Datos'][]=$fila;
+  }
+  echo json_encode($arreglo);*/
 ?>
