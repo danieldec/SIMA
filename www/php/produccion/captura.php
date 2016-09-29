@@ -193,20 +193,29 @@
           $records[]=$fila;
         }
         $resultado->free();
+        $index=0;
         foreach ($records as $r) {
-          if ($r->hora_inicio==$horaInicioC) {
-            $arreglo['Validacion']="Error";
-            $arreglo['Error']="captura ya existente";
-            $arreglo['Datos']=$r;
-            echo json_encode($arreglo);
-            exit();
-          }//fin del if dentro del for each
-          if () {
-
+          $index++;
+          if ($index==(count($records))) {
+            $ultimoRegistro=$r;
           }
         }//fin del for each
-        $arreglo['Datos']=$records;
+        if ($ultimoRegistro->hora_inicio==$horaInicioC) {
+          $arreglo['Validacion']="Error";
+          $arreglo['Datos']="Error Captura no realizada";
+          $arreglo['DatosExtra']=$ultimoRegistro;
+          echo json_encode($arreglo);
+          exit();
+        }
+        if ($ultimoRegistro->hora_final==$horaInicioC) {
+          $arreglo['Datos']="Exito Captura realizada";
+          echo json_encode($arreglo);
+          exit();
+        }
+        $arreglo['Validacion']="Fin del for each";
         echo json_encode($arreglo);
+        exit();
+        $arreglo['Datos']=$records;
         exit();
       }//Acaba el elseif fila>0
       if (isset($_POST['pArregloTiempoMuerto'])) {
