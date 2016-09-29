@@ -384,7 +384,8 @@
           <h3 class="text-center">Captura</h4>
         </div>
           <div class="modal-body">
-            <p><h4><span id='spanNumEmp'></span></h4></p>
+            <span id='spanNumEmp'></span>
+            <span id='spanIdDLNOC'></span>
             <form id='formCaptura' class="form-inline" action="#" method="post" role="form">
               <div class="form-group">
                 <label for="fechaC">Fecha</label>

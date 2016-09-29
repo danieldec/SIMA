@@ -5,14 +5,14 @@
   }
   if ($_SERVER['REQUEST_METHOD']=="POST") {
     if (isset($_POST['pFecha'])){
-    $conexionLista=$conexion;
-    $fecha=date($_POST['pFecha']);
-    $fechaHoy=date('Y-m-d',strtotime($fecha));
-    $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
-    $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
-    $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
-    //echo "dia de hoy = ".$fechaHoy." día de ayer: ".$fechaAyer." día de mañana: ".$fechaManana;
-      mostrarListaNumOrden($conexion,$fechas);
+      $conexionLista=$conexion;
+      $fecha=date($_POST['pFecha']);
+      $fechaHoy=date('Y-m-d',strtotime($fecha));
+      $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
+      $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
+      $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
+      //echo "dia de hoy = ".$fechaHoy." día de ayer: ".$fechaAyer." día de mañana: ".$fechaManana;
+        mostrarListaNumOrden($conexion,$fechas);
     }//fin del if isset($_POST['pFecha'])
     else{
       // echo "No entro a if del ".'isset($_POST["pFaecha"]'."";
@@ -182,7 +182,7 @@
           echo json_encode($arreglo);
           exit();
         }
-        $arreglo['Validacion']="Exito2";
+        $arreglo['Validacion']="Exito";
         echo json_encode($arreglo);
       }
       //aquí si el resultado que nos arroja es mayor de 0, quiere decir que existe una captura con el iddetalle_Lista_NumOrden que mandamos en el formulario. y vamos a buscar los errores que pueden surgir.
@@ -196,32 +196,58 @@
         }
         $fila=$resultado->fetch_object();
         if ($fila->hora_inicio==$horaInicioC) {
-          $arreglo['Validacion']="Error HIHI";
+          $arreglo['Validacion']="ErrorD";
           $arreglo['Datos']=$fila;
           echo json_encode($arreglo);
           exit();
         }
-        // if ($horaInicioC=!$fila->hora_final) {
-        //   $arreglo['Validacion']="Error HIHF";
-        //   $arreglo['Datos']=$fila;
-        //   echo json_encode($arreglo);
-        //   exit();
-        // }
+        if ($fila->hora_final>$horaInicioC) {
+          $consulta="SELECT * FROM captura c WHERE c.hora_inicio='$horaInicioC' and c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden'";
+          $resultado=$conexion->query($consulta);
+          $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+          if ($arreglo['Validacion']=="Error") {
+            echo json_encode($arreglo);
+            exit();
+          }
+          if ($resultado->num_rows>0) {
+
+          }
+          $arreglo['Validacion']="Error";
+          $fila=$resultado->fetch_object();
+          $arreglo['Datos']=$fila;
+          echo json_encode($arreglo);
+          exit();
+        }
         if ($fila->hora_final==$horaInicioC) {
           $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
           if ($arreglo['Validacion']=="Error") {
             echo json_encode($arreglo);
             exit();
           }
-          $arreglo['Validacion']="Exito3";
+          $arreglo['Validacion']="Exito";
           echo json_encode($arreglo);
-      }
-      else{
-        $arreglo['Validacion']="ErrorHFHI";
-        $arreglo['Datos']=$fila;
-        echo json_encode($arreglo);
-        exit();
-      }
+        }
+        else{
+          $horasT=(strtotime($horaInicioC)-strtotime($fila->hora_final))/60;
+          if ($horasT%60==0) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="No puedes dejar Horas incompletas";
+            $arreglo['DatosAux']=$fila;
+            echo json_encode($arreglo);
+            exit();
+          }
+          if ($horasT>=90) {
+            $arreglo['Validacion']="Advertencia";
+            $arreglo['Datos']="Hace mas de ".($horasT/60)." hr(s), que no realizas captura una captura a este operador"."\n"."Captura registrada";
+            $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+            echo json_encode($arreglo);
+          }else{
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']=$fila;
+            echo json_encode($arreglo);
+            exit();
+          }
+        }
       }//Acaba el elseif fila>0
       if (isset($_POST['pArregloTiempoMuerto'])) {
         foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
@@ -243,7 +269,7 @@
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
   }
 
-/*--------------------------------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-----------------------------------*/
+/*----------------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-----------------------*/
 
   function errorConsultaJSON($resultado,$conexion,$arreglo)
   {
@@ -421,4 +447,20 @@
     $arreglo['Datos'][]=$fila;
   }
   echo json_encode($arreglo);*/
+  /*$records=array();
+  if ($resultado=$conexion->query($consulta)) {
+    if ($resultado->num_rows) {
+      while ($fila->$resultado->fetch_object()) {
+        $records[]=$row;
+      }
+      $resultado->free();
+    }
+  }
+  if (count($records)) {
+    foreach ($records as $r) {
+      echo $r->nombreColumna;
+    }
+  }else{
+
+  }*/
 ?>

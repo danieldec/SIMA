@@ -37,6 +37,7 @@
   var tmC=$('#tmC');
   var cantidadC=$('#cantidadC');
   var capturarC=$('#capturarC');
+  var fechaC=$('#fechaC');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -58,6 +59,9 @@
   var capNumOrden="";
   var eficiencia="";
   var cantProg="";
+  var fechaCaptura="";
+  var hICaptura="";
+  var hFCaptura="";
   var cantidad="";
   var minTM="";
   var numOMODCAP=$('#spanNOMC').html();
@@ -67,6 +71,19 @@
   cantidadC.focus(function() {
     $(this).select();
   });
+  //deshabilita el botón de captura del formulario captura. cuando cambia el valor de cantidad o pierde el foco el input.f
+  cantidadC.on('blur',function(e) {
+    if (eficiencia.length=0) {
+      return false;
+    }
+    if (eficiencia<20) {
+      cantidad=$(this).val();
+      console.log(e);
+      if (cantidad.length>0) {
+        capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      }
+    }
+  })
   //Evento que asocia a la tab cuando carga por completo el
   navPill.on('shown.bs.tab',function() {
     var nombreTab=$(this).text();
@@ -570,7 +587,7 @@
   $('#tablaCaptura').on('click','.capturaEmpleados',clickCaptura);
   // capturaEmpleados.on('click',clickCaptura);
   function clickCaptura() {
-    modCapNumOrd.modal({backdrop: "static"});
+    modCapNumOrd.modal({backdrop: "static",keyboard:false});
     //guardamos el número de parte para extraer el rate
     capNumParte=$(this).parent().siblings('.tdCapNumPart').html();
     capNumOrden=$(this).parent().siblings('.tdCapNumOrd').html();
@@ -676,14 +693,17 @@
     }
     $('.inpNumEmpl').val('');
     // console.log(numEmpleadoC);
-    modalCaptura.modal({backdrop: "static"});
+    modalCaptura.modal({backdrop: "static",keyboard:false});
   }
   //evento del modal cuando se abre por completo #modalCaptura
   $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura() {
     $('#spanNumEmp','#modalCaptura').empty();
-    $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado)
-    $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'})
+    $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
+    $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+    $('#spanIdDLNOC','#modalCaptura').empty();
+    $('#spanIdDLNOC','#modalCaptura').html("-----Id precaptura: "+idDetAsis);
+    $('#spanIdDLNOC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
     $('input[name=tm]').removeAttr('checked');
     $('#cantidadC').val('0');
     var fechaServidor=$('#hoy').val();
@@ -886,9 +906,13 @@
   function formularioCaptura(e) {
     e.preventDefault();
     var cantValid=$('#cantidadC').val();
-    if (cantValid!=cantidad) {
+    var fechaValid=$('#fechaC').val();
+    var hIValid=$('#horaInicioC').val();
+    var hFValid=$('#horaFinalC').val();
+    if (hFCaptura!=hFValid|| hICaptura!=hIValid||cantValid!=cantidad||fechaValid!=fechaCaptura) {
       window.alert("Vuelve a calcular eficiencia");
       cantidadC.focus().select();
+      capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
       return false;
     }
     //se implementa esto para google chrome porque al momento de obtener los datos de la hora de inicio y fin solamente trae las horas y minutos y necesitamos lo segundos también para insertar en la base de datos.
@@ -941,23 +965,58 @@
     rateNP=datos.Datos;
     minTM=$('#tmC').val();
     cantidad=$('#cantidadC').val();
+    fechaCaptura=fechaC.val();
+    hICaptura=$('#horaInicioC').val();
+    hFCaptura=$('#horaFinalC').val();
     horaInicio= new Date();
     horaFinal= new Date();
-    inpHoraInicio=$('#horaInicioC').val().split(':');
-    inpHoraFinal=$('#horaFinalC').val().split(':');
-    horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1]);
-    horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1]);
+    hi=horaInicio;
+    hf=horaFinal;
+    inpHoraInicio=hICaptura.split(':');
+    inpHoraFinal=hFCaptura.split(':');
+    horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1],00);
+    horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1],00);
+    if (horaInicio.valueOf()==horaFinal.valueOf()) {
+      window.alert("La hora inicio no puede ser igual a la hora final");
+      capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      return false;
+    }
     if (horaInicio>=horaFinal) {
-      window.alert("La hora inicio debe ser mayor a la hora final");
-      return;
+      hi.setHours(23,00,00);
+      hf.setHours(00,00,00);
+      if (!(horaInicio.valueOf()==hi.valueOf()&&horaFinal.valueOf()==hf.valueOf())){
+        window.alert("La hora inicio debe ser mayor a la hora final");
+        capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+        return false;
+      }
     }
     if (cantidad==""||cantidad<0||isNaN(cantidad)) {
       window.alert('Ingresa un número entero o una cantidad en la caja de texto CANTIDAD');
-      // $('input[name=tm]:checked').removeAttr('checked');
       $('#cantidadC').focus();
       return false;
     }
+    hiMinMili=horaInicio.getMinutes()*60000;
+    horaInicioAux=horaInicio.valueOf()-hiMinMili;
+    horaInicioAux=horaInicioAux+3600000;
+    horaInicioAux= new Date(horaInicioAux);
+    if (horaInicio>horaFinal) {
+      window.alert("La hora final debe menor a la hora de inicio");
+      return false;
+    }
+    if (horaInicioAux.toTimeString()>=horaFinal.toTimeString()) {
+      console.log("Bien hecho :D");
+    }else{
+      window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
+      $("#horaFinalC").focus().select();
+      capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      return false;
+    }
     minNP=((horaFinal-horaInicio)/1000)/60;
+    if (minNP>60) {
+      window.alert('Ingresa un verifica la hora Final no puedes pasar de la siguiente HORA');
+      $('#horaFinalC').focus();
+      return false;
+    }
     console.log("Minutos totales: "+ minNP);
     minTrab=minNP-minTM;
     console.log("Minutos Trabajados: "+ minTrab);
