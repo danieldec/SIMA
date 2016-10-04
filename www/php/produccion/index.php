@@ -82,7 +82,7 @@
                     <div class="col-xs-2 text-center"><label>Fecha Requerimiento</label></div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-2 text-center col-xs-offset-1"><input disabled class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
+                  <div class="col-xs-2 text-center col-xs-offset-1"><input class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
                   //Aquí vamos a insertar el último registro de el número de parte
                     if (isset($fila)) {
                       echo 1+$fila['id'];
@@ -313,22 +313,31 @@
                         <tr>
                           <th># Empleado</th>
                           <th>Nombre</th>
-                          <th>7-8</th>
-                          <th>8-9</th>
-                          <th>9-10</th>
+                          <th>07-08</th>
+                          <th>08-09</th>
+                          <th>09-10</th>
                           <th>10-11</th>
                           <th>11-12</th>
-                          <th>12-1</th>
-                          <th>1-2</th>
-                          <th>2-3</th>
-                          <th>3-4</th>
-                          <th>4-5</th>
-                          <th>5-6</th>
-                          <th>6-7</th>
+                          <th>12-13</th>
+                          <th>13-14</th>
+                          <th>14-15</th>
+                          <th>15-16</th>
+                          <th>16-17</th>
+                          <th>18-19</th>
+                          <th>20-21</th>
+                          <th>21-22</th>
+                          <th>22-23</th>
+                          <th>23-00</th>
+                          <th>00-01</th>
+                          <th>01-02</th>
+                          <th>02-03</th>
+                          <th>03-04</th>
+                          <th>04-05</th>
+                          <th>05-06</th>
+                          <th>06-07</th>
                         </tr>
                       </thead>
                       <tbody id="tBodyCapNumEmp">
-
                       </tbody>
                     </table>
                   </div>

@@ -38,6 +38,7 @@
   var cantidadC=$('#cantidadC');
   var capturarC=$('#capturarC');
   var fechaC=$('#fechaC');
+  var elimNumEmp=$('.elimNumEmp');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -67,6 +68,10 @@
   var numOMODCAP=$('#spanNOMC').html();
   var numPMODCAP=$('#spanNPMC').html();
   var cantModCaptura="";
+  //variables enviadas para eliminar un empleado de la lista de número de orden, y guardamos el elemento de donde surgio el evento de elminacion;
+  var numOrdenL="";
+  var numEmpleadoL="";
+  var liNumEmpleado;
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -101,7 +106,6 @@
       default:
     }
   });
-  inpParcial.attr('disabled','');
   inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
   var inpFNumOrden=$('#inpFNumOrden');
@@ -543,11 +547,12 @@
     }
     function insertDetListNumOrd(data,status) {
       if (data=="Exito") {
-        var x=$('<li><span>'+valInpNumEmp.val()+'</span><span>Eliminar</span></li>');
-        console.log($(this));
+        var x=$('<li><span>'+valInpNumEmp.val()+'</span><span><a class="elimNumEmp" href="#">Eliminar</a></span></li>');
+        // console.log($(this));
         btnPresionado.prev().prev().prev().append(x);
         optionNumEmp.each(function(index, value) {
           if ($(this).val()==valInpNumEmp.val()) {
+            //guardamos el objeto del option que agregamos para utilizarlo en la eliminación
             $(this).remove();
           }
         });
@@ -583,6 +588,33 @@
   divListNumOrden.on('focus blur','.inpCLNE',blurListNumParte);
   function blurListNumParte(e) {
     $('[data-toggle="popover"]').popover('destroy');
+  }
+  //evento para eliminar el numero de empleado en la lista de número de orden pestaña "captura" subpestaña "Asignar Número de Empleado a Número de Orden"
+  divListNumOrden.on('click','.elimNumEmp',eliminarEmpl);
+  function eliminarEmpl(e) {
+    e.preventDefault();
+    liNumEmpleado=$(this).parent().parent();
+    numOrdenL=$(this).parent().parent().parent().parent().parent().parent().parent().parent('.list-group-item').children('.spanNumOrd').html();
+    numEmpleadoL=$(this).parent().siblings('span').html();
+    $.post('captura.php',{pNumEmpleado:numEmpleadoL,pNumOrd:numOrdenL},funElimNumEmplListNumOrd);
+  }
+  function funElimNumEmplListNumOrd(data,status) {
+    var datosJson=$.parseJSON(data);
+    // console.log(datosJson.Validacion+" "+datosJson.Datos);
+    if (datosJson.Validacion=="Exito") {
+      // var idDataList=liNumEmpleado.parent().siblings('datalist').prop('id');
+      // var dataList=liNumEmpleado.parent().siblings('datalist');
+      console.log(datosJson);
+      // liNumEmpleado.remove();
+      var fecha=hoy;
+      $.post('captura.php',{pFecha:fecha},postElimNumEmpl);
+    }
+    function postElimNumEmpl(data) {
+      // divListNumOrden.html(data);
+    }
+    if (datosJson.Validacion=="ErrorDB") {
+      window.alert("Error inesperado favor de contactar al administrador: "+"\n"+datosJson.Datos);
+    }
   }
   $('#tablaCaptura').on('click','.capturaEmpleados',clickCaptura);
   // capturaEmpleados.on('click',clickCaptura);
@@ -717,13 +749,14 @@
     $('#cantidadC').focus().select();
     $('#fechaC').val(fechaCompleta);
     console.log($('#fechaC').val());
-    var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getMinutes();
+    var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
     if (hora<10) {
       hora="0"+hora;
       minutos="0"+minutos;
       segundos="0"+segundos;
     }
     horaComplet=hora+":"+minutos+":"+segundos;
+    console.log(horaComplet);
     if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
       $('#horaInicioC').val('07:00:00');
       $('#horaFinalC').val('08:00:00');
@@ -935,8 +968,8 @@
     $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto},postFormCaptura)
   };
   function postFormCaptura(data,status) {
-    // dat=$.parseJSON(data);
-    // console.log(dat);
+        // dat=$.parseJSON(data);
+        // console.log(dat);
     console.log(data);
 
   }
@@ -1024,6 +1057,11 @@
     eficiencia=(cantidad/cantProg)*100;
     eficienciaM=eficiencia.toFixed(2);
     eficiencia=eficienciaM;
+    if (eficiencia<0) {
+      $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'white'});
+      window.alert("eficiencia no valida");
+      return false;
+    }
     eficienciaColor(eficiencia);
   }
   //esta función cambia de color el input de la eficiencia
@@ -1066,6 +1104,10 @@
         capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
       }
     }
+  }//fin de la función eficienciaColor
+  //funciones de las alertas de la capturas
+  function alertasCaptura() {
+
   }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);

@@ -166,22 +166,27 @@ body>.navbar{
   width: 20px;
   align-content: center;
 }
-#tableCapNumEmp,#tableCapNumEmp{
+#tableCapNumEmp{
+  table-layout: auto;
+}
+#tableCapNumEmp{
   table-layout: auto;
 }
 #tableCapNumEmp>tbody>tr>td:nth-of-type(1){
   background-color:rgb(12, 232, 205);
-  width: 7.3%;
+  width: 5%;
+  font-size: 12px;
 }
 #tableCapNumEmp>tbody>tr>td:nth-of-type(2){
-  width: 27%;
+  width: 22%;
+  font-size: 12px;
 }
 /*Aquí calculamos el ancho de cada celda, es la siguiente formula width= 7.3%+27% = 34.3%
 totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 */
 #tableCapNumEmp>tbody>tr>td:nth-of-type(+n+3){
   /*background-color: rgb(113, 91, 158);*/
-  width: 5.47%;
+  width: 3.3%;
 }
 #modCapNumOrd{
   top: 25%;
@@ -208,6 +213,7 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 }
 #tableCapNumEmp th{
   text-align: center;
+  font-size: 12px;
 }
 #capturaC{
   background-color: #337ab7;

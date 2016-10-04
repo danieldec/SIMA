@@ -11,12 +11,47 @@
       $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
       $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
       $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
+
       //echo "dia de hoy = ".$fechaHoy." día de ayer: ".$fechaAyer." día de mañana: ".$fechaManana;
-        mostrarListaNumOrden($conexion,$fechas);
+      mostrarListaNumOrden($conexion,$fechas);
+
     }//fin del if isset($_POST['pFecha'])
     else{
       // echo "No entro a if del ".'isset($_POST["pFaecha"]'."";
     }//fin del else de isset$_POST['pFecha']
+    //eliminar numero empleado de la lista de número de orden;
+    if (isset($_POST['pNumEmpleado'])&& isset($_POST['pNumOrd'])) {
+      $numEmpleado=$_POST['pNumEmpleado'];
+      $numOrden=$_POST['pNumOrd'];
+      $arreglo= array('Validacion'=>'HOLA','Datos'=>'HOLA' );
+      $consulta="select @idDetLisNum:=dln.iddetalle_Lista_NumOrden from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in(select da.iddetalle_asistencia from detalle_asistencia da join detalle_Lista_NumOrden dln on da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList and da.empleados_idempleados='$numEmpleado') AND dln.idnum_ordenDetLis='$numOrden';
+      DELETE FROM detalle_Lista_NumOrden WHERE iddetalle_Lista_NumOrden =@idDetLisNum;";
+      $filas=0;
+      $contador=0;
+      if ($conexion->multi_query($consulta)) {
+        do {
+          if ($resultado=$conexion->store_result()) {
+            while ($fila=$resultado->fetch_object()) {
+              $filas=$resultado->num_rows;
+              $contador=$contador+1;
+            }
+            $resultado->free();
+          }
+        } while ($conexion->next_result());
+      }
+      if ($conexion->errno) {
+        $arreglo['Validacion']="ErrorDB";
+        $arreglo['Datos']=$conexion->errno."($conexion->error)";
+        echo json_encode($arreglo);
+        exit();
+      }
+      if ($filas==1) {
+        $arreglo['Validacion']="Exito";
+        $arreglo['Datos']="Numero de empleado eliminado";
+        echo json_encode($arreglo);
+        exit();
+      }
+    }
     //este if se llamo desde el archivo produccion.js en la línea 425
     if (isset($_POST['pHoy'])&&isset($_POST['pNumOrd'])&&isset($_POST['pNumEmp'])) {
       $fechaHoyPost=$_POST['pHoy'];
@@ -167,7 +202,7 @@
       $tm=$datosForm['tm'];
       $eficienciaC=$datosForm['eficienciaC'];
       //aquí buscamos si existe un captura con el id de iddetalle_Lista_NumOrden, para buscar si hay una captura con la misma hora de inicio.
-      $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden'";
+      $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden' ORDER BY c.hora_final ASC";
       $resultado=$conexion->query($consulta);
       $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
       if ($arreglo['Validacion']=="ErrorDB") {
@@ -199,24 +234,50 @@
           if ($index==(count($records))) {
             $ultimoRegistro=$r;
           }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)==strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)!=strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura no realizada, hora incompleta verificar captura ";
+            $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)!=strtotime($horaInicioC)&&strtotime($r->hora_final)==strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)>strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
+          }
         }//fin del for each
-        if ($ultimoRegistro->hora_inicio==$horaInicioC) {
-          $arreglo['Validacion']="Error";
-          $arreglo['Datos']="Error Captura no realizada";
-          $arreglo['DatosExtra']=$ultimoRegistro;
+        //verificamos si la última captura realizada es igual a la captura que se esta realizando
+        if ($arreglo['Validacion']=="Error") {
           echo json_encode($arreglo);
           exit();
         }
         if ($ultimoRegistro->hora_final==$horaInicioC) {
-          $arreglo['Datos']="Exito Captura realizada";
-          echo json_encode($arreglo);
-          exit();
+          $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+          if ($arreglo['Validacion']=="ErrorDB") {
+            echo json_encode($arreglo);
+            exit();
+          }
+          $arreglo['Validacion']="Exito";
+          $arreglo['Datos']="Captura realizada";
+        }else{
+          $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+          if ($arreglo['Validacion']=="ErrorDB") {
+            echo json_encode($arreglo);
+            exit();
+          }
+          $arreglo['Validacion']="Advertencia";
+          $arreglo['Datos']="Captura realizada, faltan capturas de este operador";
         }
-        $arreglo['Validacion']="Fin del for each";
         echo json_encode($arreglo);
-        exit();
-        $arreglo['Datos']=$records;
-        exit();
       }//Acaba el elseif fila>0
       if (isset($_POST['pArregloTiempoMuerto'])) {
         foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
@@ -308,7 +369,7 @@
   //si exite empleados en el número de orden que me los muestre en la lista, de la fecha del día(HOY).
   function listNumEmpEnNumOrden($conexion,$numOrden,$hoy)
   {
-    $consulta="SELECT * from detalle_asistencia da where (da.asistencia_fecha='$hoy') and ( da.iddetalle_asistencia IN (SELECT dln.iddetalle_asistenciaDetList from detalle_Lista_NumOrden dln WHERE dln.idnum_ordenDetLis='$numOrden' and dln.iddetalle_asistenciaDetList=da.iddetalle_asistencia ))";
+    $consulta="SELECT * from detalle_asistencia da where (da.asistencia_fecha='$hoy') and ( da.iddetalle_asistencia IN (SELECT dln.iddetalle_asistenciaDetList from detalle_Lista_NumOrden dln WHERE dln.idnum_ordenDetLis='$numOrden' and  da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList))";
     $resultado=$conexion->query($consulta);
     if (!$resultado) {
       echo "Hubo un error en la consulta(".$conexion->errno."): $conexion->error";
@@ -318,7 +379,7 @@
         $li="";
         $contador=0;
         while ($fila=$resultado->fetch_array()) {
-          $li=$li."<li><span id='numEmpListaNumOrd$contador'>".$fila['empleados_idempleados']."</span><span>Eliminar</span>"."</li>";
+          $li=$li."<li><span id='numEmpListaNumOrd$contador'>".$fila['empleados_idempleados']."</span><span><a href='#' class='elimNumEmp'>Eliminar</a></span>"."</li>";
           $contador++;
         }
         return $li;
@@ -392,7 +453,7 @@
     while ($fila=$resultado->fetch_array()) {
       $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
       $datos=$datos."<td>".$fila['Nombre']."</td>";
-      for ($i=0; $i <12 ; $i++) {
+      for ($i=0; $i <22 ; $i++) {
         $datos=$datos."<td></td>";
       }
       $datos=$datos."<td class='detAsisCap'>".$fila['iddetalle_asistencia']."</td></tr>";
