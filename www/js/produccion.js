@@ -39,9 +39,11 @@
   var capturarC=$('#capturarC');
   var fechaC=$('#fechaC');
   var elimNumEmp=$('.elimNumEmp');
+  var navTabsuLTabCaptura=$('uLTabCaptura>li>a');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
+  var divAlertMenCaptura='<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong></strong></div>';
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
@@ -72,6 +74,7 @@
   var numOrdenL="";
   var numEmpleadoL="";
   var liNumEmpleado;
+  var dataList;
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -567,7 +570,7 @@
         //vamos a actualizar el badge del número de parte
         $.post('captura.php',{pActBadNumOrdn:"",pNumOrdenBadge:numOrdenBadge,pHoy:diaHoy},function(data,status) {
           btnPresionado.parent().parent().parent().parent().parent().children("span.badge").text(data);
-        })
+        });
       }else{
         //si ocurrio un error dejamos en blanco el input
         btnPresionado.prev().prev().val("");
@@ -582,6 +585,7 @@
         }
       }
       console.log(data);
+      $('.inpCLNE').focus();
     }
   }//fin de la función liNumParte
   //evento blur de input <input class="form-control inpCLNE" list="inpLisNumParte0" name="inpLisNumParte">
@@ -596,24 +600,33 @@
     liNumEmpleado=$(this).parent().parent();
     numOrdenL=$(this).parent().parent().parent().parent().parent().parent().parent().parent('.list-group-item').children('.spanNumOrd').html();
     numEmpleadoL=$(this).parent().siblings('span').html();
-    $.post('captura.php',{pNumEmpleado:numEmpleadoL,pNumOrd:numOrdenL},funElimNumEmplListNumOrd);
+    var fecha=hoy;
+    console.log(fecha);
+    $.post('captura.php',{pNumEmpleado:numEmpleadoL,pNumOrd:numOrdenL,pF:fecha},funElimNumEmplListNumOrd);
   }
   function funElimNumEmplListNumOrd(data,status) {
     var datosJson=$.parseJSON(data);
-    // console.log(datosJson.Validacion+" "+datosJson.Datos);
     if (datosJson.Validacion=="Exito") {
-      // var idDataList=liNumEmpleado.parent().siblings('datalist').prop('id');
-      // var dataList=liNumEmpleado.parent().siblings('datalist');
+      var idDataList=liNumEmpleado.parent().siblings('datalist').prop('id');
+      dataList=liNumEmpleado.parent().siblings('datalist');
       console.log(datosJson);
-      // liNumEmpleado.remove();
+      liNumEmpleado.remove();
       var fecha=hoy;
-      $.post('captura.php',{pFecha:fecha},postElimNumEmpl);
+      $.post('captura.php',{pFecha:fecha,pNumOrdenL:numOrdenL},postElimNumEmpl);
     }
     function postElimNumEmpl(data) {
-      // divListNumOrden.html(data);
+      console.log(data);
+      var jsonDatos=$.parseJSON(data);
+      dataList.html(jsonDatos.optionNumEmpl);
+      // dataList.parent().parent().parent().parent().parent() .parent('.list-group-item').children('.spanNumOrd').html(jsonDatos.cantEmplNumOrd);
+      console.log(jsonDatos);
+      console.log(dataList.parent().parent().parent().parent().parent('.list-group-item').children('span.badge').html(jsonDatos.cantEmplNumOrd));
     }
     if (datosJson.Validacion=="ErrorDB") {
       window.alert("Error inesperado favor de contactar al administrador: "+"\n"+datosJson.Datos);
+    }
+    if (datosJson.Validacion=="ErrorControlado") {
+      window.alert(datosJson.Datos);
     }
   }
   $('#tablaCaptura').on('click','.capturaEmpleados',clickCaptura);
@@ -965,12 +978,37 @@
       return false;
     }
     console.log(datosForm);
+    // Aquí enviamos el tiempo muerto al servidor
     $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto},postFormCaptura)
   };
   function postFormCaptura(data,status) {
-        // dat=$.parseJSON(data);
-        // console.log(dat);
-    console.log(data);
+    try {
+      datosJson=$.parseJSON(data);
+    } catch (e) {
+      $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+e+'</p>').css({'margin-top':'10px','font-size':'17px'}));
+      console.log(data);
+      console.log(e);
+      return false;
+    }
+    // console.log(datosJson);
+    alertasCaptura(datosJson);
+  }
+  function alertasCaptura(datosJson) {
+    switch (datosJson.Validacion) {
+      case "ErrorDB":
+      $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px'}));
+      return false;
+      break;
+      case "Exito":
+
+      break;
+      case "Advertencia":
+
+      break;
+      default:
+
+    }
+    // $("#formCaptura").append($(divAlertMenCaptura).html(datosJson.Validacion+datosJson.Datos).show(200).hide(4000));
 
   }
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
@@ -1057,7 +1095,7 @@
     eficiencia=(cantidad/cantProg)*100;
     eficienciaM=eficiencia.toFixed(2);
     eficiencia=eficienciaM;
-    if (eficiencia<0) {
+    if (eficiencia<=0) {
       $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'white'});
       window.alert("eficiencia no valida");
       return false;
@@ -1106,9 +1144,6 @@
     }
   }//fin de la función eficienciaColor
   //funciones de las alertas de la capturas
-  function alertasCaptura() {
-
-  }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
 

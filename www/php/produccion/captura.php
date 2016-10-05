@@ -11,8 +11,15 @@
       $fechaAyer=date('Y-m-d',strtotime($fecha."-1 day"));
       $fechaManana=date('Y-m-d',strtotime($fecha."+1 day"));
       $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
-
       //echo "dia de hoy = ".$fechaHoy." día de ayer: ".$fechaAyer." día de mañana: ".$fechaManana;
+      if (isset($_POST['pNumOrdenL'])) {
+        $datos=array("optionNumEmpl"=>"","cantEmplNumOrd"=>"");
+        $numOrden=$_POST['pNumOrdenL'];
+        $datos["optionNumEmpl"]=optionNumEmpl($conexion,$fecha,$numOrden);
+        $datos["cantEmplNumOrd"]=cantEmplNumOrd($conexion,$numOrden,$fecha);
+        echo json_encode($datos);
+        exit();
+      }
       mostrarListaNumOrden($conexion,$fechas);
 
     }//fin del if isset($_POST['pFecha'])
@@ -20,11 +27,12 @@
       // echo "No entro a if del ".'isset($_POST["pFaecha"]'."";
     }//fin del else de isset$_POST['pFecha']
     //eliminar numero empleado de la lista de número de orden;
-    if (isset($_POST['pNumEmpleado'])&& isset($_POST['pNumOrd'])) {
+    if (isset($_POST['pNumEmpleado'])&& isset($_POST['pNumOrd'])&&isset($_POST['pF'])) {
       $numEmpleado=$_POST['pNumEmpleado'];
       $numOrden=$_POST['pNumOrd'];
+      $fHoy=$_POST['pF'];
       $arreglo= array('Validacion'=>'HOLA','Datos'=>'HOLA' );
-      $consulta="select @idDetLisNum:=dln.iddetalle_Lista_NumOrden from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in(select da.iddetalle_asistencia from detalle_asistencia da join detalle_Lista_NumOrden dln on da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList and da.empleados_idempleados='$numEmpleado') AND dln.idnum_ordenDetLis='$numOrden';
+      $consulta="select @idDetLisNum:=dln.iddetalle_Lista_NumOrden from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in(select da.iddetalle_asistencia from detalle_asistencia da join detalle_Lista_NumOrden dln on da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList and da.empleados_idempleados='$numEmpleado' AND da.asistencia_fecha='$fHoy') AND dln.idnum_ordenDetLis='$numOrden';
       DELETE FROM detalle_Lista_NumOrden WHERE iddetalle_Lista_NumOrden =@idDetLisNum;";
       $filas=0;
       $contador=0;
@@ -42,6 +50,10 @@
       if ($conexion->errno) {
         $arreglo['Validacion']="ErrorDB";
         $arreglo['Datos']=$conexion->errno."($conexion->error)";
+        if ($conexion->errno==1451) {
+          $arreglo['Validacion']="ErrorControlado";
+          $arreglo['Datos']="No se puede Eliminar este número de empleado ".$numEmpleado." tiene una o más capturas realizadas";
+        }
         echo json_encode($arreglo);
         exit();
       }
@@ -188,11 +200,12 @@
     /*{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto}
     fechaC=2016-09-19&cantidadC=900&horaInicioC=23%3A00&horaFinalC=00%3A00&tm=no&tmC=0&eficienciaC=0*/
     //Captura de la eficiencia número de empleado
-    if (isset($_POST['pIdEmpleado'])&&isset($_POST['pIdDetAsis'])) {
+    if (isset($_POST['pIdEmpleado'])&&isset($_POST['pIdDetAsis'])&&isset($_POST['pDatosForm'])) {
       //Aquí inicializamos el un arreglo, y obtenemos los datos que pasamos atraves del post.
       $arreglo= array('Validacion'=>'','Datos'=>'' );
       $numEmpleado=$_POST['pIdEmpleado'];
       $iddetalle_Lista_NumOrden=$_POST['pIdDetAsis'];
+      //obtenemos los datos del formulario serializado que enviamos desde produccion.js
       parse_str($_POST['pDatosForm'],$datosForm);
       $fechaC=$datosForm['fechaC'];
       $cantidadC=$datosForm['cantidadC'];
@@ -205,7 +218,8 @@
       $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden' ORDER BY c.hora_final ASC";
       $resultado=$conexion->query($consulta);
       $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
-      if ($arreglo['Validacion']=="ErrorDB") {
+      if ($arreglo['Validacion']=="Error") {
+        $arreglo['Validacion']="ErrorDB";
         echo json_encode($arreglo);
         exit();
       }
@@ -213,7 +227,8 @@
       $fila=$resultado->num_rows;
       if ($fila==0) {
         $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
-        if ($arreglo['Validacion']=="ErrorDB") {
+        if ($arreglo['Validacion']=="Error") {
+          $arreglo['Validacion']="ErrorDB";
           echo json_encode($arreglo);
           exit();
         }
@@ -262,7 +277,8 @@
         }
         if ($ultimoRegistro->hora_final==$horaInicioC) {
           $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
-          if ($arreglo['Validacion']=="ErrorDB") {
+          if ($arreglo['Validacion']=="Error") {
+            $arreglo['Validacion']="ErrorDB";
             echo json_encode($arreglo);
             exit();
           }
@@ -270,29 +286,61 @@
           $arreglo['Datos']="Captura realizada";
         }else{
           $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
-          if ($arreglo['Validacion']=="ErrorDB") {
+          if ($arreglo['Validacion']=="Error") {
+            $arreglo['Validacion']="ErrorDB";
             echo json_encode($arreglo);
             exit();
           }
           $arreglo['Validacion']="Advertencia";
           $arreglo['Datos']="Captura realizada, faltan capturas de este operador";
         }
-        echo json_encode($arreglo);
+        if ($tm=="no") {
+          echo json_encode($arreglo);
+        }
       }//Acaba el elseif fila>0
-      if (isset($_POST['pArregloTiempoMuerto'])) {
-        foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
-          foreach ($valor as $k=>$v) {
-            if ($k==0) {
-              echo "idTiempoM: ".$valor[$k];
+      if (isset($_POST['pArregloTiempoMuerto'])&&$tm=="si") {
+        $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden' AND cast(c.eficiencia as decimal)=cast('$eficienciaC' as decimal) AND c.tiempo_muerto='$tmC' AND c.hora_inicio='$horaInicioC' AND c.hora_final='$horaFinalC' AND c.fecha='$fechaC'";
+        $resultado=$conexion->query($consulta);
+        if (!$resultado) {
+          $arreglo['Validacion']="ErrorDB";
+          $arreglo['Datos']=$conexion->errno."($conexion->error)";
+          echo json_encode($arreglo);
+          exit();
+        }
+        // $filaArreglo= array();
+        // while ($fila=$resultado->fetch_object()) {
+        // $filaArreglo[]=$fila;
+        // }
+        $numeroFila=$resultado->num_rows;
+        $fila=$resultado->fetch_object();
+        if ($numeroFila>0) {
+          $idCapturaTM=$fila->idcaptura;
+          foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
+            foreach ($valor as $k=>$v) {
+              if ($k==0) {
+              $idTiempoM=$valor[$k];
             }
             if ($k==1) {
-              if ($valor[$k]>0) {
-                echo " MinutosTM ".$valor[$k]."\n";
+              if ($valor[$k]>0){
+                $minutosTM=$valor[$k];
               }
             }
           }//fin del for each
-        }//fin del for each
+          $consulta="INSERT INTO detalleTiempoM (idcaptura,idtiempo_muerto,minutos) VALUES ('$idCapturaTM','$idTiempoM','$minutosTM')";
+          $resultado=$conexion->query($consulta);
+          if (!$resultado) {
+            $arreglo['Validacion']="ErrorDB";
+            $arreglo['Datos']=$conexion->errno."($conexion->error)";
+            echo json_encode($arreglo);
+            exit();
+            }//fin del if
+          }//fin del for each
+        }//fin del if resultado->num:rows
+        // $arreglo["DatosExtra"]="Numero de filas: ".$numeroFila." arreglo fila".var_dump($filaArreglo)."Arreglo tiempo muerto".var_dump($_POST['pArregloTiempoMuerto']);
+        $arreglo['TM']="OK";
+        echo json_encode($arreglo);
       }//aquí acaba el if de arrelgo tiempo muerto
+
     }//aquí acaba el if de la captura
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
