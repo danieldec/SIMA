@@ -43,7 +43,7 @@
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
-  var divAlertMenCaptura='<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong></strong></div>';
+  var divAlertMenCaptura='<div class="alert alert-success aCapNumEmp"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong></strong></div>';
   var inpFeAsis="";
   var inpNumEmp="";
   var cadNumParte="";
@@ -993,24 +993,39 @@
     // console.log(datosJson);
     alertasCaptura(datosJson);
   }
+  //aquí mostramos los tipos de validación que tenemos al momento de hacer la captura errores de la base de datos, errores que no deberian pasar como caputuras duplicadas
   function alertasCaptura(datosJson) {
+    console.log(datosJson);
+    console.log(datosJson.Validacion);
     switch (datosJson.Validacion) {
       case "ErrorDB":
-      $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px'}));
-      return false;
+        $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
       break;
       case "Exito":
-
+        var alto=window.screen.width;
+        var ancho=window.screen.height;
+        console.log(alto+""+ancho);
+        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),4000);
+        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-success").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn("fast").fadeOut("slow"));
+        clearTimeout(ocultarModal);
+        $('#modCapNumOrd input.inpNumEmpl').focus();
       break;
       case "Advertencia":
 
       break;
+      case "Error":
+      $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p><h4 class="text-center">'+datosJson.Validacion+": "+datosJson.Datos+'</h3></p>').css({'margin-top':'10px','font-size':'15px'}).append("<p class='text-center'>idCaptura: "+datosJson.DatosExtra.idcaptura+" Fecha: "+datosJson.DatosExtra.fecha+" Eficiencia: "+datosJson.DatosExtra.eficiencia+" Hora Inicio: "+datosJson.DatosExtra.hora_inicio+" Hora Final: "+datosJson.DatosExtra.hora_final+" Detalle Lista Número de orden: "+datosJson.DatosExtra.iddetalle_Lista_NumOrdenCap+"</p>"));
+      break;
       default:
-
-    }
+    }//fin del switch
     // $("#formCaptura").append($(divAlertMenCaptura).html(datosJson.Validacion+datosJson.Datos).show(200).hide(4000));
-
-  }
+  }//fin de la función alertasCaptura
+  modCapNumOrd.on('keypress','.inpNumEmpl',function(e) {
+    if (e.keyCode==13) {
+      //aqui lanzamos el trigger como si hubieramos hecho un click en el boton de capturaC del modal captura por número de orden.
+      $('#capturaC',modCapNumOrd).trigger('click');
+    }
+  });
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
   cantidadC.on('keydown',function(e) {
     // console.log(e.key);

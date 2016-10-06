@@ -402,7 +402,7 @@
               </div>
               <div class="form-group">
               <label for="cantidadC">Cantidad</label>
-              <input type="number" id="cantidadC" name="cantidadC"  value="0" class="form-control" required>
+              <input type="number" id="cantidadC" name="cantidadC" min="0" value="0" class="form-control" required>
               </div>
               <label for="horaInicioC">Hora Inicio<input type="time" id='horaInicioC' name="horaInicioC" value="" class="form-control" required></label>
               <label for="horaFinalC">Hora Final<input type="time" id="horaFinalC" name="horaFinalC" value="" class="form-control" required></label>
