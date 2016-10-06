@@ -169,7 +169,7 @@
                     <div class="col-md-12">
                       <h2 class="text-center">Lista Asistencia</h2>
                       <form class="" id="formListAsis"action="#" method="post">
-                        <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo$dia?>">
+                        <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?echo $dia;?>">
                         <input type="text" class="form-control" name="inpNumEmpAsis" id="inpNumEmpAsis" required value="" placeholder="# de empleado">
                         <input type="submit" class="form-control btn-success" name="inpBtnLista" id="inpBtnLista" value="Agregar lista"/>
                       </form>
