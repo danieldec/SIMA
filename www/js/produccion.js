@@ -676,9 +676,15 @@
     }else if (jsonDatos.Validacion=="Exito") {
       var tbody=$.parseJSON(data);
       // console.log(tbody.Datos);
+      $('#tablaCaptura').DataTable().destroy();
       $('#tablaCaptura>tbody').empty();
       // console.log(tbody.Datos);
       $('#tablaCaptura>tbody').append(tbody.Datos);
+      $('#tablaCaptura').DataTable({
+        "language":{
+          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+      });
     }
   }
   //asínamos la API de dataTable

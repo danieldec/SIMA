@@ -255,7 +255,7 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="table-responsive">
-                        <table id="tablaCaptura"class="table table-bordered">
+                        <table id="tablaCaptura"class="table table-bordered table-condensed table-responsive">
                           <thead>
                             <tr>
                               <th>#</th>

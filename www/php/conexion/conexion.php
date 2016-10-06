@@ -3,7 +3,7 @@
     session_start();
   }
   $usuario="root";
-  $contrasena="";
+  $contrasena="SIMADB2016";
   $equipo="localhost";
   $baseDatos="SIMAP";
   $conexion=new mysqli($equipo,$usuario,$contrasena,$baseDatos,3306);
