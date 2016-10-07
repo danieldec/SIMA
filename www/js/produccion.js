@@ -1008,16 +1008,16 @@
         $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
       break;
       case "Exito":
-        var alto=window.screen.width;
-        var ancho=window.screen.height;
-        console.log(alto+""+ancho);
-        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),4000);
-        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-success").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn("fast").fadeOut("slow"));
+        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),6000);
+        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-success").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn("slow").fadeOut("slow"));
         clearTimeout(ocultarModal);
         $('#modCapNumOrd input.inpNumEmpl').focus();
       break;
       case "Advertencia":
-
+        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),5000);
+        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-warning").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn(1000).fadeOut(3000));
+        clearTimeout(ocultarModal);
+        $('#modCapNumOrd input.inpNumEmpl').focus();
       break;
       case "Error":
       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p><h4 class="text-center">'+datosJson.Validacion+": "+datosJson.Datos+'</h3></p>').css({'margin-top':'10px','font-size':'15px'}).append("<p class='text-center'>idCaptura: "+datosJson.DatosExtra.idcaptura+" Fecha: "+datosJson.DatosExtra.fecha+" Eficiencia: "+datosJson.DatosExtra.eficiencia+" Hora Inicio: "+datosJson.DatosExtra.hora_inicio+" Hora Final: "+datosJson.DatosExtra.hora_final+" Detalle Lista Número de orden: "+datosJson.DatosExtra.iddetalle_Lista_NumOrdenCap+"</p>"));
