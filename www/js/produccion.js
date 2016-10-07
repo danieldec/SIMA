@@ -1167,8 +1167,7 @@
   //funciones de las alertas de la capturas
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
-
-});//fin del ready
+});//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte
 function set_item(item) {
