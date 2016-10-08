@@ -747,8 +747,14 @@
     modalCaptura.modal({backdrop: "static",keyboard:false});
   }
   //evento del modal cuando se abre por completo #modalCaptura
-  $('#modalCaptura').on('shown.bs.modal',cargComplModalCaptura);
-  function cargComplModalCaptura() {
+  $('#modalCaptura').on('shown.bs.modal show.bs.modal',cargComplModalCaptura);
+  function cargComplModalCaptura(e) {
+    if (e.type="show") {
+      var numAlert=$('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').length;
+      if (numAlert>0) {
+        $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
+      }
+    }
     $('#spanNumEmp','#modalCaptura').empty();
     $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
     $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
@@ -1008,14 +1014,14 @@
         $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
       break;
       case "Exito":
-        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),6000);
-        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-success").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn("slow").fadeOut("slow"));
+        var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),5000);
+        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-success").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn(500).fadeOut(2500));
         clearTimeout(ocultarModal);
         $('#modCapNumOrd input.inpNumEmpl').focus();
       break;
       case "Advertencia":
         var ocultarModal = setTimeout($('#modalCaptura').modal('hide'),5000);
-        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-warning").html('<p class="text-center"> '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn(1000).fadeOut(3000));
+        $("#capturaC").after($(divAlertMenCaptura).addClass("alert-warning").html('<p class="text-center"> '+'<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>'+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'17px','margin-bottom':"0px"}).fadeIn(1000).fadeOut(3000));
         clearTimeout(ocultarModal);
         $('#modCapNumOrd input.inpNumEmpl').focus();
       break;

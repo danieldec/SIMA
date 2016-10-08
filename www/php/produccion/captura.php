@@ -215,7 +215,7 @@
       $tm=$datosForm['tm'];
       $eficienciaC=$datosForm['eficienciaC'];
       //aquí buscamos si existe un captura con el id de iddetalle_Lista_NumOrden, para buscar si hay una captura con la misma hora de inicio.
-      $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden' ORDER BY c.hora_final ASC";
+      $consulta="SELECT * FROM captura c where c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in (SELECT da.iddetalle_asistencia from detalle_asistencia da where da.empleados_idempleados='$numEmpleado' and da.asistencia_fecha='$fechaC')) ORDER BY c.hora_final ASC";
       $resultado=$conexion->query($consulta);
       $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
       if ($arreglo['Validacion']=="Error") {
@@ -268,6 +268,9 @@
             $arreglo['Validacion']="Error";
             $arreglo['Datos']="Captura duplicada";
             $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)!=strtotime($horaInicioC)) {
+            # code...
           }
         }//fin del for each
         //verificamos si la última captura realizada es igual a la captura que se esta realizando
