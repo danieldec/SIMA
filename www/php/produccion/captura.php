@@ -345,6 +345,46 @@
       }//aquí acaba el if de arrelgo tiempo muerto
 
     }//aquí acaba el if de la captura
+    //
+    if (isset($_POST['pNumOrdenDC'])&&isset($_POST['pfechaDC'])) {
+      $numOrden=$_POST['pNumOrdenDC'];
+      $fecha=$_POST['pfechaDC'];
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $consulta="SELECT c.idcaptura,c.fecha,da.empleados_idempleados,c.hora_inicio,c.hora_final,c.eficiencia,c.cantidad,c.horaCaptura, da.iddetalle_asistencia FROM captura c, detalle_Lista_NumOrden dln, detalle_asistencia da WHERE c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.idnum_ordenDetLis='$numOrden') and dln.iddetalle_Lista_NumOrden= c.iddetalle_Lista_NumOrdenCap and c.fecha='$fecha' and da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        echo json_encode($arreglo);
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      if ($resultado->num_rows==0) {
+        $arreglo['Validacion']="Error";
+        $arreglo['Datos']="No se encontraron captura";
+        echo json_encode($arreglo);
+        exit();
+      }
+      $registros=array();
+      $contador=0;
+      $tbody="";
+      while ($fila=$resultado->fetch_object()) {
+        $tbody=$tbody."<tr>";
+        $tbody=$tbody."<td>".$contador."</td>";
+        $tbody=$tbody."<td>".$fila->idcaptura."</td>";
+        $tbody=$tbody."<td>".$fila->fecha."</td>";
+        $tbody=$tbody."<td>".$fila->empleados_idempleados."</td>";
+        $tbody=$tbody."<td>".$fila->hora_inicio."</td>";
+        $tbody=$tbody."<td>".$fila->hora_final."</td>";
+        $tbody=$tbody."<td>".$fila->eficiencia."</td>";
+        $tbody=$tbody."<td>".$fila->cantidad."</td>";
+        $tbody=$tbody."<td>".$fila->horaCaptura."</td>";
+        $tbody=$tbody."<td>".$fila->iddetalle_asistencia."</td>";
+        $tbody=$tbody."</tr>";
+        $contador++;
+      }
+      $arreglo['Datos']=$tbody;
+      echo json_encode($arreglo);
+    }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
@@ -532,7 +572,7 @@
   if ($resultado=$conexion->query($consulta)) {
     if ($resultado->num_rows) {
       while ($fila->$resultado->fetch_object()) {
-        $records[]=$row;
+        $records[]=$fila;
       }
       $resultado->free();
     }

@@ -40,6 +40,7 @@
   var fechaC=$('#fechaC');
   var elimNumEmp=$('.elimNumEmp');
   var navTabsuLTabCaptura=$('uLTabCaptura>li>a');
+  var modDetCap=$('#modDetCap');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -647,6 +648,32 @@
     $('#divColListEmp').empty().append(modDatos.Datos);
     // console.log(modDatos.Datos);
   }
+  //vamos a mostrar las capturas de un número de orden con un evento click y en un modal.
+  $('#tablaCaptura').on('click','.detalleNumOrden',clickDetalleCap);
+  function clickDetalleCap(e) {
+    var numOrdenDC=$(this).parent().siblings(".tdCapNumOrd").html();
+    var numParteDC=$(this).parent().siblings(".tdCapNumPart").html();
+    var fechaDC=$('#hoy').val();
+    modDetCap.modal({backdrop: "static",keyboard:false});
+    $('#spanNO','#modDetCap').html(numOrdenDC);
+    $('#spanNP','#modDetCap').html(numParteDC);
+
+    $.post('captura.php',{pNumOrdenDC:numOrdenDC,pfechaDC:fechaDC},postDetCaptura)
+  }
+  function postDetCaptura(data,status) {
+    try {
+      var d=$.parseJSON(data);
+      $('#modDetCap tbody').empty();
+      $('#modDetCap tbody').html(d.Datos);
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+      console.log(data);
+    } finally {
+
+    }
+  }
+
   //evento Buton para realizar la captura
   //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
   $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy,pInicio:true},listCapNumOrd);
