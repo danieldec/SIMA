@@ -16,14 +16,12 @@ body{
 label{
   font-size: 1.3em;
 }
-input{
-  text-align: center;
-  height: 50px;
-}
 div{
 /*border: 1px solid rgb(142, 149, 0);*/
 }
-
+input{
+  text-align: center;
+}
 
 .row>.col-sm-4,.col-xs-4,.col-xs-6, .col-sm-3,.col-sm-5,.col-sm-6,.col-md-4,.col-md-3,
 .col-md-6,.col-md-9,.col-xs-9,.col-xs-3,.col-xs-2,.col-xs-12{
@@ -90,6 +88,10 @@ height: 70px;
 }
 #inUsuario{
   text-transform: uppercase;
+  text-align: center;
+}
+#inContra{
+  text-align: center;
 }
 #pLogUsua{
   margin-top: 50px;

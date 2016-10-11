@@ -395,6 +395,8 @@
           <div class="modal-body">
             <span id='spanNumEmp'></span>
             <span id='spanIdDLNOC'></span>
+            <span id='spanNumOrdenC'></span>
+            <span id='spanNumParteC'></span>
             <form id='formCaptura' class="form-inline" action="#" method="post" role="form">
               <div class="form-group">
                 <label for="fechaC">Fecha</label>
@@ -460,7 +462,7 @@
         </div>
       </div>
     </div><!--Fin modal Tiempo Muerto-->
-    <!--Modal Tiempo Muerto-->
+    <!--Modal Tiempo Detalle Captura-->
     <div class="modal fade" tab-index="-1" role="dialog" id="modDetCap">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -469,33 +471,33 @@
             <h4>Detalle Captura Numero de orden: <span id="spanNO"></span> y numero de parte: <span id="spanNP"></span> </h4>
           </div>
           <div class="modal-body">
-            <table class="table table-bordered" id="tablaDetCap">
-              <caption>Capturas Realizadas</caption>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>idcaptura</th>
-                  <th>fecha</th>
-                  <th># empleado</th>
-                  <th>hora Inicio</th>
-                  <th>hora Final</th>
-                  <th>Eficiencia</th>
-                  <th>cantidad</th>
-                  <th>H Captura</th>
-                  <th>idDetAsis</th>
-                </tr>
-              </thead>
-              <tbody>
-
-              </tbody>
-            </table>
+            <div class="col-sm-12">
+              <table class="table table-bordered compact display" id="tablaDetCap">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th><abbr title="Id Captura">TM</abbr>idc</th>
+                    <th>fecha</th>
+                    <th><abbr title="Número de empleado"># empl</abbr></th>
+                    <th><abbr title="Hora Inicio">HI</abbr></th>
+                    <th><abbr title="Hora Final">HF</abbr></th>
+                    <th><abbr title="Tiempo Muerto">TM</abbr></th>
+                    <th>Eficiencia</th>
+                    <th>cantidad</th>
+                    <th>H Captura</th>
+                    <th>idDetAsis</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss='modal' id="btnCanTTM">Cerrar</button>
           </div>
         </div>
       </div>
-    </div><!--Fin modal Tiempo Muerto-->
+    </div><!--Fin modal Detalle captura-->
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

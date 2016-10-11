@@ -22,7 +22,7 @@
     if (isset($_POST['pInpFeAsis'])&&isset($_POST['pInpNumEmp'])&&isset($_POST['pHoy'])) {
       $error="";
       $inpFeAsis=$_POST['pInpFeAsis'];
-      $inpNumEmp=$_POST['pInpNumEmp'];
+      $inpNumEmp=trim($_POST['pInpNumEmp']);
       $fechaHoy=$_POST['pHoy'];
       //hacemos una consulta a la base de datos para verificar si la fecha y el num de empleado existen en la base de datos
       $consulta = "select * from detalle_asistencia as da where da.asistencia_fecha='$inpFeAsis' AND da.empleados_idempleados ='$inpNumEmp'";

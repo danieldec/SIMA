@@ -357,7 +357,7 @@
   formListAsis.on('submit',listaEmpleados);
   function listaEmpleados(e) {
     e.preventDefault();
-    inpNumEmpAsis.val(cadNumEmpList);
+    inpNumEmpAsis.val(cadNumEmpList.trim());
     inpFeAsis=$('#inpFeAsis').val();
     inpNumEmp=inpNumEmpAsis.val();
     console.log(inpFeAsis + " " + inpNumEmp);
@@ -380,7 +380,7 @@
       if (capError=="E") {
         menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html('<span>'+data.substr(1)+'</span>').show().fadeOut(5000);
         //aquí seleccionamos la columna idempleados(columna numero 2) de la tabla tablaListaEmpleados
-        auxNumEmpl=inpNumEmpAsis.val();
+        auxNumEmpl=inpNumEmpAsis.val().trim();
         $('#tablaListaEmpleados tr>td:nth-of-type(2)').each(busNumEmpTabla);
         inpNumEmpAsis.val("");
         inpNumEmpAsis.focus();
@@ -653,7 +653,9 @@
   function clickDetalleCap(e) {
     var numOrdenDC=$(this).parent().siblings(".tdCapNumOrd").html();
     var numParteDC=$(this).parent().siblings(".tdCapNumPart").html();
+    // console.log(numOrdenDC+" "+numParteDC);
     var fechaDC=$('#hoy').val();
+    // console.log(fechaDC);
     modDetCap.modal({backdrop: "static",keyboard:false});
     $('#spanNO','#modDetCap').html(numOrdenDC);
     $('#spanNP','#modDetCap').html(numParteDC);
@@ -664,13 +666,18 @@
     try {
       var d=$.parseJSON(data);
       $('#modDetCap tbody').empty();
+      $('#tablaDetCap').DataTable().destroy();
       $('#modDetCap tbody').html(d.Datos);
+      $('#tablaDetCap').DataTable({
+        "language":{
+          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+      });
+      $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
       console.log(data);
     } catch (e) {
       console.log(e);
       console.log(data);
-    } finally {
-
     }
   }
 
@@ -777,6 +784,7 @@
   $('#modalCaptura').on('shown.bs.modal show.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura(e) {
     if (e.type="show") {
+      //aquí quitamos los alertas si de dejaron abierto
       var numAlert=$('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').length;
       if (numAlert>0) {
         $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
@@ -786,8 +794,14 @@
     $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
     $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
     $('#spanIdDLNOC','#modalCaptura').empty();
-    $('#spanIdDLNOC','#modalCaptura').html("-----Id precaptura: "+idDetAsis);
+    $('#spanIdDLNOC','#modalCaptura').html(" Id precaptura: "+idDetAsis);
     $('#spanIdDLNOC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+    $('#spanNumOrdenC','#modalCaptura').empty();
+    $('#spanNumOrdenC','#modalCaptura').html(" Número de Orden: "+capNumOrden);
+    $('#spanNumOrdenC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+    $('#spanNumParteC','#modalCaptura').empty();
+    $('#spanNumParteC','#modalCaptura').html(" Número de Parte: "+capNumParte);
+    $('#spanNumParteC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
     $('input[name=tm]').removeAttr('checked');
     $('#cantidadC').val('0');
     var fechaServidor=$('#hoy').val();

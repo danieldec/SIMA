@@ -5,9 +5,6 @@ body{
 label[for="button"]{
   color: #ffffff;
 }
-thead{
-  background-color: #c5fe5b;
-}
 caption{
   font-size: 20px;
   text-align: center;
@@ -172,6 +169,9 @@ body>.navbar{
 #tableCapNumEmp{
   table-layout: auto;
 }
+#divTablaNumOrden thead{
+  background-color: #c5fe5b;
+}
 #tableCapNumEmp>tbody>tr>td:nth-of-type(1){
   background-color:rgb(12, 232, 205);
   width: 5%;
@@ -223,6 +223,19 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 }
 #modalCaptura>.modal-dialog.modal-lg{
   width: 100%;
+}
+#modalCaptura div.modal-body{
+  overflow: auto;
+}
+#modDetCap div.modal-body{
+  overflow-y: auto;
+  overflow-x: auto;
+}
+#modDetCap>.modal-dialog.modal-lg{
+  width: 100%;
+}
+#tablaDetCap{
+  table-layout: auto;
 }
 .divFormTTM>input.inpTiempoMuerto{
   width: 35%;
