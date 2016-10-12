@@ -75,10 +75,10 @@
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
               <div class="container-fluid well">
                 <div class="row">
-                    <div class="col-xs-2 col-xs-offset-1 text-center"><label>Número de Orden</label></div>
+                    <div class="col-xs-2 col-xs-offset-1 text-center"><label>Folio</label></div>
                     <div class="col-xs-2 text-center"><label>Número de Parte</label></div>
                     <div class="col-xs-2 text-center"><label>Parcial</label></div>
-                    <div class="col-xs-2 text-center"><label>Cantidad</label></div>
+                    <div class="col-xs-2 text-center"><label><abbr title="Requerimiento">REQ</abbr></label></div>
                     <div class="col-xs-2 text-center"><label>Fecha Requerimiento</label></div>
                 </div>
                 <div class="row">
@@ -351,7 +351,28 @@
           <div role="tabpanel" class="tab-pane fade" id="divRequerimientos">
             <div class="row">
               <div class="container-fluid">
-                <p>Estas en el tab de requerimientos</p>
+                <div class="col-sm-12">
+                  <table class="compact display" id="tablaReq" cellspacing="0" width="100%">
+                    <caption>Requerimientos <span id="diaReq"></span></caption>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Folio</th>
+                        <th>Número de parte</th>
+                        <th><abbr title="Requerimiento">Req</abbr></th>
+                        <th>Parcial</th>
+                        <th><abbr title="Piezas a producir">PaP</abbr></th>
+                        <th>Producido</th>
+                        <th>Balance</th>
+                        <th>Porcentaje</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -476,7 +497,7 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th><abbr title="Id Captura">TM</abbr>idc</th>
+                    <th><abbr title="Id Captura">idc</abbr></th>
                     <th>fecha</th>
                     <th><abbr title="Número de empleado"># empl</abbr></th>
                     <th><abbr title="Hora Inicio">HI</abbr></th>

@@ -41,6 +41,7 @@
   var elimNumEmp=$('.elimNumEmp');
   var navTabsuLTabCaptura=$('uLTabCaptura>li>a');
   var modDetCap=$('#modDetCap');
+  var tablaReq=$('#tablaReq');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -76,6 +77,13 @@
   var numEmpleadoL="";
   var liNumEmpleado;
   var dataList;
+  //variables requerimientos Numero de orden
+  var cantR="";
+  var parcR="";
+  var paPR="";
+  var proR="";
+  var balR="";
+  var parReqNumOrdR="";
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -94,19 +102,26 @@
     }
   })
   //Evento que asocia a la tab cuando carga por completo el
-  navPill.on('shown.bs.tab',function() {
+  navPill.on('show.bs.tab',function() {
     var nombreTab=$(this).text();
     switch (nombreTab) {
       case "CAPTURA":
       //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
-      console.log(hoy);
+      // console.log(hoy);
       $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
-        break;
+      break;
       case "NÚMERO DE ORDEN":
         inpNumParte.focus();
-        break;
+      break;
       case "ASISTENCIA":
       $("#txtAreCom").focus();
+      break;
+      case "REQUERIMIENTOS":
+        //vamos  a crear la tabla de requerimientos a partir de la información obtenida de la base de datos.
+        var fechaHoy=$('#hoy').val();
+        var reqNumOrden=true;
+        $.post('requerimientos.php',{pFechaHoy:fechaHoy,pReqNumOrden:reqNumOrden},reqNumOrdenPost);
+      break;
       default:
     }
   });
@@ -1211,7 +1226,67 @@
       }
     }
   }//fin de la función eficienciaColor
-  //funciones de las alertas de la capturas
+  function reqNumOrdenPost(data,status,callback) {
+    try {
+      var datos=$.parseJSON(data);
+      $('#tablaReq tbody').empty();
+      $('#tablaReq').DataTable().destroy();
+      $('#tablaReq tbody').html(datos.Datos);
+      $('#tablaReq').DataTable({
+        "language":{
+          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+      });
+      confTablaReq();
+    } catch (e) {
+        console.log(e);
+        console.log(data);
+    }
+    // console.log(datos);
+    // console.log(data);
+  }// fin de la función reqNumOrdenPost
+  function confTablaReq() {
+    $('.cantReq',tablaReq).each(function() {
+      cantR=$(this).html();
+      parseInt(cantR);
+      parcR=$(this).siblings('.parReq').html();
+      paPR=cantR-parcR;
+      parseInt(paPR);
+      proR=$(this).siblings('.cantReaReq').html();
+      parseInt(proR);
+      balR=paPR-proR;
+      parseInt(balR);
+      // $(this).html(parseInt(cantR).toLocaleString('en-IN'));
+      // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
+      // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
+      $(this).html(cantR);
+      $(this).siblings('.paPReq').html(paPR);
+      $(this).siblings('.balReq').html(balR);
+      console.log($(this).siblings('.porReq').children('.progress'));
+      var porcentaje=((parcR+proR)/paPR)*100;
+      $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
+      $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"% Completado")
+    })
+  }
+  tablaReq.on('dblclick','.parReq',calcularBalance);
+  function calcularBalance(e) {
+    $(this).prop('contenteditable','true').blur(function() {
+      console.log(window.localStorage.getItem(parReqNumOrdR));
+      parReqNumOrdR=$(this).siblings('.numOrdReq').html();
+      $(this).prop('contenteditable','false');
+      cantR=$(this).siblings('.cantReq').html();
+      parcR=$(this).html();
+      paPR=parseInt(cantR)-parseInt(parcR);
+      proR=$(this).siblings('.cantReaReq').html();
+      balR=parseInt(paPR)-parseInt(proR);
+      $(this).html(parcR);
+      $(this).siblings('.paPReq').html(paPR);
+      $(this).siblings('.balReq').html(balR);
+      // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
+      // $(this).html(parseInt(parcR).toLocaleString('en-IN'));
+      // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
+    });
+  }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
 });//fin del la función del ready

@@ -64,9 +64,9 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Número de orden</th>
+            <th>Folio</th>
             <th>Número de parte</th>
-            <th>Cantidad</th>
+            <th><abbr title='Requerimiento'>REQ</abbr></th>
             <th>Fecha_Requerimiento</th>
             <th>Fecha_Hora_Generada</th>
           </tr>
