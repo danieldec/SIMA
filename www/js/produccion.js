@@ -84,6 +84,7 @@
   var proR="";
   var balR="";
   var parReqNumOrdR="";
+  var ig=0;
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -1232,12 +1233,33 @@
       $('#tablaReq tbody').empty();
       $('#tablaReq').DataTable().destroy();
       $('#tablaReq tbody').html(datos.Datos);
+      $('.cantReq',tablaReq).each(function() {
+        cantR=$(this).html();
+        parseInt(cantR);
+        parcR=$(this).siblings('.parReq').html();
+        paPR=cantR-parcR;
+        parseInt(paPR);
+        proR=$(this).siblings('.cantReaReq').html();
+        parseInt(proR);
+        balR=paPR-proR;
+        parseInt(balR);
+        // $(this).html(parseInt(cantR).toLocaleString('en-IN'));
+        // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
+        // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
+        $(this).text(cantR);
+        $(this).siblings('.paPReq').text(paPR);
+        $(this).siblings('.balReq').text(balR);
+        console.log($(this).siblings('.porReq').children('.progress'));
+        var porcentaje=((parcR+proR)/paPR)*100;
+        $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
+        $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+      });
       $('#tablaReq').DataTable({
         "language":{
           "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
       });
-      confTablaReq();
+      // confTablaReq();
     } catch (e) {
         console.log(e);
         console.log(data);
@@ -1259,14 +1281,14 @@
       // $(this).html(parseInt(cantR).toLocaleString('en-IN'));
       // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
       // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
-      $(this).html(cantR);
-      $(this).siblings('.paPReq').html(paPR);
-      $(this).siblings('.balReq').html(balR);
+      $(this).text(cantR);
+      $(this).siblings('.paPReq').text(paPR);
+      $(this).siblings('.balReq').text(balR);
       console.log($(this).siblings('.porReq').children('.progress'));
       var porcentaje=((parcR+proR)/paPR)*100;
       $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
-      $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"% Completado")
-    })
+      $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+    });
   }
   tablaReq.on('dblclick','.parReq',calcularBalance);
   function calcularBalance(e) {
