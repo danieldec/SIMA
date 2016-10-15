@@ -269,9 +269,6 @@
             $arreglo['Datos']="Captura duplicada";
             $arreglo['DatosExtra']=$r;
           }
-          if (strtotime($r->hora_inicio)!=strtotime($horaInicioC)) {
-            # code...
-          }
         }//fin del for each
         //verificamos si la última captura realizada es igual a la captura que se esta realizando
         if ($arreglo['Validacion']=="Error") {

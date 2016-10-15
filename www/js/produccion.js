@@ -112,7 +112,7 @@
       $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
       break;
       case "NÚMERO DE ORDEN":
-        inpNumParte.focus();
+        inpNumParte.focus().select();
       break;
       case "ASISTENCIA":
       $("#txtAreCom").focus();
@@ -821,6 +821,7 @@
     $('input[name=tm]').removeAttr('checked');
     $('#cantidadC').val('0');
     var fechaServidor=$('#hoy').val();
+    capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
     tmC.val('0');
     $('#tm1').prop('checked','checked');
     $('#eficienciaC').val('').css('background-color','#eee');
@@ -1086,6 +1087,8 @@
       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p><h4 class="text-center">'+datosJson.Validacion+": "+datosJson.Datos+'</h3></p>').css({'margin-top':'10px','font-size':'15px'}).append("<p class='text-center'>idCaptura: "+datosJson.DatosExtra.idcaptura+" Fecha: "+datosJson.DatosExtra.fecha+" Eficiencia: "+datosJson.DatosExtra.eficiencia+" Hora Inicio: "+datosJson.DatosExtra.hora_inicio+" Hora Final: "+datosJson.DatosExtra.hora_final+" Detalle Lista Número de orden: "+datosJson.DatosExtra.iddetalle_Lista_NumOrdenCap+"</p>"));
       break;
       default:
+       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
+      break;
     }//fin del switch
     // $("#formCaptura").append($(divAlertMenCaptura).html(datosJson.Validacion+datosJson.Datos).show(200).hide(4000));
   }//fin de la función alertasCaptura
@@ -1213,7 +1216,7 @@
       // minTM="";
       // tmC.val(0);
       // capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
-      if (eficiencia>150) {
+      if (eficiencia>200) {
         window.alert("verificar el tiempo muerto o la cantidad, eficiencia no valida");
         $('#cantidadC').val("");
         $('input[name=tm]:checked').removeAttr('checked');
