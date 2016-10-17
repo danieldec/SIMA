@@ -254,11 +254,11 @@
             $arreglo['Datos']="Captura duplicada";
             $arreglo['DatosExtra']=$r;
           }
-          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)!=strtotime($horaFinalC)) {
-            $arreglo['Validacion']="Error";
-            $arreglo['Datos']="Captura no realizada, hora incompleta verificar captura ";
-            $arreglo['DatosExtra']=$r;
-          }
+          // if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)!=strtotime($horaFinalC)) {
+          //   $arreglo['Validacion']="Error";
+          //   $arreglo['Datos']="Captura no realizada, hora incompleta verificar captura ";
+          //   $arreglo['DatosExtra']=$r;
+          // }
           if (strtotime($r->hora_inicio)!=strtotime($horaInicioC)&&strtotime($r->hora_final)==strtotime($horaFinalC)) {
             $arreglo['Validacion']="Error";
             $arreglo['Datos']="Captura duplicada";

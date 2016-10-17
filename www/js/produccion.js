@@ -1253,7 +1253,8 @@
         $(this).siblings('.paPReq').text(paPR);
         $(this).siblings('.balReq').text(balR);
         console.log($(this).siblings('.porReq').children('.progress'));
-        var porcentaje=((parcR+proR)/paPR)*100;
+        var porcentaje=((parseInt(parcR)+parseInt(proR))/cantR)*100;
+        console.log(porcentaje);
         $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
         $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
       });
@@ -1262,7 +1263,6 @@
           "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
       });
-      // confTablaReq();
     } catch (e) {
         console.log(e);
         console.log(data);
@@ -1270,47 +1270,43 @@
     // console.log(datos);
     // console.log(data);
   }// fin de la función reqNumOrdenPost
-  function confTablaReq() {
-    $('.cantReq',tablaReq).each(function() {
-      cantR=$(this).html();
-      parseInt(cantR);
-      parcR=$(this).siblings('.parReq').html();
-      paPR=cantR-parcR;
-      parseInt(paPR);
-      proR=$(this).siblings('.cantReaReq').html();
-      parseInt(proR);
-      balR=paPR-proR;
-      parseInt(balR);
-      // $(this).html(parseInt(cantR).toLocaleString('en-IN'));
-      // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
-      // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
-      $(this).text(cantR);
-      $(this).siblings('.paPReq').text(paPR);
-      $(this).siblings('.balReq').text(balR);
-      console.log($(this).siblings('.porReq').children('.progress'));
-      var porcentaje=((parcR+proR)/paPR)*100;
-      $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
-      $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
-    });
-  }
   tablaReq.on('dblclick','.parReq',calcularBalance);
   function calcularBalance(e) {
     $(this).prop('contenteditable','true').blur(function() {
-      console.log(window.localStorage.getItem(parReqNumOrdR));
+      // console.log(window.localStorage.getItem(parReqNumOrdR));
       parReqNumOrdR=$(this).siblings('.numOrdReq').html();
       $(this).prop('contenteditable','false');
       cantR=$(this).siblings('.cantReq').html();
       parcR=$(this).html();
+      console.log(parcR);
       paPR=parseInt(cantR)-parseInt(parcR);
       proR=$(this).siblings('.cantReaReq').html();
       balR=parseInt(paPR)-parseInt(proR);
       $(this).html(parcR);
       $(this).siblings('.paPReq').html(paPR);
       $(this).siblings('.balReq').html(balR);
+      console.log("cantidad req"+ cantR+"parcial"+parcR+"producido"+proR);
+      var porcentaje=((parseInt(parcR)+parseInt(proR))/cantR)*100;
+      console.log(parcR+proR);
+      $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
+      $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+      console.log(cantR);
+      $.post('requerimientos.php',{pParReqNumOrdR:parReqNumOrdR,pParcR:parcR},reqParNumOrd);
       // $(this).siblings('.paPReq').html(paPR.toLocaleString('en-IN'));
       // $(this).html(parseInt(parcR).toLocaleString('en-IN'));
       // $(this).siblings('.balReq').html(balR.toLocaleString('en-IN'));
     });
+  }
+  function reqParNumOrd(data,status) {
+    try {
+      datos=$.parseJSON(data);
+      if (datos.Validacion=="Error") {
+        window.alert(datos.Datos);
+      }
+    } catch (e) {
+      console.log(e);
+      console.log(data);
+    }
   }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);

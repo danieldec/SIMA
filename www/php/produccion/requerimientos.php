@@ -14,6 +14,22 @@
       $arreglo=tBodyReq($conexion,$fechas,$arreglo);
       echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
     }
+  }//fin del if pFechaHoy u pReqNumOrden
+  if (isset($_POST['pParReqNumOrdR'])&&isset($_POST['pParcR'])) {
+    $cantidadR=trim($_POST['pParcR']);
+    $numOrden=$_POST['pParReqNumOrdR'];
+    $arreglo = array('Validacion' =>'','Datos'=>'');
+    $consulta="INSERT INTO requerimientos (num_orden,cantidad) VALUES('$numOrden','$cantidadR') ON DUPLICATE KEY UPDATE cantidad='$cantidadR'";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      $arreglo['Validacion']='Error';
+      $arreglo['Datos']="Error($conexion->errno)".$conexion->error;
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+      exit();
+    }
+    $arreglo['Validacion']='Exito';
+    $arreglo['Datos']="Datos Insertados Exitosamente";
+    echo json_encode($arreglo);
   }
   function errorConsultaJSON($resultado,$conexion,$arreglo)
   {
@@ -44,7 +60,7 @@
       $tbody=$tbody."<td class='numOrdReq'>".$fila->idnum_orden."</td>";
       $tbody=$tbody."<td class='numParReq'>".$fila->num_parte."</td>";
       $tbody=$tbody."<td class='cantReq'>".$fila->cantidad."</td>";
-      $tbody=$tbody."<td class='parReq'>"."0"."</td>";
+      $tbody=$tbody."<td class='parReq'>".parcialNumOrden($conexion,$fila->idnum_orden)."</td>";
       $tbody=$tbody."<td class='paPReq'>"."0"."</td>";
       $tbody=$tbody."<td class='cantReaReq'>".$fila->cantidad_realizada."</td>";
       $tbody=$tbody."<td class='balReq'>"."0"."</td>";
@@ -53,6 +69,26 @@
     }
     $arreglo['Datos']=$tbody;
     return $arreglo;
+  }//fin funcion tBodyReq
+  function parcialNumOrden($conexion,$numOrden)
+  {
+    $consulta="SELECT * FROM requerimientos r WHERE r.num_orden='$numOrden';";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      echo "Error($conexion->errno)".$conexion->error;
+      exit();
+    }
+    if ($resultado->num_rows<=0) {
+      $consulta="INSERT INTO requerimientos (num_orden,cantidad) VALUES('$numOrden','0')";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        echo "Error($conexion->errno)".$conexion->error;
+        exit();
+      }
+      return 0;
+    }
+    $fila=$resultado->fetch_object();
+    return $fila->cantidad;
   }
 
 ?>
