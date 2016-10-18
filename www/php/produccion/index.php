@@ -427,8 +427,8 @@
               <label for="cantidadC">Cantidad</label>
               <input type="number" id="cantidadC" name="cantidadC" min="0" value="0" class="form-control" required>
               </div>
-              <label for="horaInicioC">Hora Inicio<input type="time" id='horaInicioC' name="horaInicioC" value="" class="form-control" required></label>
-              <label for="horaFinalC">Hora Final<input type="time" id="horaFinalC" name="horaFinalC" value="" class="form-control" required></label>
+              <label for="horaInicioC">Hora Inicio<input type="text" id='horaInicioC' name="horaInicioC"  autocomplete="off" class="form-control" required></label>
+              <label for="horaFinalC"></label>Hora Final<input type="text" id="horaFinalC" name="horaFinalC" autocomplete="off" class="form-control" required>
               <div class="form-group">TTM
                 <label>
                   <input type="radio" id='tm1'name="tm" value="no" required checked="checked"/>No
@@ -545,6 +545,9 @@
   <!--importar los scripts de la ruta www/js -->
   <?php include '../scriptsPiePag.php'; ?>
   <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
+  <script src="../../js/jquery.timeAutocomplete.js" type="text/javascript"></script>
+  <script src="../../js/formatters/24hr.js" type="text/javascript"></script>
+  <script src="../../js/formatters/ampm.js" type="text/javascript"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
 </body>
 </html>

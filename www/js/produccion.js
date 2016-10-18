@@ -42,6 +42,8 @@
   var navTabsuLTabCaptura=$('uLTabCaptura>li>a');
   var modDetCap=$('#modDetCap');
   var tablaReq=$('#tablaReq');
+  var horaInicioC=$('#horaInicioC');
+  var horaFinalC=$('#horaFinalC');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -85,6 +87,10 @@
   var balR="";
   var parReqNumOrdR="";
   var ig=0;
+  $('#pH').timeAutocomplete();
+  //inicializamos el datepick del plug-in
+  horaInicioC.timeAutocomplete();
+  horaFinalC.timeAutocomplete();
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -838,44 +844,44 @@
       minutos="0"+minutos;
       segundos="0"+segundos;
     }
-    horaComplet=hora+":"+minutos+":"+segundos;
-    console.log(horaComplet);
-    if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
-      $('#horaInicioC').val('07:00:00');
-      $('#horaFinalC').val('08:00:00');
-    }
-    if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
-      $('#horaInicioC').val('08:00:00');
-      $('#horaFinalC').val('09:00:00');
-    }
-    if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
-      $('#horaInicioC').val('09:00:00');
-      $('#horaFinalC').val('10:00:00');
-    }
-    if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
-      $('#horaInicioC').val('10:00:00');
-      $('#horaFinalC').val('11:00:00');
-    }
-    if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
-      $('#horaInicioC').val('11:00:00');
-      $('#horaFinalC').val('12:00:00');
-    }
-    if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
-      $('#horaInicioC').val('12:00:00');
-      $('#horaFinalC').val('13:00:00');
-    }
-    if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
-      $('#horaInicioC').val('13:00:00');
-      $('#horaFinalC').val('14:00:00');
-    }
-    if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
-      $('#horaInicioC').val('14:00:00');
-      $('#horaFinalC').val('15:00:00');
-    }
-    if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
-      $('#horaInicioC').val('15:00:00');
-      $('#horaFinalC').val('16:00:00');
-    }
+    // horaComplet=hora+":"+minutos+":"+segundos;
+    // console.log(horaComplet);
+    // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
+    //   $('#horaInicioC').val('07:00:00');
+    //   $('#horaFinalC').val('08:00:00');
+    // }
+    // if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
+    //   $('#horaInicioC').val('08:00:00');
+    //   $('#horaFinalC').val('09:00:00');
+    // }
+    // if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
+    //   $('#horaInicioC').val('09:00:00');
+    //   $('#horaFinalC').val('10:00:00');
+    // }
+    // if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
+    //   $('#horaInicioC').val('10:00:00');
+    //   $('#horaFinalC').val('11:00:00');
+    // }
+    // if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
+    //   $('#horaInicioC').val('11:00:00');
+    //   $('#horaFinalC').val('12:00:00');
+    // }
+    // if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
+    //   $('#horaInicioC').val('12:00:00');
+    //   $('#horaFinalC').val('13:00:00');
+    // }
+    // if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
+    //   $('#horaInicioC').val('13:00:00');
+    //   $('#horaFinalC').val('14:00:00');
+    // }
+    // if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
+    //   $('#horaInicioC').val('14:00:00');
+    //   $('#horaFinalC').val('15:00:00');
+    // }
+    // if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
+    //   $('#horaInicioC').val('15:00:00');
+    //   $('#horaFinalC').val('16:00:00');
+    // }
     var idDetListaNumOrden=$('#'+numEmpleadoC).val();
   }
   //se dispara este evento del modal al momento de cerrar la ventana
@@ -1023,8 +1029,9 @@
     e.preventDefault();
     var cantValid=$('#cantidadC').val();
     var fechaValid=$('#fechaC').val();
-    var hIValid=$('#horaInicioC').val();
-    var hFValid=$('#horaFinalC').val();
+    var hIValid=$('#horaInicioC').data('timeAutocomplete').getTime();
+    var hFValid=$('#horaFinalC').data('timeAutocomplete').getTime();
+    console.log(hIValid+" "+hFValid+" "+hFCaptura+" "+hICaptura);
     if (hFCaptura!=hFValid|| hICaptura!=hIValid||cantValid!=cantidad||fechaValid!=fechaCaptura) {
       window.alert("Vuelve a calcular eficiencia");
       cantidadC.focus().select();
@@ -1124,16 +1131,17 @@
     minTM=$('#tmC').val();
     cantidad=$('#cantidadC').val();
     fechaCaptura=fechaC.val();
-    hICaptura=$('#horaInicioC').val();
-    hFCaptura=$('#horaFinalC').val();
+    hICaptura=$('#horaInicioC').data('timeAutocomplete').getTime();
+    hFCaptura=$('#horaFinalC').data('timeAutocomplete').getTime();
+    console.log(hICaptura+""+hFCaptura);
     horaInicio= new Date();
     horaFinal= new Date();
     hi=horaInicio;
     hf=horaFinal;
     inpHoraInicio=hICaptura.split(':');
     inpHoraFinal=hFCaptura.split(':');
-    horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1],00);
-    horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1],00);
+    horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1],inpHoraInicio[2]);
+    horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1],inpHoraFinal[2]);
     if (horaInicio.valueOf()==horaFinal.valueOf()) {
       window.alert("La hora inicio no puede ser igual a la hora final");
       capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');

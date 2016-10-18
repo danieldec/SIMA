@@ -237,6 +237,10 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #tablaDetCap{
   table-layout: auto;
 }
+ul.ui-front{
+  position: absolute;
+  z-index: 1050;
+}
 .divFormTTM>input.inpTiempoMuerto{
   width: 35%;
 }
