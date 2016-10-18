@@ -388,7 +388,7 @@
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
   }
 
-/*----------------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-----------------------*/
+/*---------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-------------------*/
 
   function errorConsultaJSON($resultado,$conexion,$arreglo)
   {
@@ -543,7 +543,11 @@
       $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
       $datos=$datos."<td>".$fila['Nombre']."</td>";
       for ($i=0; $i <22 ; $i++) {
-        $datos=$datos."<td></td>";
+        if ($i>=0&&$i<11) {
+          $datos=$datos."<td></td>";
+        }else{
+          $datos=$datos."<td hidden='hidden'></td>";
+        }
       }
       $datos=$datos."<td class='detAsisCap'>".$fila['iddetalle_asistencia']."</td></tr>";
     }

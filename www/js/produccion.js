@@ -556,7 +556,7 @@
     //aquí comprobamos si el input donde vamos a ingresar el número de empleado es diferente de una cadena vacia y vamos a insertar el registro a la base de datos en la tabla
     if (!(valInpNumEmp.val()==="")) {
       $('[data-toggle="popover"]').popover('destroy');
-      $.post('captura.php',{pHoy:fechaCompleta,pNumOrd:valNumOrden,pNumEmp:valInpNumEmp.val()},insertDetListNumOrd);
+      $.post('captura.php',{pHoy:fechaCompleta,pNumOrd:valNumOrden,pNumEmp:valInpNumEmp.val().toUpperCase()},insertDetListNumOrd);
     }else{
       if (!(btnPresionado.attr('data-trigger')==="focus")) {
         btnPresionado.attr({'data-trigger':"focus", 'title':"Alerta",'data-content':"Ingresa un # Empleado"})
@@ -567,7 +567,7 @@
     }
     function insertDetListNumOrd(data,status) {
       if (data=="Exito") {
-        var x=$('<li><span>'+valInpNumEmp.val()+'</span><span><a class="elimNumEmp" href="#">Eliminar</a></span></li>');
+        var x=$('<li><span>'+valInpNumEmp.val().toUpperCase()+'</span><span><a class="elimNumEmp" href="#">Eliminar</a></span></li>');
         // console.log($(this));
         btnPresionado.prev().prev().prev().append(x);
         optionNumEmp.each(function(index, value) {
@@ -771,7 +771,7 @@
   //evento Boton del modal, Captura por número de orden.
   modCapNumOrd.on('click','#capturaC',modalCapturaC);
   function modalCapturaC() {
-    idEmpleado=$('.inpNumEmpl','#modCapNumOrd').val();
+    idEmpleado=$('.inpNumEmpl','#modCapNumOrd').val().toUpperCase();
     idDetAsis=$('#'+idEmpleado).val();
     // console.log(idEmpleado+" "+idDetAsis);
     numEmpleadoC=$('.inpNumEmpl').val();

@@ -324,17 +324,17 @@
                           <th>15-16</th>
                           <th>16-17</th>
                           <th>18-19</th>
-                          <th>20-21</th>
-                          <th>21-22</th>
-                          <th>22-23</th>
-                          <th>23-00</th>
-                          <th>00-01</th>
-                          <th>01-02</th>
-                          <th>02-03</th>
-                          <th>03-04</th>
-                          <th>04-05</th>
-                          <th>05-06</th>
-                          <th>06-07</th>
+                          <th hidden="hidden">20-21</th>
+                          <th hidden="hidden">21-22</th>
+                          <th hidden="hidden">22-23</th>
+                          <th hidden="hidden">23-00</th>
+                          <th hidden="hidden">00-01</th>
+                          <th hidden="hidden">01-02</th>
+                          <th hidden="hidden">02-03</th>
+                          <th hidden="hidden">03-04</th>
+                          <th hidden="hidden">04-05</th>
+                          <th hidden="hidden">05-06</th>
+                          <th hidden="hidden">06-07</th>
                         </tr>
                       </thead>
                       <tbody id="tBodyCapNumEmp">
