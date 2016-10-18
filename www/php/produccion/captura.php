@@ -208,9 +208,9 @@
       //obtenemos los datos del formulario serializado que enviamos desde produccion.js
       parse_str($_POST['pDatosForm'],$datosForm);
       $fechaC=$datosForm['fechaC'];
-      $cantidadC=$datosForm['cantidadC'];
       $horaInicioC=$datosForm['horaInicioC'];
       $horaFinalC=$datosForm['horaFinalC'];
+      $cantidadC=$datosForm['cantidadC'];
       $tmC=$datosForm['tmC'];
       $tm=$datosForm['tm'];
       $eficienciaC=$datosForm['eficienciaC'];
@@ -268,6 +268,13 @@
             $arreglo['Validacion']="Error";
             $arreglo['Datos']="Captura duplicada";
             $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)) {
+            if (strtotime($r->hora_final)!=strtotime($horaFinalC)||strtotime($r->hora_final)==strtotime($horaFinalC)) {
+              $arreglo['Validacion']="Error";
+              $arreglo['Datos']="Captura duplicada";
+              $arreglo['DatosExtra']=$r;
+            }
           }
         }//fin del for each
         //verificamos si la última captura realizada es igual a la captura que se esta realizando
@@ -342,7 +349,7 @@
       }//aquí acaba el if de arrelgo tiempo muerto
 
     }//aquí acaba el if de la captura
-    //
+    //Aquí se contruye el tbody de la tabla detalle captura
     if (isset($_POST['pNumOrdenDC'])&&isset($_POST['pfechaDC'])) {
       $numOrdenDC=trim($_POST['pNumOrdenDC']);
       $fechaDC=trim($_POST['pfechaDC']);
@@ -367,9 +374,9 @@
       while ($fila=$resultado->fetch_object()) {
         $tbody=$tbody."<tr>";
         $tbody=$tbody."<td>".$contador."</td>";
-        $tbody=$tbody."<td>".$fila->idcaptura."</td>";
+        $tbody=$tbody."<td class='idCap'>".$fila->idcaptura."</td>";
         $tbody=$tbody."<td>".$fila->fecha."</td>";
-        $tbody=$tbody."<td>".$fila->empleados_idempleados."</td>";
+        $tbody=$tbody."<td class='numEmpleado'>".$fila->empleados_idempleados."</td>";
         $tbody=$tbody."<td>".$fila->hora_inicio."</td>";
         $tbody=$tbody."<td>".$fila->hora_final."</td>";
         $tbody=$tbody."<td>".$fila->tiempo_muerto."</td>";
@@ -377,11 +384,59 @@
         $tbody=$tbody."<td>".$fila->cantidad."</td>";
         $tbody=$tbody."<td>".$fila->horaCaptura."</td>";
         $tbody=$tbody."<td>".$fila->iddetalle_asistencia."</td>";
+        $tbody=$tbody."<td class='text-center'>".'<button type="button" class="btn btn-default editCap" aria-label="Left Align"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>'.'<button type="button" class="btn btn-default elimCap" aria-label="Left Align"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'."</td>";
         $tbody=$tbody."</tr>";
         $contador++;
       }
       $arreglo['Datos']=$tbody;
       echo json_encode($arreglo);
+    }
+    //aquí eliminamos la captura de un operador desde nuestro modal detalle captura
+    if (isset($_POST['pIdCaptura'])&&isset($_POST['pNumOrdenEC'])&&isset($_POST['pFechaEC'])) {
+      $idCaptura=$_POST['pIdCaptura'];
+      $pNumOrdenEC=$_POST['pNumOrdenEC'];
+      $pFechaEC=$_POST['pFechaEC'];
+      $arreglo= array('Validacion'=>'','Datos'=>'' );
+      $consulta="DELETE FROM detalleTiempoM where idcaptura='$idCaptura';";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="errordb";
+        $arreglo['Datos']="Error($conexion->errno) ".$conexion->error;
+        exit();
+      }
+      $consulta="DELETE FROM captura WHERE idcaptura ='$idCaptura';";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="errordb";
+        $arreglo['Datos']="Error($conexion->errno) ".$conexion->error;
+        exit();
+      }
+      if ($conexion->affected_rows>0) {
+        $consulta="SELECT c.idcaptura,c.fecha,da.empleados_idempleados,c.hora_inicio,c.hora_final,c.tiempo_muerto,c.eficiencia,c.cantidad,c.horaCaptura, da.iddetalle_asistencia FROM captura c, detalle_Lista_NumOrden dln, detalle_asistencia da WHERE c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.idnum_ordenDetLis='$pNumOrdenEC') and dln.iddetalle_Lista_NumOrden= c.iddetalle_Lista_NumOrdenCap and c.fecha='$pFechaEC' and da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList;";
+        $resultado=$conexion->query($consulta);
+        $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+        if ($arreglo['Validacion']=="Error") {
+          $arreglo['Validacion']="errordb";
+          echo json_encode($arreglo);
+          exit();
+        }
+        $arreglo['Validacion']="exito";
+        // if ($resultado->num_rows==0) {
+        //   $arreglo['Validacion']="error";
+        //   $arreglo['Datos']="No se encontraron capturas";
+        //   echo json_encode($arreglo);
+        //   exit();
+        // }
+        $contador=1;
+        $tbody= tbodyDetCaptura($resultado);
+        $arreglo['Datos']=$tbody;
+        $arreglo['mensaje']="captura eliminada";
+        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+      }else{
+        $arreglo['Validacion']="error";
+        $arreglo['Datos']="Captura no eliminada";
+        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+      }
     }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
@@ -560,6 +615,29 @@
     $resultado=$conexion->query($consulta);
     $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
     return $arreglo;
+  }
+  function tbodyDetCaptura($resultado)
+  {
+    $tbody="";
+    $contador=1;
+    while ($fila=$resultado->fetch_object()) {
+      $tbody=$tbody."<tr>";
+      $tbody=$tbody."<td>".$contador."</td>";
+      $tbody=$tbody."<td class='idCap'>".$fila->idcaptura."</td>";
+      $tbody=$tbody."<td>".$fila->fecha."</td>";
+      $tbody=$tbody."<td class='numEmpleado'>".$fila->empleados_idempleados."</td>";
+      $tbody=$tbody."<td>".$fila->hora_inicio."</td>";
+      $tbody=$tbody."<td>".$fila->hora_final."</td>";
+      $tbody=$tbody."<td>".$fila->tiempo_muerto."</td>";
+      $tbody=$tbody."<td>".$fila->eficiencia."</td>";
+      $tbody=$tbody."<td>".$fila->cantidad."</td>";
+      $tbody=$tbody."<td>".$fila->horaCaptura."</td>";
+      $tbody=$tbody."<td>".$fila->iddetalle_asistencia."</td>";
+      $tbody=$tbody."<td class='text-center'>".'<button type="button" class="btn btn-default editCap" aria-label="Left Align"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>'.'<button type="button" class="btn btn-default elimCap" aria-label="Left Align"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'."</td>";
+      $tbody=$tbody."</tr>";
+      $contador++;
+    }
+    return $tbody;
   }
   function capturaTM()
   {

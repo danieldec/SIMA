@@ -74,6 +74,7 @@
   var numOMODCAP=$('#spanNOMC').html();
   var numPMODCAP=$('#spanNPMC').html();
   var cantModCaptura="";
+  var numOrdenDC;
   //variables enviadas para eliminar un empleado de la lista de número de orden, y guardamos el elemento de donde surgio el evento de elminacion;
   var numOrdenL="";
   var numEmpleadoL="";
@@ -87,7 +88,6 @@
   var balR="";
   var parReqNumOrdR="";
   var ig=0;
-  $('#pH').timeAutocomplete();
   //inicializamos el datepick del plug-in
   horaInicioC.timeAutocomplete();
   horaFinalC.timeAutocomplete();
@@ -673,7 +673,7 @@
   //vamos a mostrar las capturas de un número de orden con un evento click y en un modal.
   $('#tablaCaptura').on('click','.detalleNumOrden',clickDetalleCap);
   function clickDetalleCap(e) {
-    var numOrdenDC=$(this).parent().siblings(".tdCapNumOrd").html();
+    numOrdenDC=$(this).parent().siblings(".tdCapNumOrd").html();
     var numParteDC=$(this).parent().siblings(".tdCapNumPart").html();
     // console.log(numOrdenDC+" "+numParteDC);
     var fechaDC=$('#hoy').val();
@@ -682,7 +682,7 @@
     $('#spanNO','#modDetCap').html(numOrdenDC);
     $('#spanNP','#modDetCap').html(numParteDC);
 
-    $.post('captura.php',{pNumOrdenDC:numOrdenDC,pfechaDC:fechaDC},postDetCaptura)
+    $.post('captura.php',{pNumOrdenDC:numOrdenDC,pfechaDC:fechaDC},postDetCaptura);
   }
   function postDetCaptura(data,status) {
     try {
@@ -696,7 +696,7 @@
         }
       });
       $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
-      console.log(data);
+      // console.log(data);
     } catch (e) {
       console.log(e);
       console.log(data);
@@ -812,6 +812,8 @@
         $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
       }
     }
+    horaInicioC.timeAutocomplete();
+    horaFinalC.timeAutocomplete();
     $('#spanNumEmp','#modalCaptura').empty();
     $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
     $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
@@ -1031,7 +1033,6 @@
     var fechaValid=$('#fechaC').val();
     var hIValid=$('#horaInicioC').data('timeAutocomplete').getTime();
     var hFValid=$('#horaFinalC').data('timeAutocomplete').getTime();
-    console.log(hIValid+" "+hFValid+" "+hFCaptura+" "+hICaptura);
     if (hFCaptura!=hFValid|| hICaptura!=hIValid||cantValid!=cantidad||fechaValid!=fechaCaptura) {
       window.alert("Vuelve a calcular eficiencia");
       cantidadC.focus().select();
@@ -1042,6 +1043,7 @@
     var horaI,HoraF;
     horaI=$(e.target).find('#horaInicioC');
     horaF=$(e.target).find('#horaFinalC');
+    console.log(horaF.val()+"hF"+horaI.val());
     if (horaI.val().length==5) {
       horaI.val($(e.target).find('#horaInicioC').val()+":00");
     }else if (horaF.val().length==5) {
@@ -1051,7 +1053,7 @@
     //cuando no haya tiempo muerto. no se envia el arregloTiempoMuerto
     if ($('#tm1').prop('checked')) {
       console.log(datosForm);
-      $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,},postFormCaptura);
+      $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm},postFormCaptura);
       return false;
     }
     console.log(datosForm);
@@ -1318,6 +1320,57 @@
   }
   //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+  //eliminar captura
+  $('#modDetCap').on('click','.elimCap',function() {
+    var numOrdenEC=numOrdenDC;
+    var empleado=$(this).parent().siblings('.numEmpleado').text();
+    var fechaEC=$('#hoy').val();
+    var idCaptura=$(this).parent().siblings('.idCap').text();
+    var respuesta=window.confirm("Deseas eliminar esta captura "+ idCaptura +"número de empleado"+ empleado);
+    if (respuesta==true) {
+      console.log("OKEY");
+      $.post('captura.php',{pIdCaptura:idCaptura,pNumOrdenEC:numOrdenEC,pFechaEC:fechaEC},respuestaElimCaptura)
+    }else{
+      console.log("NOP");
+      return false;
+    }
+  });
+  function respuestaElimCaptura(data,status) {
+    try {
+      /*posibles valores de data.Validacion
+      Validacion[errordb,error,exito];
+      si la validacion es error el mensaje del error esta en la variable datos.Datos
+      si la validacion es errodb el mensaje del error esta en la variable datos.Datos y si el mensaje es exito las variables Datos contiene la tabla actualizada y la variable mensaje, contiene el mensaje de exito;*/
+      var datos=$.parseJSON(data);
+      switch (datos.Validacion) {
+        case "error":
+          window.alert(datos.Datos);
+          break;
+        case "errordb":
+          window.alert(datos.Datos);
+          break;
+        case "exito":
+          $('#modDetCap tbody').empty();
+          $('#tablaDetCap').DataTable().destroy();
+          $('#modDetCap tbody').html(datos.Datos);
+          $('#tablaDetCap').DataTable({
+            "language":{
+              "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+            }
+          });
+          $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
+          window.alert(datos.mensaje);
+          break;
+        default:
+        window.alert("OQUELA QUIEN SABE QUE PASO");
+      }
+    } catch (e) {
+      console.log(data);
+      console.log(e);
+    } finally {
+
+    }
+  }
 });//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte

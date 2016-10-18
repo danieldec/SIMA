@@ -96,7 +96,7 @@
                     <ul id="listaNumParte" class="list-unstyled">
                     </ul>
                   </div>
-                  <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpParcial" name="parcial" required type="number"/></div>
+                  <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpParcial" name="parcial" required type="number" disabled/></div>
                   <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpCantReq" name="cantReq" required type="number"/></div>
                   <div class="col-xs-2 text-center"><input class="form-control" name="fNumOrden" id="inpFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
                   <input type="text" name="numUsuario" id="inpNumUsuario" hidden="hidden"value="<?php echo $_SESSION['idusuario']; ?>">
@@ -484,41 +484,44 @@
       </div>
     </div><!--Fin modal Tiempo Muerto-->
     <!--Modal Tiempo Detalle Captura-->
-    <div class="modal fade" tab-index="-1" role="dialog" id="modDetCap">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" data-dismiss="modal" class="close">&times</button>
-            <h4>Detalle Captura Numero de orden: <span id="spanNO"></span> y numero de parte: <span id="spanNP"></span> </h4>
-          </div>
-          <div class="modal-body">
-            <div class="col-sm-12">
-              <table class="table table-bordered compact display" id="tablaDetCap">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th><abbr title="Id Captura">idc</abbr></th>
-                    <th>fecha</th>
-                    <th><abbr title="Número de empleado"># empl</abbr></th>
-                    <th><abbr title="Hora Inicio">HI</abbr></th>
-                    <th><abbr title="Hora Final">HF</abbr></th>
-                    <th><abbr title="Tiempo Muerto">TM</abbr></th>
-                    <th>Eficiencia</th>
-                    <th>cantidad</th>
-                    <th>H Captura</th>
-                    <th>idDetAsis</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
+    <div class="col-xs-12">
+      <div class="modal fade" tab-index="-1" role="dialog" id="modDetCap">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" data-dismiss="modal" class="close">&times</button>
+              <h4>Detalle Captura Numero de orden: <span id="spanNO"></span> y numero de parte: <span id="spanNP"></span> </h4>
+            </div>
+            <div class="modal-body">
+              <div class="col-sm-12">
+                <table class="table table-bordered compact display" id="tablaDetCap">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th><abbr title="Id Captura">idc</abbr></th>
+                      <th>fecha</th>
+                      <th><abbr title="Número de empleado"># empl</abbr></th>
+                      <th><abbr title="Hora Inicio">HI</abbr></th>
+                      <th><abbr title="Hora Final">HF</abbr></th>
+                      <th><abbr title="Tiempo Muerto">TM</abbr></th>
+                      <th>Eficiencia</th>
+                      <th>cantidad</th>
+                      <th>H Captura</th>
+                      <th>idDetAsis</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss='modal' id="btnCanTTM">Cerrar</button>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss='modal' id="btnCanTTM">Cerrar</button>
-          </div>
         </div>
-      </div>
-    </div><!--Fin modal Detalle captura-->
+      </div><!--Fin modal Detalle captura-->
+    </div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">
