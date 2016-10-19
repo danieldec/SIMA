@@ -214,108 +214,140 @@
       $tmC=$datosForm['tmC'];
       $tm=$datosForm['tm'];
       $eficienciaC=$datosForm['eficienciaC'];
-      //Aquí vamis a convertir las horas en formato string como el siguiente 2016-10-09 10:20:00
-      $horaI=date("Y-m-d H:i:s",strtotime($horaInicioC));
-      $horaF=date("Y-m-d H:i:s",strtotime($horaFinalC));
-      $fechaCero=$fechaC."00:00:00";
-      //con este for vamos a encontrar la hora que vamos a buscar en nuestra base de datos y la hora inicio le vamos a sumar 59 minutos
-      for ($i=0; $i < 23; $i++) {
-        $horaIR=date("Y-m-d H:i:s",strtotime("+".$i."hour",strtotime($fechaCero)));
-        $horaFR=date("Y-m-d H:i:s",strtotime("+".($i+1)."hour",strtotime($fechaCero)));
-        if ($horaI>=$horaIR&&$horaI<=$horaFR) {
-          $hIDB=date("H:i:s",strtotime($horaIR));
-          $hFDB=date("H:i:s",strtotime("+59 minutes",strtotime($horaIR)));
-        }
-      }
-      $consulta="SELECT * FROM captura c where c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in (SELECT da.iddetalle_asistencia from detalle_asistencia da where da.empleados_idempleados='$numEmpleado' and da.asistencia_fecha='$fechaC')) AND c.hora_inicio BETWEEN '$hIDB' AND '$hFDB' ORDER BY c.hora_final ASC";
+      //aquí buscamos si existe un captura con el id de iddetalle_Lista_NumOrden, para buscar si hay una captura con la misma hora de inicio.
+      $consulta="SELECT * FROM captura c where c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList in (SELECT da.iddetalle_asistencia from detalle_asistencia da where da.empleados_idempleados='$numEmpleado' and da.asistencia_fecha='$fechaC')) ORDER BY c.hora_final ASC";
       $resultado=$conexion->query($consulta);
       $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
       if ($arreglo['Validacion']=="Error") {
         $arreglo['Validacion']="ErrorDB";
-        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+        echo json_encode($arreglo);
         exit();
       }
-      if ($conexion->affected_rows==0) {
+      $arreglo['Validacion']="Exito";
+      $fila=$resultado->num_rows;
+      if ($fila==0) {
         $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
         if ($arreglo['Validacion']=="Error") {
           $arreglo['Validacion']="ErrorDB";
-          echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+          echo json_encode($arreglo);
           exit();
         }
         $arreglo['Validacion']="Exito";
-        $arreglo['Datos']="Captura Realizada";
-      }else{
-        $numReg=$resultado->num_rows;
-        $contador=1;
+        $arreglo['Datos']="Captura realizada";
+        echo json_encode($arreglo);
+      }//Aquí acaba el if de la fila = 0
+      //aquí si el resultado que nos arroja es mayor de 0, quiere decir que existe una captura con el iddetalle_Lista_NumOrden que mandamos en el formulario. y vamos a buscar los errores que pueden surgir.
+      elseif ($fila>0) {
+        $records=array();
         while ($fila=$resultado->fetch_object()) {
-          if ($numReg==$contador) {
-            if (strtotime($fila->hora_final)==strtotime($horaInicioC)) {
-              $hIdbA=$fila->hora_inicio;
-              $hFdbA=$fila->hora_final;
-              $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
-              if ($arreglo['Validacion']=="Error") {
-                $arreglo['Validacion']="ErrorDB";
-                echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-                exit();
-              }//fin del if
-              $arreglo['Validacion']="Exito";
-              $arreglo['Datos']="Captura Realizada";
-              echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-              exit();
-            }
-            if (strtotime($fila->hora_final)>strtotime($horaInicioC)||strtotime($fila->hora_final)<strtotime($horaInicioC)) {
-              if (strtotime($fila->hora_inicio)==strtotime($horaInicioC)&&strtotime($fila->hora_final)==strtotime($horaFinalC)) {
-                $arreglo['Validacion']="Error";
-                $arreglo['Datos']="Captura Duplicada";
-                $arreglo['DatosExtra']=$fila;
-                echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-                exit();
-              }
-              $arreglo['Validacion']="Error";
-              $arreglo['Datos']="Debe coincidir la hora final del último registro con la hora inicio de la captura";
-              $arreglo['DatosExtra']=$fila;
-              echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-              exit();
-            }
+          $records[]=$fila;
+        }
+        $resultado->free();
+        $index=0;
+        foreach ($records as $r) {
+          $index++;
+          if ($index==(count($records))) {
+            $ultimoRegistro=$r;
           }
-          if (strtotime($fila->hora_inicio)==strtotime($horaInicioC)&&strtotime($fila->hora_final)==strtotime($horaFinalC)) {
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)==strtotime($horaFinalC)) {
             $arreglo['Validacion']="Error";
-            $arreglo['Datos']="Captura Duplicada";
-            $arreglo['DatosExtra']=$fila;
-            echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-            exit();
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
           }
-          if ($horaInicioC!=$fila->hora_inicio&&$horaFinalC!=$fila->hora_final) {
-            if (abs(((strtotime($fila->hora_inicio)-strtotime($fila->hora_final))/60))==60) {
+          // if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)!=strtotime($horaFinalC)) {
+          //   $arreglo['Validacion']="Error";
+          //   $arreglo['Datos']="Captura no realizada, hora incompleta verificar captura ";
+          //   $arreglo['DatosExtra']=$r;
+          // }
+          if (strtotime($r->hora_inicio)!=strtotime($horaInicioC)&&strtotime($r->hora_final)==strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)&&strtotime($r->hora_final)>strtotime($horaFinalC)) {
+            $arreglo['Validacion']="Error";
+            $arreglo['Datos']="Captura duplicada";
+            $arreglo['DatosExtra']=$r;
+          }
+          if (strtotime($r->hora_inicio)==strtotime($horaInicioC)) {
+            if (strtotime($r->hora_final)!=strtotime($horaFinalC)||strtotime($r->hora_final)==strtotime($horaFinalC)) {
               $arreglo['Validacion']="Error";
               $arreglo['Datos']="Captura duplicada";
-              $arreglo['DatosExtra']=$fila;
-              echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-              exit();
+              $arreglo['DatosExtra']=$r;
             }
-            // if (abs(((strtotime($fila->hora_inicio)-strtotime($fila->hora_final)))/60)<60) {
-            //   $arreglo['Validacion']="Error";
-            //   $arreglo['Datos']="Debe coincidir la hora final del último registro con la hora inicio de la captura";
-            //   $arreglo['DatosExtra']=$fila;
-            //   echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-            //   exit();
-            // }
           }
-          $contador++;
-        }//fin del while
+        }//fin del for each
+        //verificamos si la última captura realizada es igual a la captura que se esta realizando
         if ($arreglo['Validacion']=="Error") {
-          echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+          echo json_encode($arreglo);
           exit();
         }
-      }//fin del else
-      // $horaILong=strtotime($horaI);
-      // $horaFLong=strtotime($horaF);
-      // $arreglo['Validacion']="pruebas";
-      // echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-      // exit();
-      // // $arreglo['DatosExtra']=$horaI."<->".$horaF."-----".$horaILong."<->".$horaFLong;
-      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-      exit();
+        if ($ultimoRegistro->hora_final==$horaInicioC) {
+          $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+          if ($arreglo['Validacion']=="Error") {
+            $arreglo['Validacion']="ErrorDB";
+            echo json_encode($arreglo);
+            exit();
+          }
+          $arreglo['Validacion']="Exito";
+          $arreglo['Datos']="Captura realizada";
+        }else{
+          $arreglo=captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC);
+          if ($arreglo['Validacion']=="Error") {
+            $arreglo['Validacion']="ErrorDB";
+            echo json_encode($arreglo);
+            exit();
+          }
+          $arreglo['Validacion']="Advertencia";
+          $arreglo['Datos']="Captura realizada, faltan capturas de este operador";
+        }
+        if ($tm=="no") {
+          echo json_encode($arreglo);
+        }
+      }//Acaba el elseif fila>0
+      if (isset($_POST['pArregloTiempoMuerto'])&&$tm=="si") {
+        $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$iddetalle_Lista_NumOrden' AND cast(c.eficiencia as decimal)=cast('$eficienciaC' as decimal) AND c.tiempo_muerto='$tmC' AND c.hora_inicio='$horaInicioC' AND c.hora_final='$horaFinalC' AND c.fecha='$fechaC'";
+        $resultado=$conexion->query($consulta);
+        if (!$resultado) {
+          $arreglo['Validacion']="ErrorDB";
+          $arreglo['Datos']=$conexion->errno."($conexion->error)";
+          echo json_encode($arreglo);
+          exit();
+        }
+        // $filaArreglo= array();
+        // while ($fila=$resultado->fetch_object()) {
+        // $filaArreglo[]=$fila;
+        // }
+        $numeroFila=$resultado->num_rows;
+        $fila=$resultado->fetch_object();
+        if ($numeroFila>0) {
+          $idCapturaTM=$fila->idcaptura;
+          foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
+            foreach ($valor as $k=>$v) {
+              if ($k==0) {
+              $idTiempoM=$valor[$k];
+            }
+            if ($k==1) {
+              if ($valor[$k]>0){
+                $minutosTM=$valor[$k];
+              }
+            }
+          }//fin del for each
+          $consulta="INSERT INTO detalleTiempoM (idcaptura,idtiempo_muerto,minutos) VALUES ('$idCapturaTM','$idTiempoM','$minutosTM')";
+          $resultado=$conexion->query($consulta);
+          if (!$resultado) {
+            $arreglo['Validacion']="ErrorDB";
+            $arreglo['Datos']=$conexion->errno."($conexion->error)";
+            echo json_encode($arreglo);
+            exit();
+            }//fin del if
+          }//fin del for each
+        }//fin del if resultado->num:rows
+        // $arreglo["DatosExtra"]="Numero de filas: ".$numeroFila." arreglo fila".var_dump($filaArreglo)."Arreglo tiempo muerto".var_dump($_POST['pArregloTiempoMuerto']);
+        $arreglo['TM']="OK";
+        echo json_encode($arreglo);
+      }//aquí acaba el if de arrelgo tiempo muerto
+
     }//aquí acaba el if de la captura
     //Aquí se contruye el tbody de la tabla detalle captura
     if (isset($_POST['pNumOrdenDC'])&&isset($_POST['pfechaDC'])) {
@@ -411,7 +443,7 @@
     echo "No entro a if de método ".'$_SERVER["REQUEST_METHOD"]==POST'."";
   }
 
-/*---------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-------------------*/
+/*---------------AQUÍ EMPIEZAN LAS FUNCIONES DE PHP-------------------------*/
 
   function errorConsultaJSON($resultado,$conexion,$arreglo)
   {

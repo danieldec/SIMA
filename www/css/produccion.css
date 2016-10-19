@@ -241,6 +241,7 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 }
 #inpBNONP{
   width: 200px;
+  text-transform: uppercase;
 }
 ul.ui-front{
   position: absolute;

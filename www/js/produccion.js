@@ -91,8 +91,10 @@
   var parReqNumOrdR="";
   var ig=0;
   //inicializamos el datepick del plug-in
-  horaInicioC.timeAutocomplete();
-  horaFinalC.timeAutocomplete();
+  // horaInicioC.timeAutocomplete({formatter: '24hr'});
+  // horaFinalC.timeAutocomplete({formatter: '24hr'});
+  horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+  horaFinalC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
   //este evento se dispara cuando damos foco al input de la cantidad del formulario de la captura, y siempre que tenga el foco seleccionaremos la cantidad que este escrita en ese momento.
   cantidadC.focus(function() {
     $(this).select();
@@ -553,9 +555,16 @@
     }
   }//fin de la función numParte
   //evento buscar número de parte o número de orden
+  inpBNONP.on('keypress',buscarNONPTeclado);
+  function buscarNONPTeclado(e) {
+    if (e.keyCode==13) {
+      btnBNONP.trigger('click');
+    }
+  }
   btnBNONP.on('click',buscarNONP);
   function buscarNONP() {
-    valorABuscar=inpBNONP.val();
+    valorABuscar=inpBNONP.val().toUpperCase();
+    console.log(valorABuscar);
     $('.lisNumPart').each(function () {
       var numParte=$("#"+$(this).children('span').prop('id')).html();
       if (numParte==valorABuscar) {
@@ -837,8 +846,8 @@
         $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
       }
     }
-    horaInicioC.timeAutocomplete();
-    horaFinalC.timeAutocomplete();
+    horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60',asd:00});
+    horaFinalC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
     $('#spanNumEmp','#modalCaptura').empty();
     $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
     $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
@@ -865,12 +874,12 @@
     $('#cantidadC').focus().select();
     $('#fechaC').val(fechaCompleta);
     console.log($('#fechaC').val());
-    var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
-    if (hora<10) {
-      hora="0"+hora;
-      minutos="0"+minutos;
-      segundos="0"+segundos;
-    }
+    // var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
+    // if (hora<10) {
+    //   hora="0"+hora;
+    //   minutos="0"+minutos;
+    //   segundos="0"+segundos;
+    // }
     // horaComplet=hora+":"+minutos+":"+segundos;
     // console.log(horaComplet);
     // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
@@ -911,6 +920,14 @@
     // }
     var idDetListaNumOrden=$('#'+numEmpleadoC).val();
   }
+  //evento teclado del input horaFinalC
+  horaFinalC.on('keydown',function(e) {
+    console.log(e);
+    if (e.keyCode==9) {
+      e.preventDefault();
+      $('#cantidadC').select();
+    }
+  });
   //se dispara este evento del modal al momento de cerrar la ventana
   $('#modalTiempoMuerto').on('hidden.bs.modal',function(e) {
     // console.log(e);
@@ -1058,6 +1075,8 @@
     var fechaValid=$('#fechaC').val();
     var hIValid=$('#horaInicioC').data('timeAutocomplete').getTime();
     var hFValid=$('#horaFinalC').data('timeAutocomplete').getTime();
+    console.log(hIValid);
+    console.log(hFValid);
     if (hFCaptura!=hFValid|| hICaptura!=hIValid||cantValid!=cantidad||fechaValid!=fechaCaptura) {
       window.alert("Vuelve a calcular eficiencia");
       cantidadC.focus().select();
@@ -1068,12 +1087,14 @@
     var horaI,HoraF;
     horaI=$(e.target).find('#horaInicioC');
     horaF=$(e.target).find('#horaFinalC');
-    console.log(horaF.val()+"hF"+horaI.val());
-    if (horaI.val().length==5) {
-      horaI.val($(e.target).find('#horaInicioC').val()+":00");
-    }else if (horaF.val().length==5) {
-      horaF.val($(e.target).find('#horaFinalC').val()+":00");
-    }
+    horaI.val(hIValid);
+    horaF.val(hFValid);
+    console.log("hF"+horaF.val()+"HI"+horaI.val());
+    // if (horaI.val().length==5) {
+    //   horaI.val($(e.target).find('#horaInicioC').val()+":00");
+    // }else if (horaF.val().length==5) {
+    //   horaF.val($(e.target).find('#horaFinalC').val()+":00");
+    // }
     var datosForm=$(this).serialize();
     //cuando no haya tiempo muerto. no se envia el arregloTiempoMuerto
     if ($('#tm1').prop('checked')) {
@@ -1121,7 +1142,7 @@
       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p><h4 class="text-center">'+datosJson.Validacion+": "+datosJson.Datos+'</h3></p>').css({'margin-top':'10px','font-size':'15px'}).append("<p class='text-center'>idCaptura: "+datosJson.DatosExtra.idcaptura+" Fecha: "+datosJson.DatosExtra.fecha+" Eficiencia: "+datosJson.DatosExtra.eficiencia+" Hora Inicio: "+datosJson.DatosExtra.hora_inicio+" Hora Final: "+datosJson.DatosExtra.hora_final+" Detalle Lista Número de orden: "+datosJson.DatosExtra.iddetalle_Lista_NumOrdenCap+"</p>"));
       break;
       default:
-       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
+       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.DatosExtra+'</p>').css({'margin-top':'10px','font-size':'15px'}));
       break;
     }//fin del switch
     // $("#formCaptura").append($(divAlertMenCaptura).html(datosJson.Validacion+datosJson.Datos).show(200).hide(4000));
@@ -1141,9 +1162,6 @@
       cantModCaptura=$(this).val();
       $.post('captura.php',{capNumParte},calcEficiencia);
       // $('#tm1').focus();
-    }
-    if (e.key=="Tab") {
-      // e.preventDefault();
     }
     if (e.key=="Enter") {
 
