@@ -97,6 +97,8 @@ body>.navbar{
   border: 1px solid #0e75bf;
 }*/
 #divChBoxNumParte{
+  margin-top: 10px;
+  margin-bottom: 10px;
   /*border: 2px solid red;*/
 }
 #listaNumOrd li{
@@ -236,6 +238,9 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 }
 #tablaDetCap{
   table-layout: auto;
+}
+#inpBNONP{
+  width: 200px;
 }
 ul.ui-front{
   position: absolute;

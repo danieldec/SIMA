@@ -239,8 +239,10 @@
                     <button class="btn-primary btn-lg" id="btnMosListNumOrden">Mostrar</button>
                   </div>
                   <div class="row">
-                    <div id="divChBoxNumParte" class="col-md-8">
+                    <div id="divChBoxNumParte" class="col-md-8 col-md-offset-1 container-fluid form-inline">
                       <input type="checkbox"  name="chMostrarNumParte" id="chMostrarNumParte" ><span>Ver Número de parte</span>
+                      <input type="text" class="form-control" id="inpBNONP" placeholder="Ingresa #Orden o #Parte"/>
+                      <input type="button" class="btn btn btn-success form-control"id="btnBNONP" class="" value="Buscar">
                     </div>
                   </div>
                   <div class="row">

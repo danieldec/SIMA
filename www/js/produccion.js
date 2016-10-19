@@ -44,6 +44,8 @@
   var tablaReq=$('#tablaReq');
   var horaInicioC=$('#horaInicioC');
   var horaFinalC=$('#horaFinalC');
+  var btnBNONP=$('#btnBNONP');
+  var inpBNONP=$('#inpBNONP');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -538,7 +540,8 @@
   //mostrar y ocultar numPartes
   $('#chMostrarNumParte').on('click',cheMosNumParte);
   function cheMosNumParte() {
-      var chBoxPropCheck=$('#chMostrarNumParte').prop('checked')
+    // console.log($('#chMostrarNumParte').prop('checked'));
+    var chBoxPropCheck=$('#chMostrarNumParte').prop('checked');
     if (chBoxPropCheck) {
       $('.lisNumPart').each(function () {
         $(this).show();
@@ -549,6 +552,28 @@
       });
     }
   }//fin de la función numParte
+  //evento buscar número de parte o número de orden
+  btnBNONP.on('click',buscarNONP);
+  function buscarNONP() {
+    valorABuscar=inpBNONP.val();
+    $('.lisNumPart').each(function () {
+      var numParte=$("#"+$(this).children('span').prop('id')).html();
+      if (numParte==valorABuscar) {
+        $(this).show();
+        $(this).find('.inpCLNE').focus();
+      }
+    });
+    $('.spanNumOrd').each(function () {
+      var x = $(this).html();
+      console.log(x);
+      if (x==valorABuscar) {
+        console.log("HL");
+        $(this).siblings('.list-group').children('.lisNumPart').show();
+        $(this).siblings('.list-group').find('.inpCLNE').focus();
+        return false;
+      }
+    })
+  }
   //estamos asignando  el evento click al componente creado en el archivo captura.php en la línea 36 de la función mostrarListaNumOrden
   divListNumOrden.on('click','.inpBtnLisNumEmp',liNumParte);
   function liNumParte(e) {
