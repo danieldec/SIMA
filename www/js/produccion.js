@@ -1325,10 +1325,12 @@
   }// fin de la función reqNumOrdenPost
   tablaReq.on('dblclick','.parReq',calcularBalance);
   function calcularBalance(e) {
-    $(this).prop('contenteditable','true').blur(function() {
+    colorFondo=$(this).css('background-color');
+    console.log(colorFondo);
+    $(this).prop('contenteditable','true').css('background-color','rgb(129, 129, 129)').blur(function() {
       // console.log(window.localStorage.getItem(parReqNumOrdR));
       parReqNumOrdR=$(this).siblings('.numOrdReq').html();
-      $(this).prop('contenteditable','false');
+      $(this).prop('contenteditable','false').css('background-color','rgb(0,0,0,0)');
       cantR=$(this).siblings('.cantReq').html();
       parcR=$(this).html();
       // console.log(parcR);
@@ -1361,8 +1363,6 @@
       console.log(data);
     }
   }
-  //sección de POST
-  $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
   //eliminar captura
   $('#modDetCap').on('click','.elimCap',function() {
     var numOrdenEC=numOrdenDC;
@@ -1413,7 +1413,44 @@
     } finally {
 
     }
+  }//fin de la función respuestaElimCaptura
+
+  $('#modDetCap').on('click','.editCap',abrirModalEditCap);
+  function abrirModalEditCap(e) {
+    var idCapEdit=$(this).parent().siblings('.idCap').html();
+    var idNumEmpl=$(this).parent().siblings('.numEmpleado').html();
+    $('#modEditCap').modal({backdrop:"static",keyboard:false}).data('idCapDat',idCapEdit);
+    $.post('captura.php',{pIdCapEdit:idCapEdit,pIdNumEmpl:idNumEmpl},postTabEditCap);
   }
+  function postTabEditCap(data,status) {
+    try {
+      var datos=$.parseJSON(data);
+      $('#tablaEditCap tbody').empty();
+      $('#tablaEditCap tbody').html(datos.Datos);
+      inicioValEditCap();
+    } catch (e) {
+      console.log(data);
+    }
+  }//fin de la funcion postTabEditCap
+//--------funciones, eventos y variables, etc. relacionados con la edición de la captura---------
+function inicioValEditCap() {
+  $('#inpHIEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+  $('#inpHFEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+  $('#tmEC').prop('hidden','hidden');
+}
+$('#modEditCap').on('click','.tmEC',tmEC);
+function tmEC(e) {
+  $('#tmEC').removeAttr('hidden');
+  var idCapEC=$('#modEditCap').data('idCapDat');
+  $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+}
+function datosTM(data,status) {
+console.log(data);
+}
+//---------------aquí termina todo lo relacionado con la edición de la captura--------------------
+//sección de POST
+  $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+
 });//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte

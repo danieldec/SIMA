@@ -524,6 +524,53 @@
         </div>
       </div><!--Fin modal Detalle captura-->
     </div>
+    <!--Modal Editar Captura-->
+    <div class="col-xs-12">
+      <div class="modal fade" tab-index="-1" role="dialog" id="modEditCap">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" data-dismiss="modal" class="close">&times</button>
+              <h4>Detalle Captura Numero de orden: <span id="spanNO"></span> y numero de parte: <span id="spanNP"></span> </h4>
+            </div>
+            <div class="modal-body">
+              <table class="table table-bordered compact display" id="tablaEditCap">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th><abbr title="Id Captura">idC</abbr></th>
+                    <th><abbr title="Número de empleado"># Emp</abbr></th>
+                    <th style="width:11%;">Fecha</th>
+                    <th style="width:15%;">Cantidad</th>
+                    <th style="width:20%">Hora I</th>
+                    <th style="width:20%">Hora F</th>
+                    <th><abbr title="TiempoM">Tm</abbr></th>
+                    <th><abbr title="Eficiencia">Efi</abbr></th>
+                    <th>Guardar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <div class="text-center" id="tmEC" hidden="hidden">
+                <div class="form-group form-inline divFormTTM">
+                  <input placeholder="tipo tiempo muerto" class="form-control inpTMEC" list="tTM" name="inpTiempoMuerto">
+                  <datalist id="dLTMEC">
+                  </datalist>
+                  <input placeholder="Minutos" type="number" min="0" name="inpMinEC" class="form-control inpMinEC" value="0">
+                </div>
+                <input class="btn btn-default" type="button" name="btnATMEC" value="Agregar" id="btnATMEC"/>
+                <input class="btn btn-default" type="button" name="btnAEEC" value="Eliminar" id="btnAEEC"/>
+                <input class="btn btn-default" type="button" name="btnGuardarEC" value="Guardar" id="btnGuardarEC"/>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss='modal' id="">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div><!--Fin Modal Editar Captura-->
+    </div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

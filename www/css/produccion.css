@@ -243,6 +243,9 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
   width: 200px;
   text-transform: uppercase;
 }
+#modEditCAp{
+  table-layout: auto;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;
@@ -294,4 +297,7 @@ td>.capturaEmpleados, .detalleNumOrden{
 }
 .inpNumEmpl{
   text-transform: uppercase;
+}
+.tmEC{
+  cursor: pointer;
 }
