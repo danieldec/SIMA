@@ -26,7 +26,7 @@
             break;
 
           case 'materiales':
-
+              echo $perfil;
             break;
 
           case '':

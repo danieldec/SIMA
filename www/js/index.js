@@ -41,6 +41,10 @@ $(document).on('ready',function () {
             window.alert("Ingresaste Correctamente");
             window.location.href="php/produccion/";
             break;
+          case 'materiales':
+            window.alert("Ingresaste Correctamente");
+            window.location.href="php/materiales/";
+            break;
           default:
           $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(5000);
         }
