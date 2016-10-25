@@ -552,7 +552,7 @@
                 <tbody>
                 </tbody>
               </table>
-              <div class="text-center" id="divTmEC" hidden="hidden">
+              <div class="text-center divTmEC" hidden="hidden">
                 <div class="form-group form-inline divFormTTM">
                   <input placeholder="tipo tiempo muerto" class="form-control inpTMEC" list="tTM" name="inpTiempoMuerto">
                   <datalist id="dLTMEC">
