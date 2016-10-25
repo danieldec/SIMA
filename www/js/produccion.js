@@ -1436,11 +1436,11 @@
 function inicioValEditCap() {
   $('#inpHIEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
   $('#inpHFEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
-  $('#tmEC').prop('hidden','hidden');
+  $('#divTmEC').prop('hidden','hidden');
 }
-$('#modEditCap').on('click','.tmEC',tmEC);
+$('#modEditCap').on('click','.divTmEC',tmEC);
 function tmEC(e) {
-  $('#tmEC').removeAttr('hidden');
+  $('#divTmEC').removeAttr('hidden');
   var idCapEC=$('#modEditCap').data('idCapDat');
   $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
 }
