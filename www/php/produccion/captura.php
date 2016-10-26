@@ -181,7 +181,7 @@
       }
       $arreglo['Datos']=$dataListTipoTM;
       echo json_encode($arreglo);
-    }
+    }//fin del if $_POST['pTipoTM']
     if (isset($_POST['capNumParte'])) {
       $arreglo= array('Validacion'=>'','Datos'=>'');
       $numParte=$_POST['capNumParte'];
@@ -400,7 +400,7 @@
         $tbody=$tbody."<td class='numEmpleado'>".$fila->empleados_idempleados."</td>";
         $tbody=$tbody."<td>".$fila->hora_inicio."</td>";
         $tbody=$tbody."<td>".$fila->hora_final."</td>";
-        $tbody=$tbody."<td>".$fila->tiempo_muerto."</td>";
+        $tbody=$tbody."<td class='tmCap'>".$fila->tiempo_muerto."</td>";
         $tbody=$tbody."<td>".$fila->eficiencia."</td>";
         $tbody=$tbody."<td>".$fila->cantidad."</td>";
         $tbody=$tbody."<td>".$fila->horaCaptura."</td>";
@@ -433,7 +433,7 @@
         exit();
       }
       if ($conexion->affected_rows>0) {
-        $consulta="SELECT c.idcaptura,c.fecha,da.empleados_idempleados,c.hora_inicio,c.hora_final,c.tiempo_muerto,c.eficiencia,c.cantidad,c.horaCaptura, da.iddetalle_asistencia FROM captura c, detalle_Lista_NumOrden dln, detalle_asistencia da WHERE c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.idnum_ordenDetLis='$pNumOrdenEC') and dln.iddetalle_Lista_NumOrden= c.iddetalle_Lista_NumOrdenCap and c.fecha='$pFechaEC' and da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList;";
+        $consulta="SELECT c.idcaptura,c.fecha,da.empleados_idempleados,c.hora_inicio,c.hora_final,c.tiempo_muerto,c.eficiencia,c.cantidad,c.horaCaptura, da.iddetalle_asistencia FROM captura c, detalle_Lista_NumOrden dln, detalle_asistencia da WHERE c.iddetalle_Lista_NumOrdenCap in (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln where dln.idnum_ordenDetLis='$pNumOrdenEC') and dln.iddetalle_Lista_NumOrden= c.iddetalle_Lista_NumOrdenCap and c.fecha='$pFechaEC' and da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList ORDER BY c.horaCaptura DESC;";
         $resultado=$conexion->query($consulta);
         $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
         if ($arreglo['Validacion']=="Error") {
@@ -492,7 +492,7 @@
     if (isset($_POST['pIdCapEC'])) {
       $idCap=$_POST['pIdCapEC'];
       $arreglo = array('Validacion' => '','Datos'=>'');
-      $consulta="SELECT * FROM detalleTiempoM dtm, tiempo_muerto tm where dtm.idcaptura=$idCap AND ";
+      $consulta="SELECT tm.idtiempo_muerto,minutos,descripcion FROM detalleTiempoM dtm, tiempo_muerto tm where dtm.idcaptura='$idCap' AND tm.idtiempo_muerto=dtm.idtiempo_muerto";
       $resultado=$conexion->query($consulta);
       $arreglo= errorConsultaJSON($resultado,$conexion,$arreglo);
       if ($arreglo['Validacion']=="Error") {
@@ -500,12 +500,106 @@
         echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
         exit();
       }
-      $table="<table><thead><tr></tr></thead><tbody>";
-      while ($fila=$resultado->fetch_object()) {
-
+      $arreglo['Validacion']="Exito";
+      if ($conexion->affected_rows==0) {
+        $arreglo['Datos']="No se encontro tiempo muerto";
+        echo json_encode($arreglo);
+        exit();
       }
-      //   </tbody>
-      // </table>
+      $table="";
+      $table="<table class='table table-bordered' style='width:50%; margin-left:27%' id='tablaTMEC'><thead><tr><th>#"."</th>"."<th>idTM</th><th>min</th><th>Desc</th><th>Elim</th></tr></thead><tbody>";
+      $contador=1;
+      while ($fila=$resultado->fetch_object()) {
+        $table=$table."<tr><td>$contador</td>";
+        $table=$table."<td class='idElimTMEC'>$fila->idtiempo_muerto</td>";
+        $table=$table."<td class='minTMEC'>$fila->minutos</td>";
+        $table=$table."<td>$fila->descripcion</td>";
+        $table=$table."<td><a href='#' class='eTMEC'>eliminar</a></td></tr>";
+        $contador++;
+      }
+      $table=$table.'</tbody></table>';
+      $arreglo['Datos']=$table;
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+    }//fin del if isset($_POST['pIdCapEC'])
+    if (isset($_POST['pIdCapE'])&&isset($_POST['pElimTM'])&&isset($_POST['pIdElimTM'])
+    &&isset($_POST['pMinTMEC'])) {
+      $idCaptura=$_POST['pIdCapE'];
+      $idTM=$_POST['pIdElimTM'];
+      $minTMEC=$_POST['pMinTMEC'];
+      $arreglo = array('Validacion' =>'','Datos'=>'');
+      $consulta="SELECT c.tiempo_muerto FROM captura c WHERE c.idcaptura='$idCaptura'";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="Error";
+        $arreglo['Datos']="$conexion->errno("."$conexion->error)";
+        exit();
+      }
+      $fila=$resultado->fetch_object();
+      $minTM=$fila->tiempo_muerto;
+      $consulta="DELETE FROM detalleTiempoM WHERE idcaptura='$idCaptura' and idtiempo_muerto='$idTM';";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="Error";
+        $arreglo['Datos']="$conexion->errno("."$conexion->error)";
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      $minTMAct=$minTM-$minTMEC;
+      $consulta="UPDATE `SIMAP`.`captura` SET `tiempo_muerto`= '$minTMAct' WHERE `idcaptura`='$idCaptura';";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="Error";
+        $arreglo['Datos']="$conexion->errno("."$conexion->error)";
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      $arreglo['Datos']="Eliminada con éxito";
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+    }
+    if (isset($_POST['idTM'])&&isset($_POST['minutosTM'])&&isset($_POST['idCap'])&&isset($_POST['minCap'])) {
+      $idTM=$_POST['idTM'];
+      $minutosTM=$_POST['minutosTM'];
+      $idCap=$_POST['idCap'];
+      $minCaptura=$_POST['minCap'];
+      $arreglo = array('Validacion'=>'','Datos'=>'');
+      $consulta="INSERT INTO detalleTiempoM (idcaptura,idtiempo_muerto,minutos) VALUES ('$idCap','$idTM','$minutosTM')";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        $arreglo['Validacion']="ErrorDB";
+        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+        exit();
+      }
+      $sumaMinutos=$minutosTM+$minCaptura;
+      $consulta="UPDATE `SIMAP`.`captura` SET `tiempo_muerto`='$sumaMinutos' WHERE `idcaptura`='$idCap';";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        $arreglo['Validacion']="ErrorDB";
+        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      $arreglo['Datos']="registro tiempo muerto exitoso";
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+    }//fin del if
+    if (isset($_POST['idCap'])&&isset($_POST['npCE'])) {
+      $idCap=$_POST['idCap'];
+      $rateNP="";
+      $arreglo = array('Validacion' => '','Datos'=>'' );
+      $consulta="SELECT * FROM num_parte nm where nm.num_parte in(SELECT nmo.num_parte FROM num_orden nmo where nmo.idnum_orden in(SELECT dln.idnum_ordenDetLis FROM detalle_Lista_NumOrden dln where dln.iddetalle_Lista_NumOrden in (SELECT c.iddetalle_Lista_NumOrdenCap FROM captura c WHERE c.idcaptura='$idCap')));";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsulta($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        $arreglo['Validacion']="ErrorDB";
+        json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      $fila=$resultado->fetch_object();
+      $rateNP=$fila->rate;
+      $arreglo['Datos']=$rateNP;
+      echo $rateNP;
     }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{

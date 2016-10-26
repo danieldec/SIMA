@@ -552,16 +552,19 @@
                 <tbody>
                 </tbody>
               </table>
-              <div class="text-center divTmEC" hidden="hidden">
+              <div class="text-center" id="divTmEC" hidden="hidden">
+                <div class="tableTMEC text-center">
+
+                </div>
                 <div class="form-group form-inline divFormTTM">
-                  <input placeholder="tipo tiempo muerto" class="form-control inpTMEC" list="tTM" name="inpTiempoMuerto">
+                  <input placeholder="tipo tiempo muerto" class="form-control inpTMEC" list="dLTMEC" name="inpTiempoMuerto" autocomplete="off">
                   <datalist id="dLTMEC">
+                    <option value="option">option</option>
                   </datalist>
                   <input placeholder="Minutos" type="number" min="0" name="inpMinEC" class="form-control inpMinEC" value="0">
                 </div>
                 <input class="btn btn-default" type="button" name="btnATMEC" value="Agregar" id="btnATMEC"/>
-                <input class="btn btn-default" type="button" name="btnAEEC" value="Eliminar" id="btnAEEC"/>
-                <input class="btn btn-default" type="button" name="btnGuardarEC" value="Guardar" id="btnGuardarEC"/>
+                <input class="btn btn-default" type="button" name="btnGuardarEC" value="Ocultar" id="btnGuardarEC"/>
               </div>
             </div>
             <div class="modal-footer">

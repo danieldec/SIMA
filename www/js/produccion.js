@@ -90,6 +90,9 @@
   var balR="";
   var parReqNumOrdR="";
   var ig=0;
+  //variables Editar captura TM
+  var idCapEC='';
+  var sumaTMEC='';
   //inicializamos el datepick del plug-in
   // horaInicioC.timeAutocomplete({formatter: '24hr'});
   // horaFinalC.timeAutocomplete({formatter: '24hr'});
@@ -961,7 +964,7 @@
     $('.inpNumEmpl').focus();
   });
   //evento modal cuando se abre el modal de Tiempo muerto
-  modalTiempoMuerto.on('shown.bs.modal',function() {
+  modalTiempoMuerto.on('show.bs.modal',function() {
     inpTiempoMuerto.val('');
     inpCantidadTTM.val('');
     inpTiempoMuerto.focus();
@@ -1432,21 +1435,173 @@
       console.log(data);
     }
   }//fin de la funcion postTabEditCap
+
 //--------funciones, eventos y variables, etc. relacionados con la edición de la captura---------
+//En esta parte de código se formatea los input de las horas y se oculta el div que contiene el tiempo muerto de una captura si es que lo tiene
 function inicioValEditCap() {
   $('#inpHIEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
   $('#inpHFEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
   $('#divTmEC').prop('hidden','hidden');
 }
-$('#modEditCap').on('click','.divTmEC',tmEC);
+//evento click de la tabla donde vamos a modificar el tiempo muerto de la captura, Y VAMOS A CONSTRUIR la tabla por si tiene tiempo muerto o agregar tiempo muerto a la captura. y el input donde esta el tiempo muerto traer las opciones que tenemos en la base de datos.
+$('#modEditCap').on('click','.tmEC',tmEC);
 function tmEC(e) {
+  $('.inpTMEC').val("");
+  $('.inpMinEC').val(0);
   $('#divTmEC').removeAttr('hidden');
-  var idCapEC=$('#modEditCap').data('idCapDat');
+  idCapEC=$('#modEditCap').data('idCapDat');
+  $.post('captura.php',{pTipoTM:true},dataListTTM2);
   $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
 }
+//función construimos la tabla si se tiene tiempo muerto
 function datosTM(data,status) {
-console.log(data);
+  try {
+    datos=$.parseJSON(data);
+    // console.log(data);
+    table=datos.Datos;
+    // console.log(datos.Datos);
+    $('.tableTMEC').html(table);
+    //esta función podremos usar los datos ya actualizados para actualizar el tm en pantalla
+  } catch (e) {
+    console.log(e);
+  }
+  calcTM();
 }
+
+$('.tableTMEC').on('click','.eTMEC',elimTMEC);
+function elimTMEC(e) {
+e.preventDefault();
+var idElimTM=$(this).parent().siblings('.idElimTMEC').html();
+var minTMEC=$(this).parent().siblings('.minTMEC').html();
+var elimTM=true;
+// console.log(idElimTM+" "+elimTM+" "+idCapEC+" "+minTMEC);
+$.post('captura.php',{pIdCapE:idCapEC,pElimTM:elimTM,pIdElimTM:idElimTM,pMinTMEC:minTMEC},resultadoELTMEC);
+}
+function resultadoELTMEC(data,status) {
+  try {
+    console.log(data);
+    var datos=$.parseJSON(data);
+    if (datos.Validacion=="Error") {
+      window.alert(datos.Datos);
+    }else if(datos.Validacion=="Exito"){
+      $('.tmEC','#tablaEditCap').val();
+      window.alert(datos.Datos);
+      $.post('captura.php',{pTipoTM:true},dataListTTM2);
+      $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+function dataListTTM2(datos,status) {
+  // console.log(datos);
+  var dataListTipoTM=$.parseJSON(datos);
+  if (dataListTipoTM.Validacion=="Exito") {
+    $('#dLTMEC').html(dataListTipoTM.Datos);
+  }
+  $('.inpTMEC').change(function(e) {
+    switch (parseInt(e.target.value)) {
+      case 1:
+      $(e.target).siblings('.inpMinEC').val(20);
+      break;
+      case 2:
+      $(e.target).siblings('.inpMinEC').val(40);
+      break;
+      case 3:
+      $(e.target).siblings('.inpMinEC').val(5);
+      break;
+      case 0:
+      $(e.target).siblings('.inpMinEC').val('');
+      break;
+      default:
+      $(e.target).siblings('.inpMinEC').val(0);
+    }
+  });
+  // console.log(dataListTipoTM);
+}
+$('#divTmEC').on('click','#btnGuardarEC',function() {
+  $('#divTmEC').prop('hidden','hidden');
+});
+$('#btnATMEC').on('click',function(e) {
+  var minCap=$('.tmEC','#tablaEditCap').html();
+  var idTM=$('.inpTMEC').val();
+  var minutosTM=$('.inpMinEC').val();
+  console.log(idTM);
+  if (idTM.length<1||(minutosTM.length<1||minutosTM==0)) {
+    if (idTM.length<1) {
+      $('.inpTMEC').focus();
+    }
+    if (minutosTM.length<1||minutosTM==0) {
+      $('.inpMinEC').focus();
+    }
+    window.alert('Necesitas llenar los siguientes campos');
+    return false;
+  }
+  var idCap=$('#modEditCap').data('idCapDat');
+  console.log(idTM+" "+minutosTM+" "+idCap);
+  $.post('captura.php',{idTM:idTM,minutosTM:minutosTM,idCap:idCap,minCap:minCap},capturaTMEC);
+});
+function capturaTMEC(data,status) {
+  try {
+    var datos=$.parseJSON(data);
+    if (datos.Validacion=="ErrorDB") {
+      window.alert(datos.Datos);
+    }else if (datos.Validacion=="Exito") {
+      $('.inpTMEC').val('');
+      $('.inpMinEC').val('');
+      $.post('captura.php',{pTipoTM:true},dataListTTM2);
+      $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+      window.alert(datos.Datos);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+function calcTM() {
+  var longitudTD=$('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').length;
+  // console.log(longitudTD);
+  var sumaTM=0;
+  if (longitudTD>0) {
+    $('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').each(function(index,objeto) {
+      mThis=$(objeto).html();
+      sumaTM=parseInt(sumaTM)+parseInt(mThis);
+    });
+    $('.tmEC','#tablaEditCap').html(sumaTM);
+    $('.tmCap','#tablaDetCap').each(function(index,objeto) {
+      idCap=$(objeto).siblings('.idCap').html();
+      if (parseInt(idCapEC)==parseInt(idCap)) {
+        $(objeto).html(sumaTM);
+      }
+    });
+  }else if (longitudTD==0) {
+    sumaTM=0;
+    $('.tmEC','#tablaEditCap').html(sumaTM);
+    $('.tmCap','#tablaDetCap').each(function(index,objeto) {
+      idCap=$(objeto).siblings('.idCap').html();
+      if (parseInt(idCapEC)==parseInt(idCap)) {
+        $(objeto).html(sumaTM);
+      }
+    });
+    //vamos a calcular la eficiencia, con los datos obtenidos del tiempo muerto;
+
+  }
+  // $('#inpCantEC,#inpHIEC,#inpHFEC,.tmEC','#tablaEditCap').each(function(index,objeto) {
+  //   console.log(index);
+  //   console.log(objeto);
+  // }).change(function(e) {
+  //   console.log(e);
+  // }).on('blur',function(e) {
+  //   console.log("evento blur "+e);
+  // });
+  $.post('captura.php',{idCap:idCap,npCE:true},function(data,status) {
+    console.log(data);
+  });
+}//aquí termina la función calcTM
+$('#tablaEditCap').on('change','#inpCantEC,#inpHIEC,#inpHFEC,.tmEC',function(e) {
+  console.log(e);
+});
+
+
 //---------------aquí termina todo lo relacionado con la edición de la captura--------------------
 //sección de POST
   $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
