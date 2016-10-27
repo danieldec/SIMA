@@ -137,12 +137,12 @@
       echo json_encode($arreglo);
       // echo json_encode($fechas);
     }
-    if (isset($_POST['pTabCapNumEmp'])) {
-      $fecha=fechaActual();
-      $arreglo= array('Validacion'=>'','Datos'=>'' );
-      $arreglo=mostrarListaEmpleados($conexion,$fecha['fechaHoy'],$arreglo);
-      echo json_encode($arreglo);
-    }
+    // if (isset($_POST['pTabCapNumEmp'])) {
+    //   $fecha=fechaActual();
+    //   $arreglo= array('Validacion'=>'','Datos'=>'' );
+    //   $arreglo=mostrarListaEmpleados($conexion,$fecha['fechaHoy'],$arreglo);
+    //   echo json_encode($arreglo);
+    // }
     if (isset($_POST['pcapNumOrden'])) {
       $fecha=fechaActual();
       $arreglo= array('Validacion'=>'','Datos'=>'' );
@@ -483,8 +483,8 @@
       $tbody=$tbody."<td>"."<input type='text' id='inpHIEC'class='form-control' value='$fila->hora_inicio'>"."</td>";
       $tbody=$tbody."<td>"."<input type='text' id='inpHFEC'class='form-control' value='$fila->hora_final'>"."</td>";
       $tbody=$tbody."<td class='tmEC' style='color:rgb(0, 48, 255)'>".$fila->tiempo_muerto."</td>";
-      $tbody=$tbody."<td>".$fila->eficiencia."</td>";
-      $tbody=$tbody."<td>".'<button type="button" class="btn btn-default editCap" aria-label="Left Align"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>'."</td></tr>";
+      $tbody=$tbody."<td class='efiEC'>".$fila->eficiencia."</td>";
+      $tbody=$tbody."<td>".'<button disabled type="button" class="btn btn-default btnEC" aria-label="Left Align"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>'."</td></tr>";
       }
       $arreglo['Datos']=$tbody;
       echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
@@ -583,8 +583,8 @@
       $arreglo['Datos']="registro tiempo muerto exitoso";
       echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
     }//fin del if
-    if (isset($_POST['idCap'])&&isset($_POST['npCE'])) {
-      $idCap=$_POST['idCap'];
+    if (isset($_POST['idCapEC'])&&isset($_POST['npCE'])) {
+      $idCap=$_POST['idCapEC'];
       $rateNP="";
       $arreglo = array('Validacion' => '','Datos'=>'' );
       $consulta="SELECT * FROM num_parte nm where nm.num_parte in(SELECT nmo.num_parte FROM num_orden nmo where nmo.idnum_orden in(SELECT dln.idnum_ordenDetLis FROM detalle_Lista_NumOrden dln where dln.iddetalle_Lista_NumOrden in (SELECT c.iddetalle_Lista_NumOrdenCap FROM captura c WHERE c.idcaptura='$idCap')));";
@@ -599,7 +599,27 @@
       $fila=$resultado->fetch_object();
       $rateNP=$fila->rate;
       $arreglo['Datos']=$rateNP;
-      echo $rateNP;
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+    }//fin del if
+    if (isset($_POST['cantAuxEC'])&&isset($_POST['horaIAuxEC'])&&isset($_POST['horaFAuxEC'])&&isset($_POST['tmMinAuxEC'])&&isset($_POST['efiAuxEC'])&&isset($_POST['idCapEC'])) {
+      $cantAuxEC=$_POST['cantAuxEC'];
+      $horaIAuxEC=$_POST['horaIAuxEC'];
+      $horaFAuxEC=$_POST['horaFAuxEC'];
+      $tmMinAuxEC=$_POST['tmMinAuxEC'];
+      $efiAuxEC=$_POST['efiAuxEC'];
+      $idCapEC=$_POST['idCapEC'];
+      $arreglo = array('Validacion' =>'','Datos'=>'');
+      $consulta="UPDATE `SIMAP`.`captura` SET `cantidad`='$cantAuxEC', `hora_inicio`='$horaIAuxEC', `hora_final`='$horaFAuxEC', `tiempo_muerto`='$tmMinAuxEC', `eficiencia`='$efiAuxEC', `usuarios_idusuario`='".$_SESSION['idusuario']."',`horaCaptura`='CURRENT_TIMESTAMP' WHERE `idcaptura`='$idCapEC';";
+      $resultado=$conexion->query($consulta);
+      $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+      if ($arreglo['Validacion']=="Error") {
+        $arreglo['Validacion']='ErrorDB';
+        echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+        exit();
+      }
+      $arreglo['Validacion']="Exito";
+      $arreglo['Datos']="Captura actualizada con exito";
+      echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
     }
   }//fin del if $_SERVER['REQUEST_METHOD']=="POST"
   else{
@@ -633,7 +653,7 @@
       echo "<ul class='list-group'><li class='lisNumPart list-group-item'><span id='spanNumPart$contador'>".$numParte=$fila[1]."</span>";
       $listNumEmpEnNumOrdenRes=listNumEmpEnNumOrden($conexion,$numOrden,$fechas['fechaHoy']);
       echo "<ul class='list-group'><li class='list-group-item'><ul class='lNumEmpCNumOrd'>".$listNumEmpEnNumOrdenRes."</ul>";
-      echo "<input placeholder='# de empleado' class='form-control inpCLNE' list='inpLisNumParte$contador' name='inpLisNumParte'><datalist id='inpLisNumParte$contador'>".optionNumEmpl($conexion,$fechas['fechaHoy'],$numOrden)."</datalist><input type='button' class='btn-primary form-control inpBtnLisNumEmp' value='Agregar' data-toggle='popover'></li></ul>";
+      echo "<input placeholder='# de empleado' autocomplete='off' class='form-control inpCLNE' list='inpLisNumParte$contador' name='inpLisNumParte'><datalist id='inpLisNumParte$contador'>".optionNumEmpl($conexion,$fechas['fechaHoy'],$numOrden)."</datalist><input type='button' class='btn-primary form-control inpBtnLisNumEmp' value='Agregar' data-toggle='popover'></li></ul>";
       echo "</ul></li>";
       $contador++;
     }
@@ -748,30 +768,30 @@
       return $fechas= array('fechaHoy' => $fechaHoy,'fechaAyer'=>$fechaAyer,'fechaManana'=>$fechaManana );
     }
   }
-  function mostrarListaEmpleados($conexion,$hoy,$arreglo){
-    $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
-    $resultado=$conexion->query($consulta);
-    $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
-    if ($arreglo['Validacion']=='Error') {
-      return $arreglo;
-    }
-    $arreglo['Validacion']="Exito";
-    $datos="";
-    while ($fila=$resultado->fetch_array()) {
-      $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
-      $datos=$datos."<td>".$fila['Nombre']."</td>";
-      for ($i=0; $i <22 ; $i++) {
-        if ($i>=0&&$i<11) {
-          $datos=$datos."<td></td>";
-        }else{
-          $datos=$datos."<td hidden='hidden'></td>";
-        }
-      }
-      $datos=$datos."<td class='detAsisCap'>".$fila['iddetalle_asistencia']."</td></tr>";
-    }
-    $arreglo['Datos']=$datos;
-    return $arreglo;
-  }
+  // function mostrarListaEmpleados($conexion,$hoy,$arreglo){
+  //   $consulta="select e.idempleados, concat_ws(' ',e.nombre,e.apellidos) as Nombre,da.iddetalle_asistencia  from detalle_asistencia as da, empleados as e where da.asistencia_fecha='$hoy' and e.idempleados=da.empleados_idempleados order by da.iddetalle_asistencia ASC";
+  //   $resultado=$conexion->query($consulta);
+  //   $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
+  //   if ($arreglo['Validacion']=='Error') {
+  //     return $arreglo;
+  //   }
+  //   $arreglo['Validacion']="Exito";
+  //   $datos="";
+  //   while ($fila=$resultado->fetch_array()) {
+  //     $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
+  //     $datos=$datos."<td>".$fila['Nombre']."</td>";
+  //     for ($i=0; $i <22 ; $i++) {
+  //       if ($i>=0&&$i<11) {
+  //         $datos=$datos."<td></td>";
+  //       }else{
+  //         $datos=$datos."<td hidden='hidden'></td>";
+  //       }
+  //     }
+  //     $datos=$datos."<td class='detAsisCap'>".$fila['iddetalle_asistencia']."</td></tr>";
+  //   }
+  //   $arreglo['Datos']=$datos;
+  //   return $arreglo;
+  // }
   function captura($conexion,$arreglo,$numEmpleado,$iddetalle_Lista_NumOrden,$fechaC,$cantidadC,$horaInicioC,$horaFinalC,$tmC,$eficienciaC)
   {
     $consulta="INSERT INTO captura (idcaptura, fecha, cantidad, hora_inicio, hora_final, tiempo_muerto, eficiencia, usuarios_idusuario, iddetalle_Lista_NumOrdenCap, horaCaptura) VALUES (NULL,'$fechaC','$cantidadC','$horaInicioC','$horaFinalC','$tmC','$eficienciaC','".$_SESSION['idusuario']."','$iddetalle_Lista_NumOrden',CURRENT_TIMESTAMP)";

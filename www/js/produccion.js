@@ -93,6 +93,14 @@
   //variables Editar captura TM
   var idCapEC='';
   var sumaTMEC='';
+  var horaIEC='';
+  var horaFEC='';
+  var eficienciaEC='';
+  var cantidadECVI='';
+  var horaIECVI='';
+  var horaFECVI='';
+  var minTMECVI='';
+  var eficienciaECVI='';
   //inicializamos el datepick del plug-in
   // horaInicioC.timeAutocomplete({formatter: '24hr'});
   // horaFinalC.timeAutocomplete({formatter: '24hr'});
@@ -469,7 +477,7 @@
   //Aquí asígnamos el plug-in de dataTable
   $('#tableEmplAsis').DataTable({
     "language":{
-      "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+      "url":"../../json/Spanish.json"
     }
   });
   //evento del botón con id=btnMosLisEmpl para mostrar la lista de empleados
@@ -648,6 +656,13 @@
       $('.inpCLNE').focus();
     }
   }//fin de la función liNumParte
+  divListNumOrden.on('keydown','.inpCLNE',function(e) {
+    if (e.key=="Enter") {
+      $('.inpBtnLisNumEmp',divListNumOrden).trigger('click');
+    }
+  });
+
+
   //evento blur de input <input class="form-control inpCLNE" list="inpLisNumParte0" name="inpLisNumParte">
   divListNumOrden.on('focus blur','.inpCLNE',blurListNumParte);
   function blurListNumParte(e) {
@@ -729,7 +744,7 @@
       $('#modDetCap tbody').html(d.Datos);
       $('#tablaDetCap').DataTable({
         "language":{
-          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+          "url":"../../json/Spanish.json"
         }
       });
       $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
@@ -775,7 +790,7 @@
       $('#tablaCaptura>tbody').append(tbody.Datos);
       $('#tablaCaptura').DataTable({
         "language":{
-          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+          "url":"../../json/Spanish.json"
         }
       });
     }
@@ -783,7 +798,7 @@
   //asínamos la API de dataTable
   $('#tablaCaptura').DataTable({
     "language":{
-      "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+      "url":"../../json/Spanish.json"
     }
   });
   //Aquí vamos asignar eventos a las pestañas de la pestaña de CAPTURA cada vez que damos click.
@@ -796,7 +811,7 @@
         case 'Captura Numero Orden':
         break;
         case 'Captura Numero de Empleado':
-        $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+        $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
         break;
         case 'Asignar Número de Empleado a Número de Orden':
         break;
@@ -804,11 +819,15 @@
     })
   }
   function tablaCapNumEmple(datos,estatus) {
-    var tbody=$.parseJSON(datos);
-    // console.log(datos);
-    if (tbody.Validacion=="Exito") {
-      $('#tableCapNumEmp>tbody').empty();
-      $('#tableCapNumEmp>tbody').append(tbody.Datos)
+    try {
+      var tbody=$.parseJSON(datos);
+      // console.log(datos);
+      if (tbody.Validacion=="Exito") {
+        $('#tableCapNumEmp>tbody').empty();
+        $('#tableCapNumEmp>tbody').append(tbody.Datos)
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
   //evento Boton del modal, Captura por número de orden.
@@ -1190,6 +1209,8 @@
     inpHoraFinal=hFCaptura.split(':');
     horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1],inpHoraInicio[2]);
     horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1],inpHoraFinal[2]);
+    console.log(horaInicio);
+    console.log(horaFinal);
     if (horaInicio.valueOf()==horaFinal.valueOf()) {
       window.alert("La hora inicio no puede ser igual a la hora final");
       capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
@@ -1316,7 +1337,7 @@
       });
       $('#tablaReq').DataTable({
         "language":{
-          "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+          "url":"../../json/Spanish.json"
         }
       });
     } catch (e) {
@@ -1401,7 +1422,7 @@
           $('#modDetCap tbody').html(datos.Datos);
           $('#tablaDetCap').DataTable({
             "language":{
-              "url":"http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+              "url":"../../json/Spanish.json"
             }
           });
           $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
@@ -1420,8 +1441,11 @@
 
   $('#modDetCap').on('click','.editCap',abrirModalEditCap);
   function abrirModalEditCap(e) {
+    //guardar valores Iniciales
+    // var obtDat=true;
     var idCapEdit=$(this).parent().siblings('.idCap').html();
     var idNumEmpl=$(this).parent().siblings('.numEmpleado').html();
+    // calcTM(obtDat);
     $('#modEditCap').modal({backdrop:"static",keyboard:false}).data('idCapDat',idCapEdit);
     $.post('captura.php',{pIdCapEdit:idCapEdit,pIdNumEmpl:idNumEmpl},postTabEditCap);
   }
@@ -1436,175 +1460,347 @@
     }
   }//fin de la funcion postTabEditCap
 
-//--------funciones, eventos y variables, etc. relacionados con la edición de la captura---------
-//En esta parte de código se formatea los input de las horas y se oculta el div que contiene el tiempo muerto de una captura si es que lo tiene
-function inicioValEditCap() {
-  $('#inpHIEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
-  $('#inpHFEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
-  $('#divTmEC').prop('hidden','hidden');
-}
-//evento click de la tabla donde vamos a modificar el tiempo muerto de la captura, Y VAMOS A CONSTRUIR la tabla por si tiene tiempo muerto o agregar tiempo muerto a la captura. y el input donde esta el tiempo muerto traer las opciones que tenemos en la base de datos.
-$('#modEditCap').on('click','.tmEC',tmEC);
-function tmEC(e) {
-  $('.inpTMEC').val("");
-  $('.inpMinEC').val(0);
-  $('#divTmEC').removeAttr('hidden');
-  idCapEC=$('#modEditCap').data('idCapDat');
-  $.post('captura.php',{pTipoTM:true},dataListTTM2);
-  $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
-}
-//función construimos la tabla si se tiene tiempo muerto
-function datosTM(data,status) {
-  try {
-    datos=$.parseJSON(data);
-    // console.log(data);
-    table=datos.Datos;
-    // console.log(datos.Datos);
-    $('.tableTMEC').html(table);
-    //esta función podremos usar los datos ya actualizados para actualizar el tm en pantalla
-  } catch (e) {
-    console.log(e);
+  //--------funciones, eventos y variables, etc. relacionados con la edición de la captura---------
+  //En esta parte de código se formatea los input de las horas y se oculta el div que contiene el tiempo muerto de una captura si es que lo tiene
+  function inicioValEditCap() {
+    $('#inpHIEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+    $('#inpHFEC','#modEditCap').timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+    $('#divTmEC').prop('hidden','hidden');
+    idCapEC=$('#modEditCap').data('idCapDat');
+    horaIECVI=$('#inpHIEC').data('timeAutocomplete').getTime();
+    horaFECVI=$('#inpHFEC').data('timeAutocomplete').getTime();
+    eficienciaECVI=$('.efiEC','#tablaEditCap').html();
+    minTMECVI=$('.tmEC','#tablaEditCap').html();
+    cantidadECVI=$('#inpCantEC','#tablaEditCap').val();
+    console.log(idCapEC+" "+horaIECVI+" "+horaFECVI+" "+eficienciaECVI+" "+minTMECVI+" "+cantidadECVI);
   }
-  calcTM();
-}
+  //evento click de la tabla donde vamos a modificar el tiempo muerto de la captura, Y VAMOS A CONSTRUIR la tabla por si tiene tiempo muerto o agregar tiempo muerto a la captura. y el input donde esta el tiempo muerto traer las opciones que tenemos en la base de datos.
+  $('#modEditCap').on('click','.tmEC',tmEC);
+  function tmEC(e) {
+    $('.inpTMEC').val("");
+    $('.inpMinEC').val(0);
+    $('#divTmEC').removeAttr('hidden');
+    $.post('captura.php',{pTipoTM:true},dataListTTM2);
+    $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+  }
+  //función construimos la tabla si se tiene tiempo muerto
+  function datosTM(data,status) {
+    try {
+      datos=$.parseJSON(data);
+      // console.log(data);
+      table=datos.Datos;
+      // console.log(datos.Datos);
+      $('.tableTMEC').html(table);
+      //esta función podremos usar los datos ya actualizados para actualizar el tm en pantalla
+    } catch (e) {
+      console.log(e);
+    }
+    calcTM();
+  }
 
-$('.tableTMEC').on('click','.eTMEC',elimTMEC);
-function elimTMEC(e) {
-e.preventDefault();
-var idElimTM=$(this).parent().siblings('.idElimTMEC').html();
-var minTMEC=$(this).parent().siblings('.minTMEC').html();
-var elimTM=true;
-// console.log(idElimTM+" "+elimTM+" "+idCapEC+" "+minTMEC);
-$.post('captura.php',{pIdCapE:idCapEC,pElimTM:elimTM,pIdElimTM:idElimTM,pMinTMEC:minTMEC},resultadoELTMEC);
-}
-function resultadoELTMEC(data,status) {
-  try {
-    console.log(data);
-    var datos=$.parseJSON(data);
-    if (datos.Validacion=="Error") {
-      window.alert(datos.Datos);
-    }else if(datos.Validacion=="Exito"){
-      $('.tmEC','#tablaEditCap').val();
-      window.alert(datos.Datos);
-      $.post('captura.php',{pTipoTM:true},dataListTTM2);
-      $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
-    }
-  } catch (e) {
-    console.log(e);
+  $('.tableTMEC').on('click','.eTMEC',elimTMEC);
+  function elimTMEC(e) {
+  e.preventDefault();
+  var idElimTM=$(this).parent().siblings('.idElimTMEC').html();
+  var minTMEC=$(this).parent().siblings('.minTMEC').html();
+  var elimTM=true;
+  // console.log(idElimTM+" "+elimTM+" "+idCapEC+" "+minTMEC);
+  $.post('captura.php',{pIdCapE:idCapEC,pElimTM:elimTM,pIdElimTM:idElimTM,pMinTMEC:minTMEC},resultadoELTMEC);
   }
-}
-function dataListTTM2(datos,status) {
-  // console.log(datos);
-  var dataListTipoTM=$.parseJSON(datos);
-  if (dataListTipoTM.Validacion=="Exito") {
-    $('#dLTMEC').html(dataListTipoTM.Datos);
+  function resultadoELTMEC(data,status) {
+    try {
+      console.log(data);
+      var datos=$.parseJSON(data);
+      if (datos.Validacion=="Error") {
+        window.alert(datos.Datos);
+      }else if(datos.Validacion=="Exito"){
+        $('.tmEC','#tablaEditCap').val();
+        window.alert(datos.Datos);
+        $.post('captura.php',{pTipoTM:true},dataListTTM2);
+        $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
-  $('.inpTMEC').change(function(e) {
-    switch (parseInt(e.target.value)) {
-      case 1:
-      $(e.target).siblings('.inpMinEC').val(20);
-      break;
-      case 2:
-      $(e.target).siblings('.inpMinEC').val(40);
-      break;
-      case 3:
-      $(e.target).siblings('.inpMinEC').val(5);
-      break;
-      case 0:
-      $(e.target).siblings('.inpMinEC').val('');
-      break;
-      default:
-      $(e.target).siblings('.inpMinEC').val(0);
+  function dataListTTM2(datos,status) {
+    // console.log(datos);
+    var dataListTipoTM=$.parseJSON(datos);
+    if (dataListTipoTM.Validacion=="Exito") {
+      $('#dLTMEC').html(dataListTipoTM.Datos);
     }
-  });
-  // console.log(dataListTipoTM);
-}
-$('#divTmEC').on('click','#btnGuardarEC',function() {
-  $('#divTmEC').prop('hidden','hidden');
-});
-$('#btnATMEC').on('click',function(e) {
-  var minCap=$('.tmEC','#tablaEditCap').html();
-  var idTM=$('.inpTMEC').val();
-  var minutosTM=$('.inpMinEC').val();
-  console.log(idTM);
-  if (idTM.length<1||(minutosTM.length<1||minutosTM==0)) {
-    if (idTM.length<1) {
-      $('.inpTMEC').focus();
-    }
-    if (minutosTM.length<1||minutosTM==0) {
-      $('.inpMinEC').focus();
-    }
-    window.alert('Necesitas llenar los siguientes campos');
-    return false;
-  }
-  var idCap=$('#modEditCap').data('idCapDat');
-  console.log(idTM+" "+minutosTM+" "+idCap);
-  $.post('captura.php',{idTM:idTM,minutosTM:minutosTM,idCap:idCap,minCap:minCap},capturaTMEC);
-});
-function capturaTMEC(data,status) {
-  try {
-    var datos=$.parseJSON(data);
-    if (datos.Validacion=="ErrorDB") {
-      window.alert(datos.Datos);
-    }else if (datos.Validacion=="Exito") {
-      $('.inpTMEC').val('');
-      $('.inpMinEC').val('');
-      $.post('captura.php',{pTipoTM:true},dataListTTM2);
-      $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
-      window.alert(datos.Datos);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
-function calcTM() {
-  var longitudTD=$('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').length;
-  // console.log(longitudTD);
-  var sumaTM=0;
-  if (longitudTD>0) {
-    $('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').each(function(index,objeto) {
-      mThis=$(objeto).html();
-      sumaTM=parseInt(sumaTM)+parseInt(mThis);
-    });
-    $('.tmEC','#tablaEditCap').html(sumaTM);
-    $('.tmCap','#tablaDetCap').each(function(index,objeto) {
-      idCap=$(objeto).siblings('.idCap').html();
-      if (parseInt(idCapEC)==parseInt(idCap)) {
-        $(objeto).html(sumaTM);
+    $('.inpTMEC').change(function(e) {
+      switch (parseInt(e.target.value)) {
+        case 1:
+        $(e.target).siblings('.inpMinEC').val(20);
+        break;
+        case 2:
+        $(e.target).siblings('.inpMinEC').val(40);
+        break;
+        case 3:
+        $(e.target).siblings('.inpMinEC').val(5);
+        break;
+        case 0:
+        $(e.target).siblings('.inpMinEC').val('');
+        break;
+        default:
+        $(e.target).siblings('.inpMinEC').val(0);
       }
     });
-  }else if (longitudTD==0) {
-    sumaTM=0;
-    $('.tmEC','#tablaEditCap').html(sumaTM);
-    $('.tmCap','#tablaDetCap').each(function(index,objeto) {
-      idCap=$(objeto).siblings('.idCap').html();
-      if (parseInt(idCapEC)==parseInt(idCap)) {
-        $(objeto).html(sumaTM);
+    // console.log(dataListTipoTM);
+  }
+  $('#divTmEC').on('click','#btnGuardarEC',function() {
+    $('#divTmEC').prop('hidden','hidden');
+  });
+  $('#btnATMEC').on('click',function(e) {
+    var minCap=$('.tmEC','#tablaEditCap').html();
+    var idTM=$('.inpTMEC').val();
+    var minutosTM=$('.inpMinEC').val();
+    console.log(idTM);
+    if (idTM.length<1||(minutosTM.length<1||minutosTM==0)) {
+      if (idTM.length<1) {
+        $('.inpTMEC').focus();
+      }
+      if (minutosTM.length<1||minutosTM==0) {
+        $('.inpMinEC').focus();
+      }
+      window.alert('Necesitas llenar los siguientes campos');
+      return false;
+    }
+    var idCap=$('#modEditCap').data('idCapDat');
+    // console.log(idTM+" "+minutosTM+" "+idCap);
+    $.post('captura.php',{idTM:idTM,minutosTM:minutosTM,idCap:idCap,minCap:minCap},capturaTMEC);
+  });
+  function capturaTMEC(data,status) {
+    try {
+      var datos=$.parseJSON(data);
+      if (datos.Validacion=="ErrorDB") {
+        window.alert(datos.Datos);
+      }else if (datos.Validacion=="Exito") {
+        $('.inpTMEC').val('');
+        $('.inpMinEC').val('');
+        $('.btnEC','#tablaEditCap').removeAttr('disabled');
+        $.post('captura.php',{pTipoTM:true},dataListTTM2);
+        $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+        window.alert(datos.Datos);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  function calcTM(e) {
+    var longitudTD=$('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').length;
+    // console.log(longitudTD);
+    var sumaTM=0;
+    if (longitudTD>0) {
+      $('#tablaTMEC>tbody>tr','#divTmEC').children('.minTMEC').each(function(index,objeto) {
+        mThis=$(objeto).html();
+        sumaTM=parseInt(sumaTM)+parseInt(mThis);
+      });
+      $('.tmEC','#tablaEditCap').html(sumaTM);
+      $('.tmCap','#tablaDetCap').each(function(index,objeto) {
+        idCap=$(objeto).siblings('.idCap').html();
+        if (parseInt(idCapEC)==parseInt(idCap)) {
+          $(objeto).html(sumaTM);
+        }
+      });
+    }else if (longitudTD==0) {
+      sumaTM=0;
+      $('.tmEC','#tablaEditCap').html(sumaTM);
+      $('.tmCap','#tablaDetCap').each(function(index,objeto) {
+        idCap=$(objeto).siblings('.idCap').html();
+        if (parseInt(idCapEC)==parseInt(idCap)) {
+          $(objeto).html(sumaTM);
+        }
+      });
+      //vamos a calcular la eficiencia, con los datos obtenidos del tiempo muerto;
+    }
+    $.post('captura.php',{idCapEC:idCapEC,npCE:true},function(data,status) {
+      try {
+        console.log(data);
+        var datos=$.parseJSON(data);
+        var rateNP=datos.Datos;
+        var cantidad=$('#inpCantEC').val()
+        horaIEC=$('#inpHIEC').data('timeAutocomplete').getTime();
+        horaFEC=$('#inpHFEC').data('timeAutocomplete').getTime();
+        // console.log(horaIEC+" "+horaFEC);
+        horaIS=horaIEC.split(':');
+        horaFS=horaFEC.split(':');
+        horaInicioD=new Date();
+        horaInicioD.setHours(horaIS[0],horaIS[1],horaIS[2]);
+        horaFinalD=new Date();
+        horaFinalD.setHours(horaFS[0],horaFS[1],horaFS[2]);
+        // console.log(horaInicioD+" "+horaFinalD);
+        // conversion a minutos dividiendo entre 1000 y luego entre 60
+        var minutos=(horaFinalD-horaInicioD)/1000/60;
+        // console.log(minutos);
+        if (minutos>60||horaInicioD==horaFinalD) {
+          window.alert("No se aceptan estos parametros");
+          return false;
+        }
+        horaISDB=horaIECVI.split(':');
+        horaFSDB=horaFECVI.split(':');
+        horaInicioDBD=new Date();
+        horaInicioDBD.setHours(horaISDB[0],horaISDB[1],horaISDB[2])
+        horaFinalDBD=new Date();
+        horaFinalDBD.setHours(horaFSDB[0],horaFSDB[1],horaFSDB[2]);
+
+        console.log(horaInicioDBD-horaInicioD);
+        if (horaInicioDBD-horaInicioD>0) {
+          window.alert("no se admite esta captura");
+          return false;
+        }
+        if (Math.abs(horaInicioDBD-horaInicioD)>3000000) {
+          window.alert("no se admite esta captura");
+          return false;
+        }
+        hiMinMili=horaInicioD.getMinutes()*60000;
+        horaInicioAux=horaInicioD.valueOf()-hiMinMili;
+        horaInicioAux=horaInicioAux+3600000;
+        horaInicioAux= new Date(horaInicioAux);
+        if (horaInicioAux.toTimeString()>=horaFinalD.toTimeString()) {
+          // window.alert("Bien hecho :D");
+        }else{
+          window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
+          return false;
+        }
+        var minutosTrab=minutos-sumaTM;
+        var cantidadProg=(rateNP/60)*minutosTrab;
+        var eficiencia=((cantidad/cantidadProg)*100).toFixed(2);
+        console.log(cantidadProg);
+        console.log(eficiencia);
+        $('.efiEC','#tablaEditCap').html(eficiencia);
+        // console.log(minutos);
+        // console.log(minutosTrab);
+        // console.log(sumaTM);
+      } catch (e) {
+        console.log(e);
       }
     });
-    //vamos a calcular la eficiencia, con los datos obtenidos del tiempo muerto;
-
-  }
-  // $('#inpCantEC,#inpHIEC,#inpHFEC,.tmEC','#tablaEditCap').each(function(index,objeto) {
-  //   console.log(index);
-  //   console.log(objeto);
-  // }).change(function(e) {
-  //   console.log(e);
-  // }).on('blur',function(e) {
-  //   console.log("evento blur "+e);
-  // });
-  $.post('captura.php',{idCap:idCap,npCE:true},function(data,status) {
-    console.log(data);
+  }//aquí termina la función calcTM
+  $('#tablaEditCap').on('change','#inpCantEC,#inpHIEC,#inpHFEC',function(e) {
+    console.log(e);
+    calcEC();
   });
-}//aquí termina la función calcTM
-$('#tablaEditCap').on('change','#inpCantEC,#inpHIEC,#inpHFEC,.tmEC',function(e) {
-  console.log(e);
-});
+  function calcEC() {
+    $.post('captura.php',{idCapEC:idCapEC,npCE:true},function(data,status) {
+      try {
+        console.log(data);
+        var datos=$.parseJSON(data);
+        var rateNP=datos.Datos;
+        var cantidad=$('#inpCantEC','#tablaEditCap').val()
+        var sumaTM=$('.tmEC ','#tablaEditCap').html();
+        horaIEC=$('#inpHIEC','#tablaEditCap').data('timeAutocomplete').getTime();
+        horaFEC=$('#inpHFEC','#tablaEditCap').data('timeAutocomplete').getTime();
+        console.log(horaIEC+" "+horaFEC);
+        horaIS=horaIEC.split(':');
+        horaFS=horaFEC.split(':');
+        horaInicioD=new Date();
+        horaInicioD.setHours(horaIS[0],horaIS[1],horaIS[2]);
+        horaFinalD=new Date();
+        horaFinalD.setHours(horaFS[0],horaFS[1],horaFS[2]);
+        // console.log(horaInicioD+" "+horaFinalD);
+        // conversion a minutos dividiendo entre 1000 y luego entre 60
+        var minutos=(horaFinalD-horaInicioD)/1000/60;
+        // console.log(minutos);
+        if (minutos>60||horaInicioD==horaFinalD||minutos<=0) {
+          console.log("No se aceptan estos parametros");
+          return false;
+        }
+        horaISDB=horaIECVI.split(':');
+        horaFSDB=horaFECVI.split(':');
+        horaInicioDBD=new Date();
+        horaInicioDBD.setHours(horaISDB[0],horaISDB[1],horaISDB[2])
+        horaFinalDBD=new Date();
+        horaFinalDBD.setHours(horaFSDB[0],horaFSDB[1],horaFSDB[2]);
 
-
-//---------------aquí termina todo lo relacionado con la edición de la captura--------------------
-//sección de POST
-  $.post('captura.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+        console.log(horaInicioDBD-horaInicioD);
+        if (horaInicioDBD-horaInicioD>0) {
+          console.log("no se admite esta captura");
+          return false;
+        }
+        if (Math.abs(horaInicioDBD-horaInicioD)>3000000) {
+          console.log("no se admite esta captura");
+          return false;
+        }
+        hiMinMili=horaInicioD.getMinutes()*60000;
+        horaInicioAux=horaInicioD.valueOf()-hiMinMili;
+        horaInicioAux=horaInicioAux+3600000;
+        horaInicioAux= new Date(horaInicioAux);
+        if (horaInicioAux.toTimeString()>=horaFinalD.toTimeString()) {
+          console.log("Bien hecho :D");
+        }else{
+          window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
+          return false;
+        }
+        var minutosTrab=minutos-sumaTM;
+        var cantidadProg=(rateNP/60)*minutosTrab;
+        var eficiencia=((cantidad/cantidadProg)*100).toFixed(2);
+        console.log(cantidadProg);
+        console.log(eficiencia);
+        $('.efiEC','#tablaEditCap').html(eficiencia);
+        // console.log(minutos);
+        // console.log(minutosTrab);
+        // console.log(sumaTM);
+        if (eficiencia<0||eficiencia>200||eficiencia=="inifinity") {
+          return false
+        }else{
+          $('.btnEC').removeAttr('disabled');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    });
+  }//fin del metodo calcEC
+  $('#tablaEditCap').on('click','.btnEC',funEC);
+  function funEC(e) {
+    var cantAuxEC,horaIAuxEC,horaFAuxEC,tmMinAuxEC,efiAuxEC;
+    $(this).parent().siblings().each(function(indice,objeto) {
+      if ($(objeto).children('input').length>0) {
+        var idInp=$(this).children('input').prop('id');
+        switch (idInp) {
+          case 'inpCantEC':
+            cantAuxEC=$(this).children('#'+idInp).val();
+            break;
+          case 'inpHIEC':
+            horaIAuxEC=$(this).children('#'+idInp).data('timeAutocomplete').getTime();
+            break;
+          case 'inpHFEC':
+            horaFAuxEC=$(this).children('#'+idInp).data('timeAutocomplete').getTime();
+            break;
+          default:
+        }//fin del switch
+      }//fin del if
+      if ($(this).prop('class')!="") {
+        if ($(this).prop('class')=="tmEC") {
+          tmMinAuxEC=$(this).html();
+        }else if ($(this).prop('class')=="efiEC") {
+          efiAuxEC=$(this).html();
+        }
+      }//fin del if
+    });//fin del each
+    if (eficiencia>200) {
+      window.alert('No se admite esta eficiencia');
+      return false;
+    }
+    if (cantAuxEC!=cantidadECVI||horaIAuxEC!=horaIECVI||horaFAuxEC!=horaFECVI||tmMinAuxEC!=minTMECVI||efiAuxEC!=eficienciaECVI) {
+      $.post('captura.php',{cantAuxEC:cantAuxEC,horaIAuxEC:horaIAuxEC,horaFAuxEC:horaFAuxEC,tmMinAuxEC:tmMinAuxEC,efiAuxEC:efiAuxEC,idCapEC:idCapEC},repuestaEC);
+    }
+  }//fin función funEC
+  function repuestaEC(data,status) {
+    try {
+      var datos= $.parseJSON(data);
+      window.alert(datos.Validacion+" --> "+datos.Datos);
+      console.log(data);
+      $('.btnEC').prop('disabled');
+    } catch (e) {
+      console.log(e);
+      console.log(data);
+    }
+  }
+  //----------aquí termina todo lo relacionado con la edición de la captura-----------------
+  //sección de POST
+  $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
 
 });//fin del la función del ready
 
