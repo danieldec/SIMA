@@ -85,16 +85,26 @@
   function rangoHora($horaI,$horaF,$detAsis)
   {
     include '../conexion/conexion.php';
-    return $horaI.$horaF.$detAsis;
+    // return $horaI.$horaF.$detAsis;
     $consulta="SELECT * FROM captura c where c.iddetalle_Lista_NumOrdenCap in(SELECT dln.iddetalle_Lista_NumOrden from detalle_Lista_NumOrden dln WHERE dln.iddetalle_asistenciaDetList in (SELECT da.iddetalle_asistencia FROM detalle_asistencia da WHERE da.iddetalle_asistencia='$detAsis')) AND (c.hora_inicio BETWEEN '$horaI' AND '$horaF');";
-    $resultado=$conexion->$query($consulta);
-    if ($conexion->affected_rows>0) {
-      return "NC";
+    $resultado=$conexion->query($consulta);
+    if ($conexion->affected_rows<=0) {
+      return "<abbr style='color:rgb(138, 19, 12);'title='Sin Captura'>SC</abbr>";
     }else{
-      $contador;
+      $contador=1;
       $filas=$resultado->num_rows;
+      $minutos=0;
       while ($fila=$resultado->fetch_object()) {
-        $horaN=$fila->hora_inicio;
+        $horaIDB=$fila->hora_inicio;
+        $horaFDB=$fila->hora_final;
+        $minutos=$minutos+abs(strtotime($horaIDB)-strtotime($horaFDB))/60;
+        if ($contador==$filas) {
+          if ($minutos<60) {
+            return "<abbr style='color:rgb(243, 255, 0)'title='Tiempo Incompleto'>TM</abbr>";
+          }else{
+            return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>CP</abbr>";
+          }
+        }
         $contador++;
       }
     }
