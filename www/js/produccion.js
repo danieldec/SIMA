@@ -826,7 +826,7 @@
         // $('#tableCapNumEmp tbody').empty();
         // $('#tableCapNumEmp').DataTable().destroy();
         $('#tableCapNumEmp tbody').html(tbody.Datos);
-        $('#tableCapNumEmp').DataTable();
+        // $('#tableCapNumEmp').DataTable();
       }
     } catch (e) {
       console.log(e);
