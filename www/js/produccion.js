@@ -823,8 +823,10 @@
       var tbody=$.parseJSON(datos);
       // console.log(datos);
       if (tbody.Validacion=="Exito") {
-        $('#tableCapNumEmp>tbody').empty();
-        $('#tableCapNumEmp>tbody').append(tbody.Datos)
+        // $('#tableCapNumEmp tbody').empty();
+        // $('#tableCapNumEmp').DataTable().destroy();
+        $('#tableCapNumEmp tbody').html(tbody.Datos);
+        $('#tableCapNumEmp').DataTable();
       }
     } catch (e) {
       console.log(e);
@@ -944,7 +946,7 @@
   }
   //evento teclado del input horaFinalC
   horaFinalC.on('keydown',function(e) {
-    console.log(e);
+    // console.log(e.keyCode);
     if (e.keyCode==9) {
       e.preventDefault();
       $('#cantidadC').select();

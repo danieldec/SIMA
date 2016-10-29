@@ -38,8 +38,10 @@
     while ($fila=$resultado->fetch_array()) {
       $datos=$datos."<tr><td>".$fila['idempleados']."</td>";
       $datos=$datos."<td>".$fila['Nombre']."</td>";
-      for ($i=0; $i <23 ; $i++) {
-        if ($i>=0&&$i<11) {
+      $datos=$datos."<td>".tmTot($fila['iddetalle_asistencia'])."</td>";
+      $datos=$datos."<td>".hrsTrabTot($fila['iddetalle_asistencia'])."</td>";
+      for ($i=0; $i <24 ; $i++) {
+        if ($i>=0&&$i<12) {
           $datos=$datos."<td>".horaConsulta($i,$fila['iddetalle_asistencia'])."</td>";
         }else{
           $datos=$datos."<td hidden='hidden'>".horaConsulta($i,$fila['iddetalle_asistencia'])."</td>";
@@ -66,7 +68,7 @@
     $fechaCero=$fechaH."07:00:00";
     $horaI=date("H:i:s",strtotime($fechaCero));
     $horaF=date("H:i:s",strtotime("+1 hour",strtotime($fechaCero)));
-    for ($i=0; $i < 23; $i++) {
+    for ($i=0; $i < 24; $i++) {
       if ($i==$j) {
         if ($i==0) {
           $horaI=date("H:i:s",strtotime($fechaCero));
@@ -88,6 +90,9 @@
     // return $horaI.$horaF.$detAsis;
     $consulta="SELECT * FROM captura c where c.iddetalle_Lista_NumOrdenCap in(SELECT dln.iddetalle_Lista_NumOrden from detalle_Lista_NumOrden dln WHERE dln.iddetalle_asistenciaDetList in (SELECT da.iddetalle_asistencia FROM detalle_asistencia da WHERE da.iddetalle_asistencia='$detAsis')) AND (c.hora_inicio BETWEEN '$horaI' AND '$horaF');";
     $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      return $conexion->errno." ".$conexion->error;
+    }
     if ($conexion->affected_rows<=0) {
       return "<abbr style='color:rgb(138, 19, 12);'title='Sin Captura'>SC</abbr>";
     }else{
@@ -103,10 +108,43 @@
             return "<abbr style='color:rgb(243, 255, 0)'title='Tiempo Incompleto'>TM</abbr>";
           }else{
             return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>CP</abbr>";
-          }
-        }
+          }//fin del else
+        }//fin del if
         $contador++;
-      }
+      }//fin del while
+    }//fin del else
+    $resultado->close();
+  }//fin de la función rangoHora
+  function tmTot($iddetAsis)
+  {
+    include '../conexion/conexion.php';
+    // return $iddetAsis;
+    $consulta="SELECT SUM(c.tiempo_muerto) tm FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap IN (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln WHERE dln.iddetalle_asistenciaDetList IN (SELECT da.iddetalle_asistencia FROM detalle_asistencia da WHERE da.iddetalle_asistencia='$iddetAsis'));";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      return $conexion->errno." ".$conexion->error;
     }
+    $fila=$resultado->fetch_object();
+    if (gettype($fila->tm)=='NULL') {
+      return 0;
+    }elseif (gettype($fila->tm)=="string") {
+      return $fila->tm;
+    }
+  }//fin de la función calcTM
+  function hrsTrabTot($iddetAsis)
+  {
+    include '../conexion/conexion.php';
+    $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap IN (SELECT dln.iddetalle_Lista_NumOrden FROM detalle_Lista_NumOrden dln WHERE dln.iddetalle_asistenciaDetList IN (SELECT da.iddetalle_asistencia FROM detalle_asistencia da WHERE da.iddetalle_asistencia='$iddetAsis'));";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      return $conexion->errno." ".$conexion->error;
+    }
+    $hrsTrab=0;
+    while ($fila=$resultado->fetch_object()) {
+      $horaIDB=$fila->hora_inicio;
+      $horaFDB=$fila->hora_final;
+      $hrsTrab=$hrsTrab+abs(strtotime($horaIDB)-strtotime($horaFDB))/60/60;
+    }//fin del while
+    return $hrsTrab;
   }
 ?>

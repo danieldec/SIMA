@@ -310,11 +310,12 @@
                 <div class="col-md-12">
                   <div id="divTabCapNumEmp"class="container-fluid">
                     <table class="table table-bordered" id="tableCapNumEmp">
-                      <caption>Captura</caption>
                       <thead>
                         <tr>
                           <th># Empleado</th>
                           <th>Nombre</th>
+                          <th>minTM</th>
+                          <th>hrsTrab</th>
                           <th>07-08</th>
                           <th>08-09</th>
                           <th>09-10</th>
@@ -325,6 +326,7 @@
                           <th>14-15</th>
                           <th>15-16</th>
                           <th>16-17</th>
+                          <th>17-18</th>
                           <th>18-19</th>
                           <th hidden="hidden">20-21</th>
                           <th hidden="hidden">21-22</th>
@@ -339,8 +341,7 @@
                           <th hidden="hidden">06-07</th>
                         </tr>
                       </thead>
-                      <tbody id="tBodyCapNumEmp">
-
+                      <tbody>
                       </tbody>
                     </table>
                   </div>
