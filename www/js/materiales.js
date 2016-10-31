@@ -1,7 +1,9 @@
 $(document).on('ready',principal);
 function principal(e) {
   console.log(e);
-  if (e.target.URL=='http://localhost/SIMA/php/materiales/reporte.php') {
+  var h=window.location.host
+  var path="http://"+h+""+window.location.pathname;
+  if (e.target.URL==path) {
     var fechaHoy=$('#hoy').val();
     var reqNumOrden=true;
     console.log(fechaHoy+" "+reqNumOrden);
