@@ -732,7 +732,7 @@
     $diaAyer=date('Y-m-d',$diaAyer);
     $diaManana=strtotime('+1 day',strtotime($dia));
     $diaManana=date('Y-m-d',$diaManana);
-    $consulta="select nm.idnum_orden, nm.num_parte, nm.fecha, nm.STATUS FROM num_orden nm, num_parte np WHERE nm.fecha BETWEEN '".$diaAyer."' and '".$diaManana."' and nm.num_parte=np.num_parte and nm.cantidad_realizada<=nm.cantidad and nm.STATUS='PRODUCCION' ORDER BY nm.fecha_generada DESC";
+    $consulta="select nm.idnum_orden, nm.num_parte, nm.fecha, nm.STATUS FROM num_orden nm, num_parte np WHERE nm.fecha BETWEEN '".$diaAyer."' and '".$diaManana."' and nm.num_parte=np.num_parte and nm.STATUS='PRODUCCION' ORDER BY nm.fecha_generada DESC";
     $resultado=$conexion->query($consulta);
     $tbody='';
     if (!$resultado) {

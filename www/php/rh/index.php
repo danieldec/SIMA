@@ -106,8 +106,7 @@
 
     <!--Aquí empieza el contenido de la pestaña de reporte -->
     <div class="tab-pane fade" id="reporte">
-      <div>estoy en el contenido de reporte</div>
-     </div>
+      
   </div>
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
 
