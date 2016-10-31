@@ -870,7 +870,7 @@
         $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
       }
     }
-    horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60',asd:00});
+    horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
     horaFinalC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
     $('#spanNumEmp','#modalCaptura').empty();
     $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
@@ -1706,7 +1706,7 @@
         var minutos=(horaFinalD-horaInicioD)/1000/60;
         // console.log(minutos);
         if (minutos>60||horaInicioD==horaFinalD||minutos<=0) {
-          console.log("No se aceptan estos parametros");
+          window.alert("No se aceptan estos parametros");
           return false;
         }
         horaISDB=horaIECVI.split(':');
@@ -1718,11 +1718,11 @@
 
         console.log(horaInicioDBD-horaInicioD);
         if (horaInicioDBD-horaInicioD>0) {
-          console.log("no se admite esta captura");
+          window.alert("no se admite esta captura");
           return false;
         }
         if (Math.abs(horaInicioDBD-horaInicioD)>3000000) {
-          console.log("no se admite esta captura");
+          window.alert("no se admite esta captura");
           return false;
         }
         hiMinMili=horaInicioD.getMinutes()*60000;
@@ -1801,6 +1801,27 @@
     }
   }
   //----------aquí termina todo lo relacionado con la edición de la captura-----------------
+  //Aquí se encuentra las funciones eventos relacionados con la sección busqueda empleados o numéros de parte, etc...
+  // var idEmplB=$('#idEmplB');
+  //
+  // idEmplB.autocomplete({
+  //   source: function(request,reponse) {
+  //     $.ajax({
+  //       url:"captura.php",
+  //       dataType:"json",
+  //       data{q:request.term},
+  //       success:function(data){
+  //         response(data);
+  //       }
+  //     })
+  //   },
+  //   minLength:2,
+  //   select:function(event,ui) {
+  //     window.alert('Selecciono'+ui.item.label);
+  //   }
+  // });
+
+
   //sección de POST
   $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
 

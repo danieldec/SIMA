@@ -13,6 +13,7 @@
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->
   <?php include '../hojasEstilo.php'; ?>
   <link rel="stylesheet" href="../../css/rh.css" charset="utf-8">
+  <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
 </head>
 <body>
   <!--Barra de navegación-->
@@ -60,6 +61,7 @@
 
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
-  <script type="text/javascript" src="../../js/rh.js"></script>
+  <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../../js/materiales.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-$(document).on('ready',function () {
+  $(document).on('ready',function () {
   // creamos esta variable para guardar el nombreUsuario para convertirlo en mayusculas
   var cadenaUsuario="";
   //creamos una variable que hace referencia al input donde se va a colocar el nombre del usuario

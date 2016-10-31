@@ -228,6 +228,7 @@
               <li><a href="#tabAsigNumOrden" data-toggle="tab">Asignar Número de Empleado a Número de Orden</a></li>
               <li><a href="#capNumOrd" data-toggle="tab">Captura Numero Orden</a></li>
               <li class="active"><a href="#capNumEmp" data-toggle="tab">Captura Numero de Empleado</a></li>
+              <li><a href="#busquedaCap" data-toggle="tab">Captura Numero de Empleado</a></li>
             </ul>
 
             <!-- Aquí empieza el contenido de la pestaña o tab -->
@@ -348,11 +349,44 @@
                     </table>
                   </div>
                 </div>
+              </div><!--Aquí termina el tab de capNumEmp-->
+              <!--Aquí empieza el tab del id=busquedaCap-->
+              <div class="tab-pane fade" id="busquedaCap">
+                <div class="col-md-12">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="form-inline">
+                        <h5>Buscar empleado en Número de Orden</h5>
+                        <label for=""># empleado</label>
+                        <input type="text" class='form-control' name="" id="idEmplB" value="" placeholder="# empleado">
+                        <input type="date" class='form-control' name="" id="" value="<?php echo $dia?>">
+                        <input type="button" class='form-control btn btn-primary' name="" id=""value="Buscar">
+                        <h5>Buscar número de parte o de orden</h5>
+                        <input type="text" class='form-control' name="" id="" value="">
+                        <input type="date" class='form-control' name="" id="" value="<?php echo $dia?>">
+                        <input type="button" class='form-control btn btn-primary' name="" id=""value="Buscar">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <table class="table table-bordered" id="tablaBusqueda">
+                        <caption>Captura</caption>
+                        <thead>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!--Aquí termina la fila o el div con clase row-->
+                  </div>
+                  <!--Aquí termina el container-fluid-->
+                </div>
+                <!--Aquí termina la columna tamaño md-12-->
               </div>
+              <!--Aquí termina el tab de busquedaCap-->
             </div>
             <!-- Aquí termina el contenido de la pestaña o tab -->
           </div>
-          <!--Aquí termina el tab de captura| -->
+          <!--Aquí termina el tab de captura -->
           <!--Aquí empieza el tab de Requerimientos-->
           <div role="tabpanel" class="tab-pane fade" id="divRequerimientos">
             <div class="row">
