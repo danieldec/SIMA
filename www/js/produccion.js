@@ -1333,9 +1333,15 @@
         $(this).siblings('.balReq').text(balR);
         // console.log($(this).siblings('.porReq').children('.progress'));
         var porcentaje=((parseInt(parcR)+parseInt(proR))/cantR)*100;
+        console.log(porcentaje);
         // console.log(porcentaje);
+        if (porcentaje>100) {
+          $(this).siblings('.porReq').children('.progress').css('width',Math.round(100)+"%");
+          $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%").removeClass('progress-bar-success').addClass('progress-bar-danger');
+        }else if (porcentaje<=100) {
         $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
         $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+        }
       });
       $('#tablaReq').DataTable({
         "language":{
