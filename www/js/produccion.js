@@ -1178,10 +1178,12 @@
     }
   });
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
-  cantidadC.on('keydown',function(e) {
+  cantidadC.on('keydown blur',function(e) {
     // console.log(e.key);
     // console.log(e.type);
     // la tecla tab es el key='Tab', la tecla derecha ArrowRight
+    console.log(e.key);
+    console.log(e);
     if (e.key=="ArrowRight") {
       cantModCaptura=$(this).val();
       $.post('captura.php',{capNumParte},calcEficiencia);
@@ -1333,7 +1335,7 @@
         $(this).siblings('.balReq').text(balR);
         // console.log($(this).siblings('.porReq').children('.progress'));
         var porcentaje=((parseInt(parcR)+parseInt(proR))/cantR)*100;
-        console.log(porcentaje);
+        // console.log(porcentaje);
         // console.log(porcentaje);
         if (porcentaje>100) {
           $(this).siblings('.porReq').children('.progress').css('width',Math.round(100)+"%");

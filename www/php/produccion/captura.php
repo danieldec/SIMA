@@ -155,7 +155,12 @@
         exit();
       }
       $arreglo['Validacion']='Exito';
-      $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl' list='capListNumEmp' name='inpNumEmpl' autocomplete='off'><datalist id='capListNumEmp'>";
+      //aquí vamos a verificar si hay un operador o no
+      if ($resultado->num_rows<=0) {
+        $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl'value='No hay operadores asignados' list='capListNumEmp' name='inpNumEmpl' autocomplete='off'><datalist id='capListNumEmp'>";
+      }elseif ($resultado->num_rows>0) {
+        $inpDatListEmpleados="<input placeholder='# de empleado' class='form-control inpNumEmpl' list='capListNumEmp' name='inpNumEmpl' autocomplete='off'><datalist id='capListNumEmp'>";
+      }
       while ($fila=$resultado->fetch_array()) {
         $inpDatListEmpleados=$inpDatListEmpleados."<option value='".$fila['idempleados']."'>".$fila['Nombre']."</option>";
         $inpDatListEmpleados=$inpDatListEmpleados."<input type='hidden' value='".$fila['iddetalle_Lista_NumOrden']."' id='".$fila['idempleados']."'>";

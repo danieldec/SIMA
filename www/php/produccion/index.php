@@ -437,6 +437,11 @@
             </div>
           </div>
           <div class="row">
+            <!-- <div class="col-md-8 col-md-offset-2" id="">
+              <input placeholder="# de empleado" autocomplete="off" class="form-control inpAgrNEmpNOrd" name="inpAgrNEmpNOrd">
+              <input type="button" class="btn-primary form-control inpAnadirEmp" value="Agregar" data-toggle="popover">
+              <br>
+            </div> -->
             <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
           </div>
         </div>

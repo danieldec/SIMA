@@ -99,15 +99,17 @@
       $contador=1;
       $filas=$resultado->num_rows;
       $minutos=0;
+      $eficiencia=0;
       while ($fila=$resultado->fetch_object()) {
         $horaIDB=$fila->hora_inicio;
         $horaFDB=$fila->hora_final;
         $minutos=$minutos+abs(strtotime($horaIDB)-strtotime($horaFDB))/60;
+        $eficiencia=$eficiencia+$fila->eficiencia;
         if ($contador==$filas) {
           if ($minutos<60) {
-            return "<abbr style='color:rgb(243, 255, 0)'title='Tiempo Incompleto'>$fila->eficiencia</abbr>";
+            return "<abbr style='color:rgb(170, 147, 0)'title='Tiempo Incompleto'>".round($eficiencia/$filas,2)."</abbr>";
           }else{
-            return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>$fila->eficiencia</abbr>";
+            return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>".round($eficiencia/$filas,2)."</abbr>";
           }//fin del else
         }//fin del if
         $contador++;
@@ -145,6 +147,6 @@
       $horaFDB=$fila->hora_final;
       $hrsTrab=$hrsTrab+abs(strtotime($horaIDB)-strtotime($horaFDB))/60/60;
     }//fin del while
-    return $hrsTrab;
+    return round($hrsTrab,2);
   }
 ?>
