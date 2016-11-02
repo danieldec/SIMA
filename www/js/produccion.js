@@ -846,7 +846,7 @@
     }
     var encontrado=false;
     $('datalist>option').each(function(indice,objeto) {
-      console.log($(objeto).val()+" "+idEmpleado);
+      // console.log($(objeto).val()+" "+idEmpleado);
       if ($(objeto).val()==idEmpleado) {
         encontrado=true;
       }
@@ -861,7 +861,7 @@
     modalCaptura.modal({backdrop: "static",keyboard:false});
   }
   //evento del modal cuando se abre por completo #modalCaptura
-  $('#modalCaptura').on('shown.bs.modal show.bs.modal',cargComplModalCaptura);
+  $('#modalCaptura').on('show.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura(e) {
     if (e.type="show") {
       //aquí quitamos los alertas si de dejaron abierto
@@ -1178,7 +1178,7 @@
     }
   });
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
-  cantidadC.on('keydown blur',function(e) {
+  cantidadC.on('keydown',function(e) {
     // console.log(e.key);
     // console.log(e.type);
     // la tecla tab es el key='Tab', la tecla derecha ArrowRight
@@ -1189,8 +1189,10 @@
       $.post('captura.php',{capNumParte},calcEficiencia);
       // $('#tm1').focus();
     }
-    if (e.key=="Enter") {
-
+    if (e.key=="=") {
+      e.preventDefault();
+      cantModCaptura=$(this).val();
+      $.post('captura.php',{capNumParte},calcEficiencia);
     }
     // console.log(e);
   });
@@ -1531,6 +1533,7 @@
         window.alert(datos.Datos);
         $.post('captura.php',{pTipoTM:true},dataListTTM2);
         $.post('captura.php',{pIdCapEC:idCapEC},datosTM);
+        $('.btnEC','#tablaEditCap').removeAttr('disabled');
       }
     } catch (e) {
       console.log(e);
