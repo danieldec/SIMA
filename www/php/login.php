@@ -31,6 +31,9 @@
 
           case '':
             break;
+          case 'gerencia':
+            echo $perfil;
+            break;
 
           default:
 
