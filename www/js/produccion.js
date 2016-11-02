@@ -1194,6 +1194,8 @@
       }
     }
     if (e.key=="ArrowRight") {
+      cantModCaptura=$(this).val();
+      $.post('captura.php',{capNumParte},calcEficiencia);
       // $('#tm1').focus();
     }
     if (e.key=="=") {
