@@ -94,7 +94,7 @@
       return $conexion->errno." ".$conexion->error;
     }
     if ($conexion->affected_rows<=0) {
-      return "<abbr style='color:rgb(138, 19, 12);'title='Sin Captura'>SC</abbr>";
+      return "<abbr style='color:rgb(138, 19, 12);'title='Sin Captura'>0</abbr>";
     }else{
       $contador=1;
       $filas=$resultado->num_rows;
@@ -105,9 +105,9 @@
         $minutos=$minutos+abs(strtotime($horaIDB)-strtotime($horaFDB))/60;
         if ($contador==$filas) {
           if ($minutos<60) {
-            return "<abbr style='color:rgb(243, 255, 0)'title='Tiempo Incompleto'>TM</abbr>";
+            return "<abbr style='color:rgb(243, 255, 0)'title='Tiempo Incompleto'>$fila->eficiencia</abbr>";
           }else{
-            return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>CP</abbr>";
+            return "<abbr style='color:rgba(8, 255, 47, 1);' title='Captura Completa'>$fila->eficiencia</abbr>";
           }//fin del else
         }//fin del if
         $contador++;

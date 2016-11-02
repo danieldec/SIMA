@@ -1338,7 +1338,10 @@
         if (porcentaje>100) {
           $(this).siblings('.porReq').children('.progress').css('width',Math.round(100)+"%");
           $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%").removeClass('progress-bar-success').addClass('progress-bar-danger');
-        }else if (porcentaje<=100) {
+        }else if (porcentaje<=100&&porcentaje>95) {
+        $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
+        $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+        }else if (porcentaje<=95) {
         $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
         $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
         }
