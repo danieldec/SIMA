@@ -1315,7 +1315,7 @@
       // capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
       if (eficiencia>200) {
         window.alert("verificar el tiempo muerto o la cantidad, eficiencia no valida");
-        $('#cantidadC').val("");
+        $('#cantidadC').val(0);
         $('input[name=tm]:checked').removeAttr('checked');
         $('#tm1').prop('checked','checked');
         eficiencia=="";
