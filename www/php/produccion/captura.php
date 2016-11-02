@@ -614,7 +614,7 @@
       $efiAuxEC=$_POST['efiAuxEC'];
       $idCapEC=$_POST['idCapEC'];
       $arreglo = array('Validacion' =>'','Datos'=>'');
-      $consulta="UPDATE `SIMAP`.`captura` SET `cantidad`='$cantAuxEC', `hora_inicio`='$horaIAuxEC', `hora_final`='$horaFAuxEC', `tiempo_muerto`='$tmMinAuxEC', `eficiencia`='$efiAuxEC', `usuarios_idusuario`='".$_SESSION['idusuario']."',`horaCaptura`='CURRENT_TIMESTAMP' WHERE `idcaptura`='$idCapEC';";
+      $consulta="UPDATE `SIMAP`.`captura` SET `cantidad`='$cantAuxEC', `hora_inicio`='$horaIAuxEC', `hora_final`='$horaFAuxEC', `tiempo_muerto`='$tmMinAuxEC', `eficiencia`='$efiAuxEC', `usuarios_idusuario`='".$_SESSION['idusuario']."',`horaCaptura`=CURRENT_TIMESTAMP WHERE `idcaptura`='$idCapEC';";
       $resultado=$conexion->query($consulta);
       $arreglo=errorConsultaJSON($resultado,$conexion,$arreglo);
       if ($arreglo['Validacion']=="Error") {
