@@ -1238,6 +1238,7 @@
       if (!(horaInicio.valueOf()==hi.valueOf()&&horaFinal.valueOf()==hf.valueOf())){
         window.alert("La hora inicio debe ser mayor a la hora final");
         capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+        $('#horaInicioC').focus();
         return false;
       }
     }
@@ -1252,6 +1253,7 @@
     horaInicioAux= new Date(horaInicioAux);
     if (horaInicio>horaFinal) {
       window.alert("La hora final debe menor a la hora de inicio");
+      $('#horaFinalC').focus();
       return false;
     }
     if (horaInicioAux.toTimeString()>=horaFinal.toTimeString()) {
@@ -1260,6 +1262,7 @@
       window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
       $("#horaFinalC").focus().select();
       capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      $('#horaFinalC').focus();
       return false;
     }
     minNP=((horaFinal-horaInicio)/1000)/60;
@@ -1278,6 +1281,7 @@
     if (eficiencia<=0) {
       $('#eficienciaC').val(eficiencia).css({'background-color':'#fe0e24','color':'white'});
       window.alert("eficiencia no valida");
+      $('#cantidadC').focus().val(0);
       return false;
     }
     eficienciaColor(eficiencia);
