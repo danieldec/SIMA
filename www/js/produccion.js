@@ -1182,8 +1182,8 @@
     // console.log(e.key);
     // console.log(e.type);
     // la tecla tab es el key='Tab', la tecla derecha ArrowRight
-    console.log(e.key);
-    console.log(e);
+    // console.log(e.key);
+    // console.log(e);
     if (e.key=="ArrowRight") {
       cantModCaptura=$(this).val();
       $.post('captura.php',{capNumParte},calcEficiencia);
