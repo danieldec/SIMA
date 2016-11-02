@@ -1243,7 +1243,7 @@
     }
     if (cantidad==""||cantidad<0||isNaN(cantidad)) {
       window.alert('Ingresa un número entero o una cantidad en la caja de texto CANTIDAD');
-      $('#cantidadC').focus();
+      $('#cantidadC').focus().val(0);
       return false;
     }
     hiMinMili=horaInicio.getMinutes()*60000;
