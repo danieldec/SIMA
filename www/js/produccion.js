@@ -117,7 +117,7 @@
     }
     if (eficiencia<20) {
       cantidad=$(this).val();
-      console.log(e);
+      // console.log(e);
       if (cantidad.length>0) {
         capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
       }
@@ -861,89 +861,91 @@
     modalCaptura.modal({backdrop: "static",keyboard:false});
   }
   //evento del modal cuando se abre por completo #modalCaptura
-  $('#modalCaptura').on('show.bs.modal',cargComplModalCaptura);
+  $('#modalCaptura').on('show.bs.modal shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura(e) {
-    if (e.type="show") {
+    console.log(e);
+    if (e.type=="show") {
       //aquí quitamos los alertas si de dejaron abierto
       var numAlert=$('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').length;
       if (numAlert>0) {
         $('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').remove();
       }
+    }else if (e.type=="shown") {
+      horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+      horaFinalC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
+      $('#spanNumEmp','#modalCaptura').empty();
+      $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
+      $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+      $('#spanIdDLNOC','#modalCaptura').empty();
+      $('#spanIdDLNOC','#modalCaptura').html(" Id precaptura: "+idDetAsis);
+      $('#spanIdDLNOC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+      $('#spanNumOrdenC','#modalCaptura').empty();
+      $('#spanNumOrdenC','#modalCaptura').html(" Número de Orden: "+capNumOrden);
+      $('#spanNumOrdenC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+      $('#spanNumParteC','#modalCaptura').empty();
+      $('#spanNumParteC','#modalCaptura').html(" Número de Parte: "+capNumParte);
+      $('#spanNumParteC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
+      $('input[name=tm]').removeAttr('checked');
+      $('#cantidadC').val('0');
+      var fechaServidor=$('#hoy').val();
+      capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      tmC.val('0');
+      $('#tm1').prop('checked','checked');
+      $('#eficienciaC').val('').css('background-color','#eee');
+      if (fechaServidor=!fechaCompleta) {
+        alert("Verificar fecha");
+        return;
+      }
+      $('#fechaC').val(fechaCompleta);
+      $('#cantidadC','#modalCaptura').focus().select();
+      console.log($('#fechaC').val());
+      // var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
+      // if (hora<10) {
+      //   hora="0"+hora;
+      //   minutos="0"+minutos;
+      //   segundos="0"+segundos;
+      // }
+      // horaComplet=hora+":"+minutos+":"+segundos;
+      // console.log(horaComplet);
+      // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
+      //   $('#horaInicioC').val('07:00:00');
+      //   $('#horaFinalC').val('08:00:00');
+      // }
+      // if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
+      //   $('#horaInicioC').val('08:00:00');
+      //   $('#horaFinalC').val('09:00:00');
+      // }
+      // if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
+      //   $('#horaInicioC').val('09:00:00');
+      //   $('#horaFinalC').val('10:00:00');
+      // }
+      // if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
+      //   $('#horaInicioC').val('10:00:00');
+      //   $('#horaFinalC').val('11:00:00');
+      // }
+      // if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
+      //   $('#horaInicioC').val('11:00:00');
+      //   $('#horaFinalC').val('12:00:00');
+      // }
+      // if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
+      //   $('#horaInicioC').val('12:00:00');
+      //   $('#horaFinalC').val('13:00:00');
+      // }
+      // if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
+      //   $('#horaInicioC').val('13:00:00');
+      //   $('#horaFinalC').val('14:00:00');
+      // }
+      // if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
+      //   $('#horaInicioC').val('14:00:00');
+      //   $('#horaFinalC').val('15:00:00');
+      // }
+      // if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
+      //   $('#horaInicioC').val('15:00:00');
+      //   $('#horaFinalC').val('16:00:00');
+      // }
+      var idDetListaNumOrden=$('#'+numEmpleadoC).val();
     }
-    horaInicioC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
-    horaFinalC.timeAutocomplete({formatter: 'ampm',start_hour:7,end_hour:19,increment:'60'});
-    $('#spanNumEmp','#modalCaptura').empty();
-    $('#spanNumEmp','#modalCaptura').html("Número de Empleado: "+idEmpleado);
-    $('#spanNumEmp','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
-    $('#spanIdDLNOC','#modalCaptura').empty();
-    $('#spanIdDLNOC','#modalCaptura').html(" Id precaptura: "+idDetAsis);
-    $('#spanIdDLNOC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
-    $('#spanNumOrdenC','#modalCaptura').empty();
-    $('#spanNumOrdenC','#modalCaptura').html(" Número de Orden: "+capNumOrden);
-    $('#spanNumOrdenC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
-    $('#spanNumParteC','#modalCaptura').empty();
-    $('#spanNumParteC','#modalCaptura').html(" Número de Parte: "+capNumParte);
-    $('#spanNumParteC','#modalCaptura').css({'font-size':'18px','font-weight':'bold'});
-    $('input[name=tm]').removeAttr('checked');
-    $('#cantidadC').val('0');
-    var fechaServidor=$('#hoy').val();
-    capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
-    tmC.val('0');
-    $('#tm1').prop('checked','checked');
-    $('#eficienciaC').val('').css('background-color','#eee');
-    if (fechaServidor=!fechaCompleta) {
-      alert("Verificar fecha");
-      return;
-    }
-    $('#cantidadC').focus().select();
-    $('#fechaC').val(fechaCompleta);
-    console.log($('#fechaC').val());
-    // var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
-    // if (hora<10) {
-    //   hora="0"+hora;
-    //   minutos="0"+minutos;
-    //   segundos="0"+segundos;
-    // }
-    // horaComplet=hora+":"+minutos+":"+segundos;
-    // console.log(horaComplet);
-    // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
-    //   $('#horaInicioC').val('07:00:00');
-    //   $('#horaFinalC').val('08:00:00');
-    // }
-    // if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
-    //   $('#horaInicioC').val('08:00:00');
-    //   $('#horaFinalC').val('09:00:00');
-    // }
-    // if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
-    //   $('#horaInicioC').val('09:00:00');
-    //   $('#horaFinalC').val('10:00:00');
-    // }
-    // if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
-    //   $('#horaInicioC').val('10:00:00');
-    //   $('#horaFinalC').val('11:00:00');
-    // }
-    // if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
-    //   $('#horaInicioC').val('11:00:00');
-    //   $('#horaFinalC').val('12:00:00');
-    // }
-    // if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
-    //   $('#horaInicioC').val('12:00:00');
-    //   $('#horaFinalC').val('13:00:00');
-    // }
-    // if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
-    //   $('#horaInicioC').val('13:00:00');
-    //   $('#horaFinalC').val('14:00:00');
-    // }
-    // if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
-    //   $('#horaInicioC').val('14:00:00');
-    //   $('#horaFinalC').val('15:00:00');
-    // }
-    // if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
-    //   $('#horaInicioC').val('15:00:00');
-    //   $('#horaFinalC').val('16:00:00');
-    // }
-    var idDetListaNumOrden=$('#'+numEmpleadoC).val();
-  }
+  }//fin de la función cargComplModalCaptura
   //evento teclado del input horaFinalC
   horaFinalC.on('keydown',function(e) {
     // console.log(e.keyCode);
@@ -1178,15 +1180,20 @@
     }
   });
   //al momento de presionar la tecla tap o flecha derecha nos dirija al radio button del tiempo muerto
-  cantidadC.on('keydown',function(e) {
+  cantidadC.on('keydown focus',function(e) {
     // console.log(e.key);
     // console.log(e.type);
     // la tecla tab es el key='Tab', la tecla derecha ArrowRight
     // console.log(e.key);
     // console.log(e);
+    if (e.type=='focus') {
+      var valor=$(this).val();
+      if (valor.length==0||parseInt(valor)>0) {
+        cantModCaptura=$(this).val();
+        $.post('captura.php',{capNumParte},calcEficiencia);
+      }
+    }
     if (e.key=="ArrowRight") {
-      cantModCaptura=$(this).val();
-      $.post('captura.php',{capNumParte},calcEficiencia);
       // $('#tm1').focus();
     }
     if (e.key=="=") {
@@ -1220,6 +1227,7 @@
     if (horaInicio.valueOf()==horaFinal.valueOf()) {
       window.alert("La hora inicio no puede ser igual a la hora final");
       capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
+      $('#horaFinalC').focus();
       return false;
     }
     if (horaInicio>=horaFinal) {

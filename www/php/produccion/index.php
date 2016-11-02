@@ -470,7 +470,7 @@
               </div>
               <div class="form-group">
               <label for="cantidadC">Cantidad</label>
-              <input type="number" id="cantidadC" name="cantidadC" min="0" value="0" class="form-control" required>
+              <input type="number" id="cantidadC" name="cantidadC" min="0" value="0" class="form-control" autofocus required>
               </div>
               <label for="horaInicioC">Hora Inicio<input type="text" id='horaInicioC' name="horaInicioC"  autocomplete="off" class="form-control" required></label>
               <label for="horaFinalC"></label>Hora Final<input type="text" id="horaFinalC" name="horaFinalC" autocomplete="off" class="form-control" required>
