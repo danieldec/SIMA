@@ -21,21 +21,21 @@
      <thead>
        <tr>
          <th>#</th>
-         <th>fecha</th>
          <th>#empleado</th>
          <th>Nombre</th>
          <th># parte</th>
-         <th>tT</th>
+         <th>fecha</th>
+         <th>H</th>
        </tr>
      </thead>
      <tbody>
        <?php while ($fila=$resultado->fetch_object()) {
          echo "<tr>";
          echo "<td>".$contador."</td>";
-         echo "<td>".$fila->fecha."</td>";
          echo "<td>".$fila->idempleados."</td>";
          echo "<td>".$fila->Nombre."</td>";
          echo "<td>".$fila->num_parte."</td>";
+         echo "<td>".$fila->fecha."</td>";
          echo "<td>".round($fila->tT,1)."</td>";
          $contador++;
        }
