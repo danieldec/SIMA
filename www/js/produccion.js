@@ -824,7 +824,7 @@
   }
   function tablaCapNumEmple(datos,estatus) {
     try {
-      console.log(estatus);
+      // console.log(estatus);
       var tbody=$.parseJSON(datos);
       // console.log(datos);
       if (tbody.Validacion=="Exito") {
