@@ -811,7 +811,11 @@
         case 'Captura Numero Orden':
         break;
         case 'Captura Numero de Empleado':
-        $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+        $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple).fail(function(jqXHR,textStatus,errorThrown) {
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
+        });
         break;
         case 'Asignar Número de Empleado a Número de Orden':
         break;
@@ -820,6 +824,7 @@
   }
   function tablaCapNumEmple(datos,estatus) {
     try {
+      console.log(estatus);
       var tbody=$.parseJSON(datos);
       // console.log(datos);
       if (tbody.Validacion=="Exito") {
@@ -863,7 +868,7 @@
   //evento del modal cuando se abre por completo #modalCaptura
   $('#modalCaptura').on('show.bs.modal shown.bs.modal',cargComplModalCaptura);
   function cargComplModalCaptura(e) {
-    console.log(e);
+    // console.log(e);
     if (e.type=="show") {
       //aquí quitamos los alertas si de dejaron abierto
       var numAlert=$('#formCaptura',"#modalCaptura").children('div.aCapNumEmp').length;
@@ -899,14 +904,22 @@
       $('#fechaC').val(fechaCompleta);
       $('#cantidadC','#modalCaptura').focus().select();
       console.log($('#fechaC').val());
-      // var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
-      // if (hora<10) {
-      //   hora="0"+hora;
-      //   minutos="0"+minutos;
-      //   segundos="0"+segundos;
-      // }
-      // horaComplet=hora+":"+minutos+":"+segundos;
-      // console.log(horaComplet);
+
+      var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
+      if (hora<10) {
+        hora="0"+hora;
+      }if (minutos<10) {
+        minutos="0"+minutos
+      }
+      if (segundos<10) {
+        segundos="0"+segundos;
+      }
+      horaCompleta=hora+":"+minutos+":"+segundos;
+      var miFecha=new Date();
+      miFecha.setHours(hora,minutos,segundos);
+      console.log(miFecha.valueOf());
+      console.log(miFecha.getMinutes());
+      console.log(horaCompleta);
       // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
       //   $('#horaInicioC').val('07:00:00');
       //   $('#horaFinalC').val('08:00:00');
@@ -1852,7 +1865,27 @@
 
   //sección de POST
   $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
-
+  //esta función sirve para captar todos los errores que tenemos al momento de hacer un ajax.
+  $.ajaxSetup({
+    error: function( jqXHR, textStatus, errorThrown ) {
+      if (jqXHR.status == 0) {
+        alert('No hay conexión con el servidor, por favor intente más tarde o llame al administrador');
+        return false;
+      } else if (jqXHR.status == 404) {
+        alert('Requested page not found [404]');
+      } else if (jqXHR.status == 500) {
+        alert('Internal Server Error [500].');
+      } else if (textStatus === 'parsererror') {
+        alert('Requested JSON parse failed.');
+      } else if (textStatus === 'timeout') {
+        alert('Time out error.');
+      } else if (textStatus === 'abort') {
+        alert('Ajax request aborted.');
+      } else {
+        alert('Uncaught Error: ' + jqXHR.responseText);
+      }
+    }
+  });//fin de la función $.ajaxSetup
 });//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte
