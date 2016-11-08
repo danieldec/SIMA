@@ -920,42 +920,6 @@
       console.log(miFecha.valueOf());
       console.log(miFecha.getMinutes());
       console.log(horaCompleta);
-      // if (horaComplet>="07:00:00"&&horaComplet<"09:00:00") {
-      //   $('#horaInicioC').val('07:00:00');
-      //   $('#horaFinalC').val('08:00:00');
-      // }
-      // if (horaComplet>="09:00:00"&&horaComplet<"10:00:00") {
-      //   $('#horaInicioC').val('08:00:00');
-      //   $('#horaFinalC').val('09:00:00');
-      // }
-      // if (horaComplet>="10:00:00"&&horaComplet<"11:00:00") {
-      //   $('#horaInicioC').val('09:00:00');
-      //   $('#horaFinalC').val('10:00:00');
-      // }
-      // if (horaComplet>="11:00:00"&&horaComplet<"12:00:00") {
-      //   $('#horaInicioC').val('10:00:00');
-      //   $('#horaFinalC').val('11:00:00');
-      // }
-      // if (horaComplet>="12:00:00"&&horaComplet<"13:00:00") {
-      //   $('#horaInicioC').val('11:00:00');
-      //   $('#horaFinalC').val('12:00:00');
-      // }
-      // if (horaComplet>="13:00:00"&&horaComplet<"14:00:00") {
-      //   $('#horaInicioC').val('12:00:00');
-      //   $('#horaFinalC').val('13:00:00');
-      // }
-      // if (horaComplet>="14:00:00"&&horaComplet<"15:00:00") {
-      //   $('#horaInicioC').val('13:00:00');
-      //   $('#horaFinalC').val('14:00:00');
-      // }
-      // if (horaComplet>="15:00:00"&&horaComplet<"15:40:00") {
-      //   $('#horaInicioC').val('14:00:00');
-      //   $('#horaFinalC').val('15:00:00');
-      // }
-      // if (horaComplet>="15:40:00"&&horaComplet<"16:30:00") {
-      //   $('#horaInicioC').val('15:00:00');
-      //   $('#horaFinalC').val('16:00:00');
-      // }
       var idDetListaNumOrden=$('#'+numEmpleadoC).val();
     }
   }//fin de la función cargComplModalCaptura
