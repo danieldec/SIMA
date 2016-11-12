@@ -14,6 +14,8 @@
   <!-- Hojas de estilos que estan en la ruta www/css-->
   <?php include '../hojasEstilo.php'; ?>
   <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
+  <!--CSS de Libreria jqwidget-->
+  <link type="text/css" rel="Stylesheet" href="../../css/styles/jqx.base.css" />
   <link rel="stylesheet" href="../../css/produccion.css" charset="utf-8">
 </head>
 <body>
@@ -437,11 +439,11 @@
             </div>
           </div>
           <div class="row">
-            <!-- <div class="col-md-8 col-md-offset-2" id="">
+            <div class="col-md-8 col-md-offset-2" id="">
               <input placeholder="# de empleado" autocomplete="off" class="form-control inpAgrNEmpNOrd" name="inpAgrNEmpNOrd">
               <input type="button" class="btn-primary form-control inpAnadirEmp" value="Agregar" data-toggle="popover">
               <br>
-            </div> -->
+            </div>
             <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
           </div>
         </div>
@@ -617,6 +619,7 @@
         </div>
       </div><!--Fin Modal Editar Captura-->
     </div>
+    <div id="jqxNotiModCap"></div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">
@@ -646,6 +649,10 @@
   <script src="../../js/jquery.timeAutocomplete.js" type="text/javascript"></script>
   <script src="../../js/formatters/24hr.js" type="text/javascript"></script>
   <script src="../../js/formatters/ampm.js" type="text/javascript"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
+  <script type="text/javascript" src="js/captura.js">
+  </script>
 </body>
 </html>

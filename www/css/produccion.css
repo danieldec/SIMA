@@ -246,6 +246,8 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #modEditCAp{
   table-layout: auto;
 }
+#jqxNotiModCap{
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;
@@ -300,4 +302,7 @@ td>.capturaEmpleados, .detalleNumOrden{
 }
 .tmEC{
   cursor: pointer;
+}
+.inpAgrNEmpNOrd{
+  text-transform: uppercase;
 }

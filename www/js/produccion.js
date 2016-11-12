@@ -101,6 +101,7 @@
   var horaFECVI='';
   var minTMECVI='';
   var eficienciaECVI='';
+  var zInd=$('#modCapNumOrd').css('zIndex');
   //inicializamos el datepick del plug-in
   // horaInicioC.timeAutocomplete({formatter: '24hr'});
   // horaFinalC.timeAutocomplete({formatter: '24hr'});
@@ -707,10 +708,10 @@
   $('#tablaCaptura').on('click','.capturaEmpleados',clickCaptura);
   // capturaEmpleados.on('click',clickCaptura);
   function clickCaptura() {
-    modCapNumOrd.modal({backdrop: "static",keyboard:false});
-    //guardamos el número de parte para extraer el rate
     capNumParte=$(this).parent().siblings('.tdCapNumPart').html();
     capNumOrden=$(this).parent().siblings('.tdCapNumOrd').html();
+    modCapNumOrd.modal({backdrop: "static",keyboard:false}).data({'numParte':capNumParte,'numOrden':capNumOrden});
+    //guardamos el número de parte para extraer el rate
     $.post('captura.php',{pcapNumOrden:capNumOrden},funCapNumOrde);
   }
   function funCapNumOrde(data,status) {
@@ -1833,7 +1834,8 @@
   $.ajaxSetup({
     error: function( jqXHR, textStatus, errorThrown ) {
       if (jqXHR.status == 0) {
-        alert('No hay conexión con el servidor, por favor intente más tarde o llame al administrador');
+        $(jqxNotiModCap).jqxNotification({template:'error'}).html("No hay conexión con el servidor,por favor espere ó llame al administrador").jqxNotification('open');
+        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd,'font-size':'15px'});
         return false;
       } else if (jqXHR.status == 404) {
         alert('Requested page not found [404]');
@@ -1850,6 +1852,14 @@
       }
     }
   });//fin de la función $.ajaxSetup
+  $('#jqxNotiModCap').html("esto es una prueba bien chida").jqxNotification({
+    width: 250,
+    position: "top-right",
+    opacity: 2,
+    autoOpen: false,
+    autoClose: false,
+    template: "success"
+    });
 });//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte

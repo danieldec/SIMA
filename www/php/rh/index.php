@@ -12,6 +12,9 @@
   <title>Recursos Humanos</title>
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->
   <?php include '../hojasEstilo.php'; ?>
+  <link rel="stylesheet" href="../../css/styles/jqx.base.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/styles/jqx.classic.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/styles/jqx.bootstrap.css" type="text/css" />
   <link rel="stylesheet" href="../../css/rh.css" charset="utf-8">
 </head>
 <body>
@@ -81,19 +84,17 @@
       <br>
       <!--Botón lista empleados-->
       <div class="row">
-       <div class="container-fluid">
-         <div class="col-md-offset-3 col-md-6 text-center">
-          <button id="btnListaE"class="btn btn-info btn-block" type="button" data-toggle="collapse" data-target="#listaEmpleados">VER LISTA EMPLEADOS</button>
-         </div>
-       </div>
-      </div>
-      <!--tabla empleados-->
-      <div class="row" id="divTablaEmpleados">
-        <div class="container-fluid">
-          <div class="collapse col-md-12 text-center" id="listaEmpleados">
+        <div class="col-md-10 col-md-offset-1">
+          <div class="container-fluid">
+             <div id='jqxWidget'>
+              <div id="jqxgridEmpleados"></div>
+              <br>
+              <input type="button" value="Export to Excel" id='excelExport' />
+            </div>
           </div>
         </div>
       </div>
+      <!--tabla empleados-->
     </div>
     <!--Aquí termina el contenido de la pestaña empleados-->
 
@@ -106,12 +107,32 @@
 
     <!--Aquí empieza el contenido de la pestaña de reporte -->
     <div class="tab-pane fade" id="reporte">
-      
+      <h2>Estas en el tab de reporte</h2>
   </div>
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
 
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
+
+  <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxdata.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxbuttons.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxscrollbar.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxmenu.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxlistbox.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxdropdownlist.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.selection.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxcheckbox.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.pager.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.sort.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.columnsresize.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.filter.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.grouping.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxdata.export.js"></script> 
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.export.js"></script> 
+
   <script type="text/javascript" src="../../js/rh.js"></script>
+
 </body>
 </html>

@@ -1,4 +1,5 @@
-$(document).on('ready',function() {
+$(document).ready(Principal);
+function Principal() {
   //variables declaradas
   var cadenaNumEmpleado,cadenaNomEmpleado,cadenaApeEmpleado;
   var inputTypeText=$('div>input[type="text"]');
@@ -22,10 +23,8 @@ $(document).on('ready',function() {
       if ($(this).prop('name')==inputApeEmpleado.prop('name')) {
         cadenaApeEmpleado=$(this).val().toUpperCase();
       }
-    })
+    });
   });
-
-
   //insertar usuario a través de ajax
   $('form').on('submit',function (e) {
     inputNumEmpleado.val(cadenaNumEmpleado);
@@ -34,7 +33,6 @@ $(document).on('ready',function() {
     var numEmpleado=inputNumEmpleado.val() ;
     var nombreEmpleado=inputNomEmpleado.val();
     var apeEmpleado=inputApeEmpleado.val();
-    //console.log(numEmpleado+" " + nombreEmpleado +" "+ apeEmpleado);
     $.post('altasEmpleado.php',
       {
         pnumEmpleado:numEmpleado,
@@ -80,11 +78,7 @@ $(document).on('ready',function() {
     )
     e.preventDefault();
   });
-  //evento cuando cerramos el alert No funciona
-  // $('#alertAltaEmple').on('close.bs.alert',function() {
-  //   $('#inpNumEmpleado').focus();
-  //   console.log($(this));
-  // });
+/*
   //empieza el listado de los empleado
   $('#btnListaE').on('click',function () {
     $.post('empleadosME.php',
@@ -104,8 +98,8 @@ $(document).on('ready',function() {
     $("tr>td>button").on('click',function() {
       var inputSelecionado=$(this).parent().prevAll();
       // original var inputSelecionado=$(this).parent().prevAll().children('input');
-    	/*console.log($(this).attr("id"));
-    	console.log($(this).text()+"\nel método.html(): "+$(this).html());*/
+      // console.log($(this).attr("id"));
+    	// console.log($(this).text()+"\nel método.html(): "+$(this).html());
     	if ($(this).text()==" Modificar") {
         numEmpleadoE=inputSelecionado.children('input:eq(2)').val();
         //nomEmpleadoE=inputSelecionado.children('input:eq(1)').val();
@@ -158,7 +152,7 @@ $(document).on('ready',function() {
       }
 
     });
-  };
+  };*/
   $('#aCerrarSesion').on('click',function(e) {
     var r= window.confirm("¿Estas seguro que quieres salir?");
     if (r) {
@@ -167,8 +161,76 @@ $(document).on('ready',function() {
       e.preventDefault();
     }
   });
-})// fin del documento
+  //Aquí vamos a usar la libreria de jqwidget en la tabla de empleados
+  // prepare the data
+  var theme='classic';
+   var source =
+   {
+       datatype: "json",
+       datafields:
+       [
+         { name: 'idempleados',type:'string' },
+         { name: 'nombre',type:'string' },
+         { name: 'apellidos',type:'string' },
+         { name: 'estado',type:'int' }
+       ],
+       cache:false,
+       url: 'empleados.php',
+       type:'POST',
+       root:'Rows',
+       beforeprocessing:function(data) {
+         source.totalrecords=data[0].TotalRows;
+       },
+       sort:function () {
+          $('#jqxgridEmpleados').jqxGrid('updatebounddata','sort');
+       }
+   };
+   var dataAdapter=new $.jqx.dataAdapter(source,
+     {
+       loadComplete:function (data) {
+         console.log(data);
+        //  console.log("Completado con exito");
+       },
+       loadError:function (xhr, status, error) {
+         window.alert("conexion fallida con el servidor, intente de nuevo");
+       }
+     });
+   $("#jqxgridEmpleados").jqxGrid({
+       width:'100%',
+       source: dataAdapter,
+       theme: theme,
+       autoheight:true,
+       pageable:true,
+       virtualmode:true,
+       sortable: true,
+       columnsresize: true,
+       altRows:true,
+       rendergridrows:function(obj) {
+         return obj.data;
+       },
+       columns:
+       [
+         { text: '# empleado', datafield: 'idempleados', width: '20%' },
+         { text: 'Nombre', datafield: 'nombre', width: '35%' },
+         { text: 'Apellidos', datafield: 'apellidos', width: '35%' },
+         { text: 'Estado', datafield: 'estado', width: '10%', columntype:'checkbox' },
+       ]
+   });
+   $("#excelExport").jqxButton();
+   $("#excelExport").click(function () {
+     $("#jqxgridEmpleados").jqxGrid('exportdata', 'pdf','empleados',true,null,null,true,null,'UTF-8');
+   });
+}
+/*
+Primer paso pedir  ayuda.
+Ser mejor persona en todo.
+Respetar a mi esposa.
+Decir no puedo :(.
+Decir no.
+Aprender de mis errores.
+Hablar con mi maestra.
 
+Voy a llorar porque tengo frio en mi cuerpecito, que mala leche, ahorita tengo ganas de dormir en mi camita con unnas cobijas y estar viendo videos o una pelicula o la televisión en mi cuarto y quedarme dormido si es posible y despertar y que todo ya este resuelto y volver a mi cama a dormir.*/
 //recorrer los elemento de un mismo tipo de selector
 //$('div>input[type="text"]').each(function (index) {
 //   console.log(index+": " +$(this).val());
