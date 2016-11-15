@@ -191,7 +191,7 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
   width: 3.3%;
 }
 #modCapNumOrd{
-  top: 25%;
+  top: 10%;
 }
 #modCapNumOrd>div>div>div>h4{
   letter-spacing: 2px;

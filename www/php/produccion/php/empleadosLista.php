@@ -15,7 +15,7 @@
 		$fila=$resultado->fetch_object();
 		$fechaDB=$fila->fecha;
 		if (strtotime($fechaHoy)===strtotime($fechaDB)) {
-			$consulta="SELECT da.empleados_idempleados as idEmpleados,CONCAT_WS(' ',e.nombre,e.apellidos) as nombre FROM detalle_asistencia da INNER JOIN empleados e ON da.empleados_idempleados=e.idempleados WHERE da.empleados_idempleados LIKE'%$numEmpleado%' AND da.asistencia_fecha='$fechaDB'";
+			$consulta="SELECT da.empleados_idempleados as idEmpleados,CONCAT_WS(' ',e.nombre,e.apellidos) as nombre FROM detalle_asistencia da INNER JOIN empleados e ON da.empleados_idempleados=e.idempleados WHERE da.empleados_idempleados LIKE'%$numEmpleado%' AND da.asistencia_fecha='$fechaDB' LIMIT 5";
 			$resultado=$conexion->query($consulta);
 			$datos=array();
 			if (!$resultado) {

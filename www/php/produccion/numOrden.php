@@ -35,14 +35,6 @@
       $fecha_Num_Orden=$_POST['pVFechaNumOrden'];
       $id_usuario=$_POST['pVNumUsuario'];
       $consulta="insert into num_orden (idnum_orden, num_parte, cantidad, fecha, usuarios_idusuario, fecha_generada) value('$num_orden','$num_parte','$cantidad_Req','$fecha_Num_Orden','$id_usuario',CURRENT_TIMESTAMP)";
-      // $consulta2="select DISTINCT num_parte_num_parte, idparcial from parcial WHERE idparcial='".$num_parteParcial."' and num_parte_num_parte = '".$idParcial."'";
-      // $resultado=$conexion->query($consulta2);
-      // if (!$resultado) {
-      //   echo "error: ".mysqli_error($conexion)." ". mysqli_errno($conexion);
-      //   return;
-      // }
-      // $fila=$resultado->num_rows;
-      // echo $fila;
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         echo "error: ".mysqli_error($conexion);

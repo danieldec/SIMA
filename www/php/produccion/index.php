@@ -434,14 +434,20 @@
         <div class="modal-body">
           <div class="row" id="divNMNP">
             <div class="col-md-12">
-              <div class="row col-md-5"><span id="spanNOMC">Número de Orden: </span></div>
-              <div class="row col-md-7"><span id="spanNPMC">Número de Parte: </span></div>
+              <div class="col-md-5"><span id="spanNOMC">Número de Orden: </span></div>
+              <div class="col-md-7"><span id="spanNPMC">Número de Parte: </span></div>
             </div>
           </div>
           <div class="row">
             <div class="col-md-8 col-md-offset-2" id="">
+              <h4 class="text-center">ASIGNAR EMPLEADO A FOLIO</h4>
               <input placeholder="# de empleado" autocomplete="off" class="form-control inpAgrNEmpNOrd" name="inpAgrNEmpNOrd">
               <input type="button" class="btn-primary form-control inpAnadirEmp" value="Agregar" data-toggle="popover">
+              <br>
+            </div>
+            <div class="col-md-8 col-md-offset-2" id="">
+              <h4 class="text-center">CAPTURA EMPLEADOS POR HORA</h4>
+              <input style="" type="button" class="btn-success form-control capturaPorHora" value="CAPTURA"/>
               <br>
             </div>
             <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
@@ -619,7 +625,14 @@
         </div>
       </div><!--Fin Modal Editar Captura-->
     </div>
-    <div id="jqxNotiModCap"></div>
+    <div id="jqxNotiModCap">
+      <div id="divNotificaciones"></div>
+    </div>
+    <div id="jqxErrorConexion">
+      <div id="divNotificaciones"></div>
+    </div>
+    <div id="jqxError2ModCap"></div>
+    <div id="jqxError3ModCap"></div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

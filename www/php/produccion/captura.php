@@ -64,7 +64,7 @@
         exit();
       }
     }
-    //este if se llamo desde el archivo produccion.js en la línea 425
+    //este if se llamo desde el archivo produccion.js en la línea 611
     if (isset($_POST['pHoy'])&&isset($_POST['pNumOrd'])&&isset($_POST['pNumEmp'])) {
       $fechaHoyPost=$_POST['pHoy'];
       $NumOrden=$_POST['pNumOrd'];

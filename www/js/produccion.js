@@ -102,6 +102,7 @@
   var minTMECVI='';
   var eficienciaECVI='';
   var zInd=$('#modCapNumOrd').css('zIndex');
+  divNotificaciones=$('#divNotificaciones');
   //inicializamos el datepick del plug-in
   // horaInicioC.timeAutocomplete({formatter: '24hr'});
   // horaFinalC.timeAutocomplete({formatter: '24hr'});
@@ -177,17 +178,9 @@
 
   //busqueda de los número de parte en el input NumParte
   inpNumParte.bind('keyup keydown keypressed blur',function(e) {
-    // e.which=38 flecha para abajo
-    // e.which=40 flecha para arriba
-    // if (e.type=="keydown") {
-    //   if (e.which==40) {
-    //     console.log($('#listaNumParte>li'));
-    //   }
-    // }
     if (e.type=="keyup"&&e.which!=219) {
       cadNumParte=$(this).val().toUpperCase();
       var palabraC=$(this).val();
-      //console.log(palabraC);
       if (cadNumParte.length>0) {
         $.ajax({
           url:'numOrden.php',
@@ -1834,8 +1827,10 @@
   $.ajaxSetup({
     error: function( jqXHR, textStatus, errorThrown ) {
       if (jqXHR.status == 0) {
-        $(jqxNotiModCap).jqxNotification({template:'error'}).html("No hay conexión con el servidor,por favor espere ó llame al administrador").jqxNotification('open');
-        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd,'font-size':'15px'});
+        divNotificaciones.html("No hay conexión con el servidor,por favor espere ó llame al administrador");
+        $(jqxNotiModCap).jqxNotification({template:'error'});
+        $(jqxNotiModCap).jqxNotification('open');
+        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd}).find('.jqx-notification-content');
         return false;
       } else if (jqXHR.status == 404) {
         alert('Requested page not found [404]');
@@ -1852,13 +1847,13 @@
       }
     }
   });//fin de la función $.ajaxSetup
-  $('#jqxNotiModCap').html("esto es una prueba bien chida").jqxNotification({
+  $('#jqxNotiModCap').jqxNotification({
     width: 250,
     position: "top-right",
     opacity: 2,
     autoOpen: false,
     autoClose: false,
-    template: "success"
+    template: "error"
     });
 });//fin del la función del ready
 
