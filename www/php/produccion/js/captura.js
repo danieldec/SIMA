@@ -65,7 +65,7 @@ function principal() {
 			success:exitoFuncionABtnEmp,
 			type:'POST',
 			error:errorFuncionABtnEmp
-		})		
+		})
 	}//fin de la función agregarBtnEmpleado
 	//Inicio de la función exitoFuncionABtnEmp
 	function exitoFuncionABtnEmp(data,textStatus,jqXHR) {
@@ -79,7 +79,7 @@ function principal() {
 			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			inpAgrNEmpNOrd.val('');
-		}		
+		}
 	}//fin de la función exitoFuncionABtnEmp
 	function errorFuncionABtnEmp(jqXHR,textStatus,errorThrown) {
 		if (jqXHR.status == 0) {
@@ -87,7 +87,7 @@ function principal() {
 			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;
-		} 
+		}
 		var errorPHP=jqXHR.responseText;
 		//Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
 		divNotificaciones.html(textStatus);
@@ -98,7 +98,20 @@ function principal() {
 		divNotificaciones.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
 		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
 	}//fin de la función errorFuncionABtnEmp
-	//Aquí acaba la función error
+
+	//empezamos a realizar la interfaz de la captura de produccion.
+	$('.capturaPorHora').on('click',clickBtnCapturaXHora);
+	$('#ventanaCapPorHora').jqxWindow({'width':'100%','height':'auto',autoOpen:false});
+	function clickBtnCapturaXHora() {
+		console.log("esto funciona bien ");
+		$('#tablaCapPorHora').DataTable().destroy();
+		$('#ventanaCapPorHora').jqxWindow('open')
+		$('#tablaCapPorHora').DataTable({
+			"language":{
+				"url":"../../json/Spanish.json"
+			}
+		});
+	}
 }//fin de la función principal
 
 

@@ -3,7 +3,7 @@
   var cadenaUsuario="";
   //creamos una variable que hace referencia al input donde se va a colocar el nombre del usuario
   var inputUsuario=$('#inUsuario');
-  console.log("estamos con el js del index");
+  // console.log("estamos con el js del index");
   //aquí aplicamos tres eventos al input del nombreUsuario para que nos convierta el texto en mayusculas
   inputUsuario.bind('keyup blur focus',function (e) {
      if (e.type=="keyup") {
@@ -30,19 +30,19 @@
       function(data, status) {
         switch (data) {
           case 'admin':
-            window.alert("Ingresaste Correctamente");
+            mensajeIngreso();
             window.location.href="php/admin/";
             break;
           case 'rh':
-            window.alert("Ingresaste Correctamente");
+            mensajeIngreso();
             window.location.href="php/rh/";
             break;
           case 'produccion':
-            window.alert("Ingresaste Correctamente");
+            mensajeIngreso();
             window.location.href="php/produccion/";
             break;
           case 'materiales':
-            window.alert("Ingresaste Correctamente");
+            mensajeIngreso();
             window.location.href="php/materiales/";
             break;
           default:
@@ -52,4 +52,7 @@
     );
     e.preventDefault();
   });
+  function mensajeIngreso() {
+    window.alert("Ingresaste Correctamente");
+  }
 });

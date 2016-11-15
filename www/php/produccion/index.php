@@ -449,6 +449,63 @@
               <h4 class="text-center">CAPTURA EMPLEADOS POR HORA</h4>
               <input style="" type="button" class="btn-success form-control capturaPorHora" value="CAPTURA"/>
               <br>
+              <div id="ventanaCapPorHora">
+                <div>Captura</div>
+                <div>
+                  <header id="cabeceraVenCapPorHora">
+                    <span>Folio: <span id='folioVenCap'></span></span>
+                    <span>Número de parte: <span id="numParteVenCap"></span></span>
+                    <span>Rate: <span id="rateNumParteVenCap"></span></span>
+                    <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span>
+                  </header>
+                  <table class="table" id="tablaCapPorHora">
+                    <caption class="text-center">Captura</caption>
+                    <thead>
+                      <tr>
+                        <th># empleado</th>
+                        <th>7-8</th>
+                        <th>8-9</th>
+                        <th>9-10</th>
+                        <th>10-11</th>
+                        <th>12-13</th>
+                        <th>13-14</th>
+                        <th>14-15</th>
+                        <th>15-16</th>
+                        <th>16-17</th>
+                        <th>18-19</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>D-1220</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>700</td>
+                        <td>600</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>700</td>
+                        <td>600</td>
+                      </tr>
+                      <tr>
+                        <td>D-1229</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>700</td>
+                        <td>600</td>
+                        <td>400</td>
+                        <td>800</td>
+                        <td>700</td>
+                        <td>600</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </dvi>
             </div>
             <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
           </div>
@@ -664,6 +721,7 @@
   <script src="../../js/formatters/ampm.js" type="text/javascript"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
   <script type="text/javascript" src="js/captura.js">
   </script>
