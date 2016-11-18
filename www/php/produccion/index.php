@@ -441,6 +441,7 @@
           <div class="row">
             <div class="col-md-8 col-md-offset-2" id="">
               <h4 class="text-center">ASIGNAR EMPLEADO A FOLIO</h4>
+              <div id="divFechaCapEmpleados"></div>
               <input placeholder="# de empleado" autocomplete="off" class="form-control inpAgrNEmpNOrd" name="inpAgrNEmpNOrd">
               <input type="button" class="btn-primary form-control inpAnadirEmp" value="Agregar" data-toggle="popover">
               <br>
@@ -458,11 +459,16 @@
                     <span>Rate: <span id="rateNumParteVenCap"></span></span>
                     <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span>
                   </header>
-                  <table class="table" id="tablaCapPorHora">
+                  <table class="table table-bordered" id="tablaCapPorHora">
                     <caption class="text-center">Captura</caption>
                     <thead>
                       <tr>
-                        <th># empleado</th>
+                        <th># Empleado</th>
+                        <th hidden="hidden">idDetLista</th>
+                        <th hidden="hidden">idDetAsis</th>
+                        <th>Nombre</th>
+                        <th>TM</th>
+                        <th>HR</th>
                         <th>7-8</th>
                         <th>8-9</th>
                         <th>9-10</th>
@@ -478,8 +484,13 @@
                     <tbody>
                       <tr>
                         <td>D-1220</td>
-                        <td>400</td>
-                        <td>800</td>
+                        <td hidden="hidden">400</td>
+                        <td hidden="hidden">300</td>
+                        <td>Alejandra</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td><span>80.76</span><br><span>CC</span><br><span>TM</span></td>
+                        <td>800<br><span>CI</span></td>
                         <td>400</td>
                         <td>800</td>
                         <td>700</td>
@@ -491,21 +502,27 @@
                       </tr>
                       <tr>
                         <td>D-1229</td>
-                        <td>400</td>
-                        <td>800</td>
-                        <td>400</td>
-                        <td>800</td>
-                        <td>700</td>
-                        <td>600</td>
-                        <td>400</td>
-                        <td>800</td>
-                        <td>700</td>
-                        <td>600</td>
+                        <td hidden="hidden">400</td>
+                        <td hidden="hidden">300</td>
+                        <td>Griselda</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>57.9</td>
+                        <td>90.8</td>
+                        <td>98.7</td>
+                        <td>96.0</td>
+                        <td>78.0</td>
+                        <td>89.5</td>
+                        <td>55.9</td>
+                        <td>66.0</td>
+                        <td>88.9</td>
+                        <td>78.9</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-              </dvi>
+              </div>
+              <div id="capturaPersona"></div>
             </div>
             <div class="col-md-8 col-md-offset-2" id="divColListEmp"></div>
           </div>
@@ -722,6 +739,10 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxdatetimeinput.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxcalendar.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
   <script type="text/javascript" src="js/captura.js">
   </script>

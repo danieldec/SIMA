@@ -5,21 +5,39 @@ function principal() {
 	var inpAgrNEmpNOrd=$('.inpAgrNEmpNOrd',"#modCapNumOrd");
 	var inpAnadirEmp=$('.inpAnadirEmp','#modCapNumOrd');
 	var jqxNotiModCap=$('#jqxNotiModCap');
-	 var divNotificaciones=$('#divNotificaciones');
-	var fechaDia=new Date(),mes,dia,fechaCompletaHoy;
+	var divNotificaciones=$('#divNotificaciones');
+	var fechaDia=new Date(),ano,mes,dia,fechaCompletaHoy;
+	var tablaCapPorHora=$('#tablaCapPorHora');
+	var divFechaCapEmpleados=$('#divFechaCapEmpleados');
+	//incializamos el calendario del modal de la captura y la configuración inicial
+	divFechaCapEmpleados.jqxDateTimeInput(
+		{
+			width: '150px',
+			height: '25px',
+			culture:'es-ES',
+			formatString: "d",
+			showFooter:true,
+			clearString:'Limpiar',
+			todayString:'Hoy'
+	}).css({'margin':'10px auto'}).jqxDateTimeInput('setDate',new Date(fechaDia.getFullYear(),fechaDia.getMonth(),fechaDia.getDate()));
 	//fecha del día del hoy.
-	if (fechaDia.getMonth()<10) {
-		mes=0+""+(fechaDia.getMonth()+1);
-	}else{
-		mes=fechaDia.getMonth()+1;
-	}
-	if (fechaDia.getDate()<10) {
-		dia=0+""+fechaDia.getDate();
-	}else{
-		dia=fechaDia.getDate();
-	}
-	fechaCompletaHoy=fechaDia.getFullYear()+"-"+mes+"-"+dia;
-	//aquí termina la fecha del día
+	fechaCompletaHoy = obtenerFecha(fechaDia);
+	/*función que nos devuelve la fecha formateada así:
+	YYYY/mm/dd*/
+	function obtenerFecha(fechaDia) {
+		this.fechaDia=fechaDia;
+		if (this.fechaDia.getMonth()<10) {
+			mes=0+""+(this.fechaDia.getMonth()+1);
+		}else{
+			mes=this.fechaDia.getMonth()+1;
+		}
+		if (this.fechaDia.getDate()<10) {
+			dia=0+""+this.fechaDia.getDate();
+		}else{
+			dia=this.fechaDia.getDate();
+		}
+		return this.fechaDia.getFullYear()+"/"+mes+"/"+dia;
+	}//fin de la función obtenerFecha
 
 	//autocomplete para registrar operadores al número de orden.
 	inpAgrNEmpNOrd.autocomplete({
@@ -34,14 +52,17 @@ function principal() {
 	//Aquí termina el método del autocomplete()
 	//Aquí empieza el metodo listaEmpleados
 	function listaEmpleados(request,response) {
+		var fechaDia=divFechaCapEmpleados.jqxDateTimeInput('getDate');
+		fechaCompletaHoy = obtenerFecha(fechaDia);
 		$.post({
 			url:"php/empleadosLista.php",
 			dataType:'json',
-			data:{q:request.term},
+			data:{fechaCompletaHoy:fechaCompletaHoy,q:request.term},
 			success:function (data) {
 				response(data);
 			},
-			type:'POST'
+			type:'POST',
+			error:errorFuncionABtnEmp
 		});
 	}//fin de la función listaEmpleados.
 	//Aquí termina las funciones y eventos asociados al autocomplete del número de empleado en el detalle asistencia del día.
@@ -100,18 +121,65 @@ function principal() {
 	}//fin de la función errorFuncionABtnEmp
 
 	//empezamos a realizar la interfaz de la captura de produccion.
+	$('#ventanaCapPorHora').jqxWindow({'width':'auto','height':'auto',autoOpen:false,maxHeight:700, maxWidth:900});
 	$('.capturaPorHora').on('click',clickBtnCapturaXHora);
-	$('#ventanaCapPorHora').jqxWindow({'width':'100%','height':'auto',autoOpen:false});
 	function clickBtnCapturaXHora() {
-		console.log("esto funciona bien ");
-		$('#tablaCapPorHora').DataTable().destroy();
-		$('#ventanaCapPorHora').jqxWindow('open')
-		$('#tablaCapPorHora').DataTable({
-			"language":{
-				"url":"../../json/Spanish.json"
-			}
+		var fechaDia=divFechaCapEmpleados.jqxDateTimeInput('getDate');
+		fechaCompletaHoy = obtenerFecha(fechaDia);
+		var numOrden=$(modCapNumOrd).data('numOrden');
+		$.post({
+			url:"php/listaCapturaFolio.php",
+			dataType:'json',
+			data:{numOrden:numOrden,fechaCompletaHoy:fechaCompletaHoy},
+			success:exitoFunListaEmpleados,
+			type:'POST',
+			error:errorFuncionABtnEmp
 		});
 	}
+	function exitoFunListaEmpleados(data,textStatus,jqXHR) {
+		if (data.validacion=="Exito") {
+			$('#tablaCapPorHora').DataTable().destroy();
+			$('#ventanaCapPorHora').jqxWindow('open');
+			$('#tablaCapPorHora').DataTable({
+				"language":{
+					"url":"../../json/Spanish.json"
+				}
+			});
+			divNotificaciones.html(data.datos[0].asistencia_fecha);
+			console.log(data.datos);
+			jqxNotiModCap.jqxNotification({template:'success',width:'auto',height:'auto'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		}else if (data.validacion=="Error") {
+			divNotificaciones.html(data.datos);
+			console.log(data.datos);
+			jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			return false;
+		}
+	}
+	$("#"+tablaCapPorHora.prop('id')+'>tbody td:nth-of-type(+n+7)').on('click',venCapPer);
+	contador=0;
+	function venCapPer(e) {
+	}
+	$.ajaxSetup({
+		error:function(jqXHR,textStatus,errorThrown) {
+			if (jqXHR.status == 0) {
+				divNotificaciones.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
+				jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+				$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+				return false;
+			}
+			var errorPHP=jqXHR.responseText;
+			//Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
+			divNotificaciones.html(textStatus);
+			jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			divNotificaciones.html(errorPHP);
+			jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+			divNotificaciones.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
+			jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		}
+	})
 }//fin de la función principal
 
 

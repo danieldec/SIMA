@@ -36,7 +36,7 @@
 			if (!$resultado) {
 				$datos['validacion']='Error';
 				if ($conexion->errno==1062) {
-				$datos['datos']="el número de empleado ".$idEmpleado." ya existe en este folio ".$numOrden;
+				$datos['datos']="el número de empleado ".$idEmpleado."\n ya existe en este folio ".$numOrden;
 				}else{
 				$datos['datos']=$conexion->errno."($conexion->error)";
 				}

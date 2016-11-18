@@ -733,7 +733,7 @@
   function postDetCaptura(data,status) {
     try {
       var d=$.parseJSON(data);
-      $('#modDetCap tbody').empty();
+      // $('#modDetCap tbody').empty();
       $('#tablaDetCap').DataTable().destroy();
       $('#modDetCap tbody').html(d.Datos);
       $('#tablaDetCap').DataTable({
@@ -1830,7 +1830,7 @@
         divNotificaciones.html("No hay conexión con el servidor,por favor espere ó llame al administrador");
         $(jqxNotiModCap).jqxNotification({template:'error'});
         $(jqxNotiModCap).jqxNotification('open');
-        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd}).find('.jqx-notification-content');
+        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
         return false;
       } else if (jqXHR.status == 404) {
         alert('Requested page not found [404]');

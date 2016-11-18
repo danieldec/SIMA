@@ -249,8 +249,7 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #jqxNotiModCap{
 }
 #cabeceraVenCapPorHora{
-  border: solid rgb(53, 227, 92) 1px;
-  overflow-x: scroll;
+  font-size: 1.2em;
 }
 ul.ui-front{
   position: absolute;
