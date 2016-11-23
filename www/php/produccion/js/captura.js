@@ -9,6 +9,20 @@ function principal() {
 	var fechaDia=new Date(),ano,mes,dia,fechaCompletaHoy;
 	var tablaCapPorHora=$('#tablaCapPorHora');
 	var divFechaCapEmpleados=$('#divFechaCapEmpleados');
+	var divVentanaCapHora=$('#divVentanaCapHora');
+	var cantidadEmp=$('#cantidadEmp');
+	var tPar=$('#tPar');
+	var modalTiempoMuerto=$('#modalTiempoMuerto');
+	var tmCap=$('#tmCap');
+	var btnCapPorHora=$('#btnCapPorHora');
+	var formCapPorHora=$('#formCapPorHora');
+	var spanNumEmpleadoCap=$('#spanNumEmpleadoCap');
+	var spanHoraCap=$('#spanHoraCap');
+	var inpNumParteCap=$('#inpNumParteCap');
+	var spanRateCap=$('#spanRateCap');
+	var thRangoHora,tdNumEmpleado,tdEditar;
+	var ventanaAbierta=false;
+	var number = 0;
 	//incializamos el calendario del modal de la captura y la configuración inicial
 	divFechaCapEmpleados.jqxDateTimeInput(
 		{
@@ -18,8 +32,11 @@ function principal() {
 			formatString: "d",
 			showFooter:true,
 			clearString:'Limpiar',
-			todayString:'Hoy'
-	}).css({'margin':'10px auto'}).jqxDateTimeInput('setDate',new Date(fechaDia.getFullYear(),fechaDia.getMonth(),fechaDia.getDate()));
+			todayString:'Hoy',
+			disabled:true
+	}).
+	css({'margin':'10px auto'}).
+	jqxDateTimeInput('setDate',new Date(fechaDia.getFullYear(),fechaDia.getMonth(),fechaDia.getDate()));
 	//fecha del día del hoy.
 	fechaCompletaHoy = obtenerFecha(fechaDia);
 	/*función que nos devuelve la fecha formateada así:
@@ -38,7 +55,23 @@ function principal() {
 		}
 		return this.fechaDia.getFullYear()+"/"+mes+"/"+dia;
 	}//fin de la función obtenerFecha
+	//evento click del calendario
+	divFechaCapEmpleados.on('click',clickCalendario);
+	function clickCalendario(e) {
+		var desactivoCalendario= divFechaCapEmpleados.jqxDateTimeInput('disabled');
+		if (!desactivoCalendario) {
 
+		}else{
+			var editarCalendario=window.prompt("Ingresa contraseña supervisor para cambiar fecha");
+			if (editarCalendario!=null) {
+				if (editarCalendario=="SIMAC2016") {
+					divFechaCapEmpleados.jqxDateTimeInput({disabled:false})
+				}else {
+					window.alert("Contraseña no válida");
+				}
+			}
+		}
+	}
 	//autocomplete para registrar operadores al número de orden.
 	inpAgrNEmpNOrd.autocomplete({
 		source:listaEmpleados,
@@ -121,7 +154,27 @@ function principal() {
 	}//fin de la función errorFuncionABtnEmp
 
 	//empezamos a realizar la interfaz de la captura de produccion.
-	$('#ventanaCapPorHora').jqxWindow({'width':'auto','height':'auto',autoOpen:false,maxHeight:700, maxWidth:900});
+	$('#ventanaCapPorHora').jqxWindow(
+		{
+			width:'100%',
+			height:'50%',
+			autoOpen:false,
+			maxHeight:'700px',
+			maxWidth:'900px',
+			minWidth:'10%',
+			minHeight:'10%',
+			cancelButton: $('#inpCancelVentana')
+		});
+		divVentanaCapHora.jqxWindow({
+			width:'100%',
+			height:'100%',
+			autoOpen:false,
+			maxHeight:'300px',
+			maxWidth:'300px',
+			minWidth:'10%',
+			minHeight:'10%',
+			showAnimationDuration:20
+		});
 	$('.capturaPorHora').on('click',clickBtnCapturaXHora);
 	function clickBtnCapturaXHora() {
 		var fechaDia=divFechaCapEmpleados.jqxDateTimeInput('getDate');
@@ -135,31 +188,115 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		});
-	}
+	}//Aquí termina la función click
+	//aquí empieza la función exitoFunListaEmpleados
 	function exitoFunListaEmpleados(data,textStatus,jqXHR) {
 		if (data.validacion=="Exito") {
 			$('#tablaCapPorHora').DataTable().destroy();
-			$('#ventanaCapPorHora').jqxWindow('open');
+			$('#tablaCapPorHora>tbody').html(data.datos);
+			$('#ventanaCapPorHora').jqxWindow({
+				width:'100%',
+				height:'350px',
+				autoOpen:true,
+				maxHeight:'700px',
+				maxWidth:'900px',
+				minWidth:'10%',
+				minHeight:'10%',
+				position:'top',
+				cancelButton: $('#inpCancelVentana')
+			}).jqxWindow('open');
+			$('#ventanaCapPorHora').jqxWindow('focus');
 			$('#tablaCapPorHora').DataTable({
 				"language":{
 					"url":"../../json/Spanish.json"
 				}
 			});
-			divNotificaciones.html(data.datos[0].asistencia_fecha);
-			console.log(data.datos);
-			jqxNotiModCap.jqxNotification({template:'success',width:'auto',height:'auto'}).jqxNotification('open');
-			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			inpNumParteCap.val(data.numParte);
+			spanRateCap.html(data.rate);
 		}else if (data.validacion=="Error") {
 			divNotificaciones.html(data.datos);
 			console.log(data.datos);
-			jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',width:'300',height:'auto'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;
 		}
-	}
-	$("#"+tablaCapPorHora.prop('id')+'>tbody td:nth-of-type(+n+7)').on('click',venCapPer);
+	}//Aquí termina la función exitoFunListaEmpleados
+	//Aquí asignamos el evento a los td donde se va a realizar la captura por hora
+	$("#"+tablaCapPorHora.prop('id')+'>tbody').on('click','td:nth-of-type(+n+7)',venCapPer);
 	contador=0;
 	function venCapPer(e) {
+
+		ventanaAbierta=divVentanaCapHora.jqxWindow('isOpen');
+		if (ventanaAbierta) {
+			divVentanaCapHora.jqxWindow('close');
+			divVentanaCapHora.jqxWindow({closeAnimationDuration:10});
+			tdEditar.css('background-color','rgb(255, 255, 255)');
+			thRangoHora.css('background-color','rgb(255, 255, 255)');
+			tdNumEmpleado.css('background-color','rgb(255, 255, 255)');
+		}
+		var indice=$(this).index();
+		$('#ventanaCapPorHora').jqxWindow({keyboardNavigation: false});
+		tdEditar=$(this);
+		tdEditar.css('background-color','gainsboro');
+		thRangoHora=$(this).parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
+		var tdClickeado=$(this);
+		tdClickeado.jqxTooltip('open');
+		thRangoHora.css('background-color','#8ec9e2');
+		tdNumEmpleado=$(this).siblings('.idEmpCap');
+		tdClickeado.jqxTooltip({ content: '#Empleado: '+tdNumEmpleado.html()+' Hora: '+thRangoHora.html(), position: 'mouse'});
+		tdNumEmpleado.css('background-color','#8ec9e2');
+		var positionVenCapPorHora=$('#ventanaCapPorHora').offset();
+		var heightVenCapPorHora=$('#ventanaCapPorHora').outerHeight();
+		divVentanaCapHora.jqxWindow(
+			{
+			position: { x: positionVenCapPorHora.left, y: heightVenCapPorHora},
+			height:'210',
+			resizable:false,
+			 okButton: btnCapPorHora
+		});
+		//función cuando se abre la ventana
+		divVentanaCapHora.jqxWindow('open',function(e) {
+			cantidadEmp.val(0);
+			tPar.val(60);
+			cantidadEmp.focus().select();
+			spanNumEmpleadoCap.html(tdNumEmpleado.html());
+			spanHoraCap.html(thRangoHora.html());
+		});
+		//métodos para que la ventana divVentanaCapHora este al frente de la ventana #ventanaCapPorHora y que tenga el foco también.
+		divVentanaCapHora.jqxWindow('bringToFront');
+		divVentanaCapHora.jqxWindow('focus');
+	}
+	//evento hover de los td
+	$("#"+tablaCapPorHora.prop('id')+'>tbody').on('mouseover','td:nth-of-type(+n+7)',funHoverTD);
+	function funHoverTD(e) {
+		if (e.type=="mouseover") {
+			var indice=$(this).index();
+			var tdClickeado=$(this);
+			var thRangoHora=$(this).parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
+			var tdNumEmpleado=$(this).siblings('.idEmpCap');
+			tdClickeado.jqxTooltip({ content: '#Empleado: '+tdNumEmpleado.html()+' Hora: '+thRangoHora.html(), position: 'mouse'});
+			tdClickeado.jqxTooltip('open');
+		}
+	}
+	//evento asígnado a la ventana de divVentanaCapHora cuando cerramos la misma ventana
+	divVentanaCapHora.on('close',funCerrarVentana);
+	function funCerrarVentana(e) {
+		thRangoHora.css('background-color','rgb(247, 247, 247)');
+		tdNumEmpleado.css('background-color','rgb(247, 247, 247)');
+		tdEditar.css('background-color','rgb(247, 247, 247)');
+	}
+	//evento asociado al botón de tiempo muerto de la ventana divVentanaCapHora
+	$('#tmCap').on('click',clickTM);
+	function clickTM(e) {
+	}
+	//evento asociado al botón de submit del formulario de la ventana divVentanaCapHora
+	btnCapPorHora.on('click',clickCaptura);
+	function clickCaptura(e) {
+		var h= thRangoHora.attr('data-h');
+	}
+	formCapPorHora.on('submit',enviarFuncion);
+	function enviarFuncion(e) {
+		e.preventDefault();
 	}
 	$.ajaxSetup({
 		error:function(jqXHR,textStatus,errorThrown) {

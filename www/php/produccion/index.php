@@ -411,7 +411,6 @@
                       </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                   </table>
                 </div>
@@ -450,76 +449,103 @@
               <h4 class="text-center">CAPTURA EMPLEADOS POR HORA</h4>
               <input style="" type="button" class="btn-success form-control capturaPorHora" value="CAPTURA"/>
               <br>
-              <div id="ventanaCapPorHora">
-                <div>Captura</div>
-                <div>
-                  <header id="cabeceraVenCapPorHora">
-                    <span>Folio: <span id='folioVenCap'></span></span>
-                    <span>Número de parte: <span id="numParteVenCap"></span></span>
-                    <span>Rate: <span id="rateNumParteVenCap"></span></span>
-                    <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span>
-                  </header>
-                  <table class="table table-bordered" id="tablaCapPorHora">
-                    <caption class="text-center">Captura</caption>
-                    <thead>
-                      <tr>
-                        <th># Empleado</th>
-                        <th hidden="hidden">idDetLista</th>
-                        <th hidden="hidden">idDetAsis</th>
-                        <th>Nombre</th>
-                        <th>TM</th>
-                        <th>HR</th>
-                        <th>7-8</th>
-                        <th>8-9</th>
-                        <th>9-10</th>
-                        <th>10-11</th>
-                        <th>12-13</th>
-                        <th>13-14</th>
-                        <th>14-15</th>
-                        <th>15-16</th>
-                        <th>16-17</th>
-                        <th>18-19</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>D-1220</td>
-                        <td hidden="hidden">400</td>
-                        <td hidden="hidden">300</td>
-                        <td>Alejandra</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td><span>80.76</span><br><span>CC</span><br><span>TM</span></td>
-                        <td>800<br><span>CI</span></td>
-                        <td>400</td>
-                        <td>800</td>
-                        <td>700</td>
-                        <td>600</td>
-                        <td>400</td>
-                        <td>800</td>
-                        <td>700</td>
-                        <td>600</td>
-                      </tr>
-                      <tr>
-                        <td>D-1229</td>
-                        <td hidden="hidden">400</td>
-                        <td hidden="hidden">300</td>
-                        <td>Griselda</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>57.9</td>
-                        <td>90.8</td>
-                        <td>98.7</td>
-                        <td>96.0</td>
-                        <td>78.0</td>
-                        <td>89.5</td>
-                        <td>55.9</td>
-                        <td>66.0</td>
-                        <td>88.9</td>
-                        <td>78.9</td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <div id="contenedorVentana">
+                <div id="ventanaCapPorHora">
+                  <div>Captura</div>
+                  <div>
+                    <header id="cabeceraVenCapPorHora">
+                      <span>Folio: <span id='folioVenCap'></span></span>
+                      <span>Número de parte: <span id="numParteVenCap"></span></span>
+                      <span>Rate: <span id="rateNumParteVenCap"></span></span>
+                      <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span><br>
+                      <input type="text" class=""value="" id="inpNumParteCap">
+                      <span>Rate:<span id="spanRateCap">800</span></span>
+                    </header>
+                    <br>
+                    <table class="table table-bordered display compact" id="tablaCapPorHora">
+                      <caption class="text-center">Captura</caption>
+                      <thead>
+                        <tr>
+                          <th># Empleado</th>
+                          <th hidden="hidden">idDetLista</th>
+                          <th hidden="hidden">idDetAsis</th>
+                          <th>Nombre</th>
+                          <th>TM</th>
+                          <th>HR</th>
+                          <th data-H='7'>7-8</th>
+                          <th data-H='8'>8-9</th>
+                          <th data-H='9'>9-10</th>
+                          <th data-H='10'>10-11</th>
+                          <th data-H='11'>11-12</th>
+                          <th data-H='12'>12-13</th>
+                          <th data-H='13'>13-14</th>
+                          <th data-H='14'>14-15</th>
+                          <th data-H='15'>15-16</th>
+                          <th data-H='16'>16-17</th>
+                          <th data-H='17'>17-18</th>
+                          <th data-H='18'>18-19</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>D-1220</td>
+                          <td hidden="hidden">400</td>
+                          <td hidden="hidden">300</td>
+                          <td>Alejandra</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td><span>80.76</span><br><span>CC</span><br><span>TM</span></td>
+                          <td>800<br><span>CI</span></td>
+                          <td>400</td>
+                          <td>400</td>
+                          <td>400</td>
+                          <td>800</td>
+                          <td>700</td>
+                          <td>600</td>
+                          <td>400</td>
+                          <td>800</td>
+                          <td>700</td>
+                          <td>600</td>
+                        </tr>
+                        <tr>
+                          <td>D-1229</td>
+                          <td hidden="hidden">400</td>
+                          <td hidden="hidden">300</td>
+                          <td>Griselda</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>57.9</td>
+                          <td>90.8</td>
+                          <td>98.7</td>
+                          <td>98.7</td>
+                          <td>98.7</td>
+                          <td>96.0</td>
+                          <td>78.0</td>
+                          <td>89.5</td>
+                          <td>55.9</td>
+                          <td>66.0</td>
+                          <td>88.9</td>
+                          <td>78.9</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <input class="btn btn-danger" type="button" id="inpCancelVentana" value="CERRAR" />
+                    <div id="divVentanaCapHora">
+                      <div>Título</div>
+                      <div>
+                        <form class="" id="formCapPorHora">
+                          <span>Número Empleado: <span id="spanNumEmpleadoCap"></span></span>
+                          <span>Hora: <span id="spanHoraCap"></span></span>
+                          <span>Número Parte: <span id="spanNumParteCap"></span></span>
+                          <span>Rate: <span id="spanNumParteCap"></span></span>
+                          <input class="form-control "type="text" placeholder="Cantidad" id="cantidadEmp"/>
+                          <input class="form-control "type="number" placeholder="Tiempo Parcial" id="tPar"/>
+                          <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCap"/>
+                          <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHora">
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div id="capturaPersona"></div>
@@ -741,6 +767,7 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxdatetimeinput.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxcalendar.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxtooltip.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>

@@ -955,7 +955,7 @@
   //evento del modal cuando carga el modal #modCapNumOr
   modCapNumOrd.on('shown.bs.modal',function() {
     //le damos el foco al input .inpNumEmpl.
-    $('.inpNumEmpl').focus();
+    $('.inpAgrNEmpNOrd').focus();
   });
   //evento modal cuando se abre el modal de Tiempo muerto
   modalTiempoMuerto.on('show.bs.modal',function() {

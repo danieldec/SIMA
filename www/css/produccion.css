@@ -251,6 +251,25 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #cabeceraVenCapPorHora{
   font-size: 1.2em;
 }
+#tablaCapPorHora>tbody td{
+  padding: 0 0;
+  text-align: center;
+  vertical-align: middle;
+}
+#tablaCapPorHora>thead tr{
+    color: rgb(201, 117, 64);
+    position: relative;
+}
+#tablaCapPorHora>tbody td:nth-of-type(1){
+  color: rgb(201, 117, 64);
+}
+#tablaCapPorHora{
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+#tablaCapPorHora_filter>label>input{
+  text-transform: uppercase;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;
