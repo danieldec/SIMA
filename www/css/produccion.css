@@ -270,6 +270,24 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #tablaCapPorHora_filter>label>input{
   text-transform: uppercase;
 }
+/*#ui-id-3,#ui-id-1,#ui-id-2,#ui-id-4{
+  z-index: 9003;
+}*/
+#divFechaCapPost{
+  display: inline-block;
+  margin: -2px 0px;
+}
+#contenedorCap>.inpNumParteCap{
+  margin: 6px 6px;
+  color: rgb(173, 40, 23);
+}
+#contenedorCap>span{
+  margin: 0px 0px;
+}
+#contenedorCap{
+  padding: 0;
+  border: 0;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;

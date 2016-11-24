@@ -457,11 +457,13 @@
                       <span>Folio: <span id='folioVenCap'></span></span>
                       <span>Número de parte: <span id="numParteVenCap"></span></span>
                       <span>Rate: <span id="rateNumParteVenCap"></span></span>
-                      <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span><br>
-                      <input type="text" class=""value="" id="inpNumParteCap">
-                      <span>Rate:<span id="spanRateCap">800</span></span>
+                      <span>Hora estimada terminada: <span id="horaEstVenCap"></span></span>
+                      <div class="col-sm-12">
+                        <input class="inpNumParteCap" name="inpNumParteCap" autocomplete="off">
+                        <span>Rate:<span id="spanRateCap">800</span></span>
+                        <span>Fecha:</span><div id="divFechaCapPost"></div>
+                      </div>
                     </header>
-                    <br>
                     <table class="table table-bordered display compact" id="tablaCapPorHora">
                       <caption class="text-center">Captura</caption>
                       <thead>
@@ -537,7 +539,7 @@
                           <span>Número Empleado: <span id="spanNumEmpleadoCap"></span></span>
                           <span>Hora: <span id="spanHoraCap"></span></span>
                           <span>Número Parte: <span id="spanNumParteCap"></span></span>
-                          <span>Rate: <span id="spanNumParteCap"></span></span>
+                          <span>Rate: <span id="spanRateCap2"></span></span>
                           <input class="form-control "type="text" placeholder="Cantidad" id="cantidadEmp"/>
                           <input class="form-control "type="number" placeholder="Tiempo Parcial" id="tPar"/>
                           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCap"/>
