@@ -462,6 +462,7 @@
                         <input class="inpNumParteCap" name="inpNumParteCap" autocomplete="off">
                         <span>Rate:<span id="spanRateCap">800</span></span>
                         <span>Fecha:</span><div id="divFechaCapPost"></div>
+                        <input type="button" class="btn btn-primary"value="Número de Parte Original" id="btnResetNumParte">
                       </div>
                     </header>
                     <table class="table table-bordered display compact" id="tablaCapPorHora">
@@ -540,11 +541,30 @@
                           <span>Hora: <span id="spanHoraCap"></span></span>
                           <span>Número Parte: <span id="spanNumParteCap"></span></span>
                           <span>Rate: <span id="spanRateCap2"></span></span>
-                          <input class="form-control "type="text" placeholder="Cantidad" id="cantidadEmp"/>
-                          <input class="form-control "type="number" placeholder="Tiempo Parcial" id="tPar"/>
+                          <label for="cantidadEmp">Cantidad</label><input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmp" id="cantidadEmp"/>
+                          <label for="tPar"><abbr title="Minutos Trabajados">MT</abbr></label><input class="form-control "type="text" placeholder="Tiempo Parcial" name="tPar" id="tPar"/>
+                          <label for="tmMinCap"><abbr title="Tiempo Muerto">TM</abbr></label><input type="text" id ="tmMinCap" name="tmMinCap" value="0" class="form-control"/>
+                          <label for="eficienciaCap">Eficiencia</label><input type="text" id="eficienciaCap" value="0" class="form-control"/>
                           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCap"/>
-                          <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHora">
+                          <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHora"/>
                         </form>
+                        <div id="divTMVentana">
+                          <div>Tiempo Muerto</div>
+                          <div>
+                            <div class="col-sm-12 container-fluid">
+                              <div class="row form-inline">
+                                <input type="text" class="form-control ttMCap">
+                                <input type="text" class="form-control minttMCap">
+                                <input type="button" class="form-control" id="btnAgreTTM" value="Agregar">
+                              </div>
+                              <div class="row text-center">
+                                <br>
+                                <input type="button" class="btn btn-primary" value="OK">
+                                <input type="button" class="btn btn-danger" value="Cancelar">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
