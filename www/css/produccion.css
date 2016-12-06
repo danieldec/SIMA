@@ -24,6 +24,9 @@ div.row>div>span{
 body>.navbar{
   margin-bottom: 0px;
 }
+label{
+  font-size: 14px;
+}
 #btnOrdPro{
   font-size: 1.3em;
 }

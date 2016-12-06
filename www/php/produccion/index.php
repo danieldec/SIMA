@@ -551,22 +551,39 @@
                         <div id="divTMVentana">
                           <div>Tiempo Muerto</div>
                           <div>
-                            <div class="col-sm-12 container-fluid">
-                              <div class="row form-inline">
-                                <input type="text" class="form-control ttMCap">
-                                <input type="text" class="form-control minttMCap">
-                                <input type="button" class="form-control" id="btnAgreTTM" value="Agregar">
+                            <div class="col-xs-12 container-fluid">
+                              <div class="row">
+                                <div class="col-xs-6">
+                                  <div class="copiaTM">
+                                    <label for=""><abbr title="Tipo tiempo Muerto">TTM</abbr></label>
+                                    <input type="text" class="form-control ttMCap" list="listTM">
+                                    <datalist id="listTM">
+                                    </datalist>
+                                    <label for="">minutos</label>
+                                    <input type="text" class="form-control minttMCap">
+                                  </div>
+                                </div>
+                                <div class="col-xs-6">
+                                  <span>¿Deseas agregar otro tiempo muerto?</span>
+                                  <select id="cantTTM">
+                                    <option value="1" selected="true">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                  </select>
+                                </div>
                               </div>
                               <div class="row text-center">
                                 <br>
-                                <input type="button" class="btn btn-primary" value="OK">
-                                <input type="button" class="btn btn-danger" value="Cancelar">
+                                <input type="button" class="btn btn-primary" value="ACEPTAR" id="btnAceptarTM">
+                                <input type="button" class="btn btn-danger" value="CANCERLAR" id="btnCancelTM">
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div><!--Fin del div ventana divVentanaCapHora-->
                   </div>
                 </div>
               </div>
@@ -727,7 +744,6 @@
               </table>
               <div class="text-center" id="divTmEC" hidden="hidden">
                 <div class="tableTMEC text-center">
-
                 </div>
                 <div class="form-group form-inline divFormTTM">
                   <input placeholder="tipo tiempo muerto" class="form-control inpTMEC" list="dLTMEC" name="inpTiempoMuerto" autocomplete="off">
@@ -755,6 +771,8 @@
     </div>
     <div id="jqxError2ModCap"></div>
     <div id="jqxError3ModCap"></div>
+    <div id="divVentanaModalConfirm"></div>
+    <div id=""></div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

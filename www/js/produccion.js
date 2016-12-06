@@ -534,8 +534,6 @@
           $(this).siblings('ul').children('li').hide();
         }
         // $(this).next().children('li').css('color','rgb(140, 38, 156)');
-        // $(this).next().children('li').append("<p>Lorem ipsum dolor sit.</p>");
-
         break;
       case 'mouseover':
         break;
@@ -1095,7 +1093,7 @@
     var datosForm=$(this).serialize();
     //cuando no haya tiempo muerto. no se envia el arregloTiempoMuerto
     if ($('#tm1').prop('checked')) {
-      console.log(datosForm);
+      // console.log(datosForm);
       $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm},postFormCaptura);
       return false;
     }
@@ -1822,7 +1820,7 @@
 
 
   //sección de POST
-  $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
+  // $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
   //esta función sirve para captar todos los errores que tenemos al momento de hacer un ajax.
   $.ajaxSetup({
     error: function( jqXHR, textStatus, errorThrown ) {
