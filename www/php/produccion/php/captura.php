@@ -39,26 +39,48 @@
       $arreglo['validacion']="exito";
       $arreglo['datos']="Captura realizada";
       echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-      // Temporal.. este comando->
-    }else{
+    }
+    //necesito saber que hacer cuando el num_rows sea mayor a cero
+    else{
 
     }
-    // $arreglo['validacion']="exito";
-    // $arreglo['datos']="número de filas: ".$resultado->num_rows." horaFinalBusqueda: ".$horaIFin;
-    // echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-    if (isset($_POST['pArregloTiempoMuerto'])) {
-      // $arreglo[]=$_POST['pArregloTiempoMuerto'];
-    }
-    // $arreglo[]=$fecha;
-    // $arreglo[]=$cantidad;
-    // $arreglo[]=$horaInicio;
-    // $arreglo[]=$horaFinal;
-    // $arreglo[]=$minutosTiempoMuerto;
-    // $arreglo[]=$eficiencia;
-    // $arreglo[]=$detalleAsistencia;
-    // $arreglo[]=$detalleListaNumOrd;
-    // echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
-  }else{
+    if (isset($_POST['pArregloTiempoMuerto'])&&$minutosTiempoMuerto>0) {
+      $consulta="SELECT * FROM captura c WHERE c.iddetalle_Lista_NumOrdenCap='$detalleListaNumOrd' AND cast(c.eficiencia as decimal)=cast('$eficiencia' as decimal) AND c.tiempo_muerto='$minutosTiempoMuerto' AND c.hora_inicio='$horaInicio' AND c.hora_final='$horaFinal' AND c.fecha='$fecha'";
+      $resultado=$conexion->query($consulta);
+      if (!$resultado) {
+        $arreglo['Validacion']="ErrorDB";
+        $arreglo['Datos']=$conexion->errno."($conexion->error)";
+        echo json_encode($arreglo);
+        exit();
+      }
+      $numeroFila=$resultado->num_rows;
+      $fila=$resultado->fetch_object();
+      $idCapturaTM=$fila->idcaptura;
+      if ($numeroFila>0) {
+        foreach ($_POST['pArregloTiempoMuerto'] as $valor) {
+          foreach ($valor as $k=>$v) {
+            if ($k==0) {
+              $idTiempoM=$valor[$k];
+            }
+            if ($k==1) {
+              if ($valor[$k]>0){
+                $minutosTM=$valor[$k];
+              }//fin del if
+            }//fin del if
+          }//fin del foreach
+          $consulta="INSERT INTO detalleTiempoM (idcaptura,idtiempo_muerto,minutos) VALUES ('$idCapturaTM','$idTiempoM','$minutosTM')";
+          $resultado=$conexion->query($consulta);
+          if (!$resultado) {
+            $arreglo['Validacion']="ErrorDB";
+            $arreglo['Datos']=$conexion->errno."($conexion->error)";
+            echo json_encode($arreglo);
+            exit();
+            }//fin del if
+        }//fin del foreach
+      }//fin del if
+    }//fin del if del tiempo muerto;
+  }//FIN DEL ELSE
+  else{
     $arreglo = array();
     $arreglo['datos']="no entro";
     // echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);

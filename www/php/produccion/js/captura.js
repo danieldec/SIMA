@@ -45,7 +45,9 @@ function principal() {
 	//variables para calcular la eficiencia de la ventana captura
 	var minTrabCap, minTotCap, minTmCap,cantidadProgCap,rateCap,efiCap,cantidadCap;
 	var detAsis,detNumOrd;
+	var vTmCapTab,vHrCapTab;
 	var minTotTrabHora;
+	var horaFTPar;
 	//incializamos el calendario del modal de la captura y la configuración inicial
 	divFechaCapEmpleados.jqxDateTimeInput(
 		{
@@ -339,6 +341,8 @@ function principal() {
 		detAsis=$(this).siblings('.idDetAsisCap').html();
 		var fechaDia=divFechaCapPost.jqxDateTimeInput('getDate');
 		fechaCompletaHoy = obtenerFecha(fechaDia);
+		vTmCapTab=$(this).siblings('.tmCapTab').html();
+		vHrCapTab=$(this).siblings('.hrCapTab').html();
 		if (parseInt(efiTabla)<=0) {
 			ventanaAbierta=divVentanaCapHora.jqxWindow('isOpen');
 			if (ventanaAbierta) {
@@ -406,9 +410,10 @@ function principal() {
 	}// fin de la función venCapPer
 	//función respuesta minutosTrab
 	function minTrabExito(data) {
-		minTotTrabHora=data.datos;
+		minTotTrabHora=data.datos.tTT;
+		horaFTPar=data.datos.horaFDb;
 		var divClick=divVentanaCapHora.data('tdClickeado');
-		if (!(parseInt(minTotTrabHora)<60)) {
+		if (parseInt(minTotTrabHora)==60) {
 			var coorTd=divClick.offset();
 			var venAbierta=divVentanaPre.jqxWindow('isOpen');
 			if (venAbierta) {
@@ -418,13 +423,14 @@ function principal() {
 				{
 					position:
 					{
-						x:coorTd.left,y:coorTd.top+divClick.outerWidth()
+						x:coorTd.left,
+						y:coorTd.top+divClick.outerWidth()
 					}
 				});
 				divVentanaPre.jqxWindow('open');
 				divVentanaPre.jqxWindow('bringToFront');
-		}else{
-
+		}else if (parseInt(minTotTrabHora)<60) {
+			
 		}
 	}
 	//evento hover de los td
@@ -452,7 +458,11 @@ function principal() {
 		var heightVenCapPorHora=$('#ventanaCapPorHora').outerHeight();
 		var coordenadasVen= divVentanaCapHora.offset()
 		divTMVentana.jqxWindow({
-			position: { x: coordenadasVen.left+divVentanaCapHora.outerWidth(), y: coordenadasVen.top}
+			position:
+			{
+				x: coordenadasVen.left+divVentanaCapHora.outerWidth(),
+				y: coordenadasVen.top
+			}
 		});
 		// divTMVentana.jqxWindow('focus');
 		divTMVentana.jqxWindow('open');
@@ -610,8 +620,8 @@ function principal() {
 		// console.log(detListNumOrd);
 		// console.log(detAsis);
 		// console.log(hI+"--"+hF+"--"+fecha+"--"+minTmCap+"--"+efiCap+"---"+detListNumOrd+"--"+detAsis+"--"+arregloTiempoMuerto);
-		if (efiCap<=0) {
-			divNotificaciones.html("No puede haber eficiencias menores a cero");
+		if (efiCap<=0||efiCap>=200) {
+			divNotificaciones.html("No puede haber eficiencias menores o igual a 0  (cero) o mayores a 200");
 			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;
@@ -662,12 +672,20 @@ function principal() {
 	}
 	function exitoFunCaptura(data) {
 		if (data.validacion=="exito") {
-			divNotificaciones.html(data.datos)
+			divNotificaciones.html(data.datos);
 			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			var td= divVentanaCapHora.data('tdClickeado');
 			var efi=$('#eficienciaCap').val();
+			var hrTrabTot="",minTMTot="";
+			hrTrabTot= (parseInt(minTotCap)/60)+parseFloat(vHrCapTab);
+			minTMTot = (parseInt(minTmCap)/60)+parseFloat(vTmCapTab);
 			td.html(efi);
+			td.siblings('.tmCapTab').html(minTMTot.toFixed(2));
+			td.siblings('.hrCapTab').html((hrTrabTot/1).toFixed(2));
+			divVentanaCapHora.jqxWindow('close');
+			// console.log("HOLAMUNDO2");
+			// window.alert("HOLAMUNDO");
 		}else if (data.validacion=="error") {
 			divNotificaciones.html(data.datos);
 			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');

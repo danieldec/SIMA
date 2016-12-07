@@ -31,7 +31,11 @@
 			$tbody.='<td class="idDetAsisCap" hidden="hidden">'.$fila->iddetalle_asistencia.'</td>';
 			$tbody.='<td class="nombre">'.$fila->nombre.'</td>';
 			for ($i=0; $i <2 ; $i++) {
-				$tbody.='<td>'.funTMHrTrab($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
+				if ($i==0) {
+					$tbody.='<td class="tmCapTab">'.funTMHrTrab($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
+				}elseif ($i==1) {
+					$tbody.='<td class="hrCapTab">'.funTMHrTrab($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
+				}
 			}
 			for ($i=0; $i < 12; $i++) {
 				$tbody.='<td>'.calcEfiHora($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
@@ -122,6 +126,7 @@
 		$resultado=$conexion->query($consulta);
 		if (!$resultado) {
 			return $conexion->errno."(".$conexion->error.")";
+			exit();
 		}
 		$fila=$resultado->fetch_object();
 		return round($fila->efi,2);
@@ -131,7 +136,20 @@
 		include '../../conexion/conexion.php';
 		switch ($i) {
 			case 0:
-				return $i;
+				$consulta="SELECT ROUND(SUM(dtm.minutos)/60,2) as tmMin FROM detalleTiempoM as dtm
+				INNER JOIN captura as c ON c.idcaptura = dtm.idcaptura AND c.fecha='$fecha'
+				INNER JOIN detalle_Lista_NumOrden as dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
+				INNER JOIN detalle_asistencia as da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND da.iddetalle_asistencia='$detAsis'";
+				$resultado=$conexion->query($consulta);
+				if (!$resultado) {
+					return $conexion->errno."(".$conexion->error.")";
+					exit();
+				}
+				$fila=$resultado->fetch_object();
+				if ($fila->tmMin==NULL) {
+					return 0;
+				}
+				return $fila->tmMin;
 				break;
 			case 1:
 				$consulta="SELECT ROUND( SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60),2 ) as tTT,COUNT(c.idcaptura) as contador FROM captura as c INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap INNER JOIN detalle_asistencia da ON da.iddetalle_asistencia='$detAsis' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList WHERE c.fecha='$fecha' ORDER BY c.hora_inicio ASC";
@@ -140,7 +158,11 @@
 					return $conexion->errno."(".$conexion->error.")";
 				}
 				$fila=$resultado->fetch_object();
-				return $fila->tTT;
+				if ($fila->tTT==NULL) {
+					return 0;
+				}elseif ($fila->tTT>=0) {
+					return $fila->tTT;
+				}
 				break;
 			default:
 				break;

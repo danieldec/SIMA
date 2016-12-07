@@ -787,8 +787,11 @@
         Ventana Capturas por Hora
       </div>
       <div>
-
       </div>
+    </div>
+    <div id="divVenParcial">
+      <div>Parcial </div>
+      <div></div>
     </div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
