@@ -40,13 +40,12 @@
       $arreglo['datos']="Captura realizada";
       echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
       // Temporal.. este comando->
-      exit();
     }else{
 
     }
-    $arreglo['validacion']="exito";
-    $arreglo['datos']="número de filas: ".$resultado->num_rows." horaFinalBusqueda: ".$horaIFin;
-    echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
+    // $arreglo['validacion']="exito";
+    // $arreglo['datos']="número de filas: ".$resultado->num_rows." horaFinalBusqueda: ".$horaIFin;
+    // echo json_encode($arreglo,JSON_UNESCAPED_UNICODE);
     if (isset($_POST['pArregloTiempoMuerto'])) {
       // $arreglo[]=$_POST['pArregloTiempoMuerto'];
     }

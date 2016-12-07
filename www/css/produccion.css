@@ -291,6 +291,9 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
   padding: 0;
   border: 0;
 }
+#tablaCapPorHora>tbody>tr>td.nombre{
+  font-size: 0.8em;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;

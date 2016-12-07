@@ -31,6 +31,8 @@ function principal() {
 	var tmMinCap=$('#tmMinCap');
 	var cantTTM=$('#cantTTM');
 	copiaTM=$('.copiaTM',"#divTMVentana");
+	var divVentanaPre=$('#divVentanaPre');
+	var divVenCapHoraEmp=$('#divVenCapHoraEmp');
 	var thRangoHora,tdNumEmpleado,tdEditar;
 	var ventanaAbierta=false;
 	var number = 0;
@@ -43,6 +45,7 @@ function principal() {
 	//variables para calcular la eficiencia de la ventana captura
 	var minTrabCap, minTotCap, minTmCap,cantidadProgCap,rateCap,efiCap,cantidadCap;
 	var detAsis,detNumOrd;
+	var minTotTrabHora;
 	//incializamos el calendario del modal de la captura y la configuración inicial
 	divFechaCapEmpleados.jqxDateTimeInput(
 		{
@@ -188,7 +191,7 @@ function principal() {
 	}
 	//aquí obtenemos el objeto que constuye el autocomplete y lo que hacemos es obtener el UL para darle un z-index de 9002
 	var  inpNumParteCapUl=$( ".inpNumParteCap" ).autocomplete( "instance" );
-	$(inpNumParteCapUl.bindings[1]).css('z-index','9004');
+	$(inpNumParteCapUl.bindings[1]).css('z-index','9020');
 	//Aquí termina las funciones y eventos asociados al autocomplete del número de empleado en el detalle asistencia del día.
 
 	//evento click registrar o agregar para asignar al empleado al número de parte. y agregarlo en la base de datos en la tabla detalle_
@@ -218,7 +221,7 @@ function principal() {
 			divNotificaciones.html(data.datos)
 			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
-			inpAgrNEmpNOrd.val('')
+			inpAgrNEmpNOrd.val('');
 		}else if (data.validacion=="Error") {
 			divNotificaciones.html(data.datos);
 			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
@@ -328,11 +331,14 @@ function principal() {
 	}//Aquí termina la función exitoFunListaEmpleados
 	//Aquí asignamos el evento a los td donde se va a realizar la captura por hora
 	$("#"+tablaCapPorHora.prop('id')+'>tbody').on('click','td:nth-of-type(+n+7)',venCapPer);
-	contador=0;
 	function venCapPer(e) {
+		contador=0;
 		var efiTabla=$(this).html();
 		detListNumOrd=$(this).siblings('.idDetLisNumOrdCap').html();
+		var indice=$(this).index();
 		detAsis=$(this).siblings('.idDetAsisCap').html();
+		var fechaDia=divFechaCapPost.jqxDateTimeInput('getDate');
+		fechaCompletaHoy = obtenerFecha(fechaDia);
 		if (parseInt(efiTabla)<=0) {
 			ventanaAbierta=divVentanaCapHora.jqxWindow('isOpen');
 			if (ventanaAbierta) {
@@ -342,12 +348,11 @@ function principal() {
 				thRangoHora.css('background-color','rgb(255, 255, 255)');
 				tdNumEmpleado.css('background-color','rgb(255, 255, 255)');
 			}
-			var indice=$(this).index();
+			thRangoHora=$(this).parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
 			$('#ventanaCapPorHora').jqxWindow({keyboardNavigation: false});
 			//Aquí obtenemos el detalle asistencia y detalle num Orden
 			tdEditar=$(this);
 			tdEditar.css('background-color','gainsboro');
-			thRangoHora=$(this).parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
 			var tdClickeado=$(this);
 			tdClickeado.jqxTooltip('open');
 			thRangoHora.css('background-color','#8ec9e2');
@@ -358,23 +363,66 @@ function principal() {
 			var heightVenCapPorHora=$('#ventanaCapPorHora').outerHeight();
 			divVentanaCapHora.jqxWindow(
 				{
-					position: { x: positionVenCapPorHora.left, y: heightVenCapPorHora},
+					position:
+					{
+						 x: positionVenCapPorHora.left,
+						 y: heightVenCapPorHora
+					 },
 					height:'210',
 					resizable:false
 				});
 				divVentanaCapHora.jqxWindow('open');
 				//métodos para que la ventana divVentanaCapHora este al frente de la ventana #ventanaCapPorHora y que tenga el foco también.
 				divVentanaCapHora.jqxWindow('bringToFront');
-				var fechaDia=divFechaCapPost.jqxDateTimeInput('getDate');
-				fechaCompletaHoy = obtenerFecha(fechaDia);
 				divVentanaCapHora.data({
 					'numParte':inpNumParteCap.val(),
 					'rate':spanRateCap.html(),
 					'fechaHoy':fechaCompletaHoy,
 					'detListNumOrd':detListNumOrd,
-					'detAsis':detAsis
+					'detAsis':detAsis,
+					'tdClickeado':$(this)
 				});
-
+		}else{
+			thRangoHora=$(this).parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
+			var horaC=thRangoHora.attr('data-h');
+			divVentanaCapHora.data({
+				'numParte':inpNumParteCap.val(),
+				'rate':spanRateCap.html(),
+				'fechaHoy':fechaCompletaHoy,
+				'detListNumOrd':detListNumOrd,
+				'detAsis':detAsis,
+				'tdClickeado':$(this)
+			});
+			$.post(
+				{
+					url:"php/minTrab.php",
+					dataType:'json',
+					data:{horaC:horaC,fechaCompletaHoy:fechaCompletaHoy,detAsis:detAsis},
+					success:minTrabExito,
+					type:'POST',
+					error:errorFuncionABtnEmp
+			});
+		}//fin del else
+	}// fin de la función venCapPer
+	//función respuesta minutosTrab
+	function minTrabExito(data) {
+		minTotTrabHora=data.datos;
+		var divClick=divVentanaCapHora.data('tdClickeado');
+		if (!(parseInt(minTotTrabHora)<60)) {
+			var coorTd=divClick.offset();
+			var venAbierta=divVentanaPre.jqxWindow('isOpen');
+			if (venAbierta) {
+				divVentanaPre.jqxWindow('close');
+			}
+			divVentanaPre.jqxWindow(
+				{
+					position:
+					{
+						x:coorTd.left,y:coorTd.top+divClick.outerWidth()
+					}
+				});
+				divVentanaPre.jqxWindow('open');
+				divVentanaPre.jqxWindow('bringToFront');
 		}else{
 
 		}
@@ -559,10 +607,9 @@ function principal() {
 		hI=obtenerHoraCompleta(horaI);
 		hF=obtenerHoraCompleta(horaF);
 		fecha=obtenerFecha(fechaCaptura);
-
-		console.log(detListNumOrd);
-		console.log(detAsis);
-		console.log(hI+"--"+hF+"--"+fecha+"--"+minTmCap+"--"+efiCap+"---"+detListNumOrd+"--"+detAsis+"--"+arregloTiempoMuerto);
+		// console.log(detListNumOrd);
+		// console.log(detAsis);
+		// console.log(hI+"--"+hF+"--"+fecha+"--"+minTmCap+"--"+efiCap+"---"+detListNumOrd+"--"+detAsis+"--"+arregloTiempoMuerto);
 		if (efiCap<=0) {
 			divNotificaciones.html("No puede haber eficiencias menores a cero");
 			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
@@ -614,7 +661,18 @@ function principal() {
 		e.preventDefault();
 	}
 	function exitoFunCaptura(data) {
-		console.log(data);
+		if (data.validacion=="exito") {
+			divNotificaciones.html(data.datos)
+			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			var td= divVentanaCapHora.data('tdClickeado');
+			var efi=$('#eficienciaCap').val();
+			td.html(efi);
+		}else if (data.validacion=="error") {
+			divNotificaciones.html(data.datos);
+			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		}
 	}
 	function obtenerHoraCompleta(hora) {
 		var horaCompleta,horas,minutos,segundos;
@@ -688,7 +746,41 @@ function principal() {
 				break;
 			default:
 		}
+	}//fin de la función copiaTTM
+	//inicializamos la ventana de la pregunta
+	divVentanaPre.jqxWindow(
+		{
+		width:'100%',
+		height:'50%',
+		autoOpen:false,
+		maxHeight:'140px',
+		maxWidth:'200px',
+		minWidth:'10%',
+		minHeight:'10%',
+		cancelButton: $('#btnCanVenPre'),
+		okButton:$('#btnAcepVenPre')
+	});
+	//eventos relacionados con la ventana de l a pregunta
+	divVentanaPre.on('close',eventoCerrar);
+	function eventoCerrar(e) {
+		if (e.args.dialogResult.OK) {
+			//Aquí vamos a programar la otra ventana donde mostrara los resultados de la captura
+			divVenCapHoraEmp.jqxWindow('open');
+			divVenCapHoraEmp.jqxWindow('bringToFront');
+			// divVenCapHoraEmp.jqxWindow('bringToFront');
+		}else if(e.args.dialogResult.Cancel) {
+		}
 	}
+	//iniciamos una ventana para visualizar las capturas
+	divVenCapHoraEmp.jqxWindow({
+		width:'100%',
+		height:'50%',
+		autoOpen:false,
+		maxHeight:'140px',
+		maxWidth:'200px',
+		minWidth:'10%',
+		minHeight:'10%'
+	})
 	$.ajaxSetup({
 		error:function(jqXHR,textStatus,errorThrown) {
 			if (jqXHR.status == 0) {

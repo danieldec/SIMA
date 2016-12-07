@@ -13,3 +13,13 @@ SELECT * from detalle_Lista_NumOrden dln where dln.iddetalle_asistenciaDetList I
 SELECT DATE_FORMAT(DATE_ADD(MAX(a.fecha), INTERVAL 1 DAY),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy, DATE_ADD( MAX(a.fecha),INTERVAL 1 DAY) from asistencia a
 
 ALTER TABLE `SIMAP`.`detalle_Lista_NumOrden` ADD UNIQUE INDEX `detNumOrdeListDup` (`idnum_ordenDetLis` DESC, `iddetalle_asistenciaDetList` DESC);
+
+SELECT ROUND( SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)),0 ) as tT,COUNT(c.idcaptura) as contador FROM captura as c
+		INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
+		INNER JOIN detalle_asistencia da ON da.iddetalle_asistencia='983' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList
+		WHERE c.fecha='2016-12-06' AND (c.hora_inicio BETWEEN '10:00:00' AND '10:59:00') ORDER BY c.hora_inicio ASC
+
+SELECT * FROM captura as c
+    		INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
+    		INNER JOIN detalle_asistencia da ON da.iddetalle_asistencia='966' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList
+    		WHERE c.fecha='2016-12-05' AND (c.hora_inicio BETWEEN '07:00:00' AND '07:59:00') ORDER BY c.hora_inicio ASC

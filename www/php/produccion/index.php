@@ -772,7 +772,24 @@
     <div id="jqxError2ModCap"></div>
     <div id="jqxError3ModCap"></div>
     <div id="divVentanaModalConfirm"></div>
-    <div id=""></div>
+    <div id="divVentanaPre">
+      <div>
+        <img src="../../images/signo.jpg" alt="No se encontró la imagen" width="14" height="14"/><span>Modal</span>
+      </div>
+      <div>
+        <p>¿Quieres ver las capturas realizadas de esta hora?</p>
+        <input class="btn" type="button" id="btnAcepVenPre" value="Aceptar"/>
+        <input class="btn" type="button" id="btnCanVenPre" value="Cancelar"/>
+      </div>
+    </div>
+    <div id="divVenCapHoraEmp">
+      <div>
+        Ventana Capturas por Hora
+      </div>
+      <div>
+
+      </div>
+    </div>
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

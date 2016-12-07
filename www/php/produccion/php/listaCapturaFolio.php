@@ -31,7 +31,7 @@
 			$tbody.='<td class="idDetAsisCap" hidden="hidden">'.$fila->iddetalle_asistencia.'</td>';
 			$tbody.='<td class="nombre">'.$fila->nombre.'</td>';
 			for ($i=0; $i <2 ; $i++) {
-				$tbody.='<td>'."0".'</td>';
+				$tbody.='<td>'.funTMHrTrab($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
 			}
 			for ($i=0; $i < 12; $i++) {
 				$tbody.='<td>'.calcEfiHora($i,$fila->iddetalle_asistencia,$fechaCalendario).'</td>';
@@ -125,6 +125,26 @@
 		}
 		$fila=$resultado->fetch_object();
 		return round($fila->efi,2);
+	}
+	function funTMHrTrab($i,$detAsis,$fecha)
+	{
+		include '../../conexion/conexion.php';
+		switch ($i) {
+			case 0:
+				return $i;
+				break;
+			case 1:
+				$consulta="SELECT ROUND( SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60),2 ) as tTT,COUNT(c.idcaptura) as contador FROM captura as c INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap INNER JOIN detalle_asistencia da ON da.iddetalle_asistencia='$detAsis' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList WHERE c.fecha='$fecha' ORDER BY c.hora_inicio ASC";
+				$resultado=$conexion->query($consulta);
+				if (!$resultado) {
+					return $conexion->errno."(".$conexion->error.")";
+				}
+				$fila=$resultado->fetch_object();
+				return $fila->tTT;
+				break;
+			default:
+				break;
+		}
 	}
  ?>
 	<?php
