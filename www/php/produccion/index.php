@@ -774,12 +774,11 @@
     <div id="divVentanaModalConfirm"></div>
     <div id="divVentanaPre">
       <div>
-        <img src="../../images/signo.jpg" alt="No se encontró la imagen" width="14" height="14"/><span>Modal</span>
+        <img src="../../images/signo.jpg" alt="No se encontró la imagen" width="14" height="14"/><span>Pregunta</span>
       </div>
       <div>
         <p>¿Quieres ver las capturas realizadas de esta hora?</p>
         <input class="btn" type="button" id="btnAcepVenPre" value="Aceptar"/>
-        <input class="btn" type="button" id="btnCanVenPre" value="Cancelar"/>
       </div>
     </div>
     <div id="divVenCapHoraEmp">
@@ -789,10 +788,42 @@
       <div>
       </div>
     </div>
-    <div id="divVenParcial">
+    <div id="divVenPrePar">
+      <div>
+        <img src="../../images/signo.jpg" alt="No se encontró la imagen" width="14" height="14"/><span>Pregunta</span>
+      </div>
+      <div>
+        <p>¿Qué deseas hacer?</p>
+        <input class="btn" type="button" id="btnCapPar" value="CAPTURAR"/>
+        <input class="btn" type="button" id="btnVerCapPar" value="VER CAPTURA PARCIAL"/>
+      </div>
+    </div>
+    <div id="divVentanaCapHoraPar">
+      <div>Captura Parcial</div>
+      <div>
+        <form class="" id="formCapPorHoraPar">
+          <span>Número Empleado: <span id="spanNumEmpleadoCapPar"></span></span>
+          <span>Hora: <span id="spanHoraCapPar"></span></span>
+          <span>Número Parte: <span id="spanNumParteCapPar"></span></span>
+          <span>Rate: <span id="spanRateCap2Par"></span></span>
+          <span>HoraInicio: <span id="horaIPar"></span></span>
+          <label for="cantidadEmpPar">Cantidad</label>
+          <input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmpPar" id="cantidadEmpPar"/>
+          <label for="tParPar"><abbr title="Minutos Trabajados">MT</abbr></label>
+          <input class="form-control "type="text" placeholder="Tiempo Parcial" name="tParPar" id="tParPar"/>
+          <label for="tmMinCapPar"><abbr title="Tiempo Muerto">TM</abbr></label>
+          <input type="text" id ="tmMinCapPar" name="tmMinCapPar" value="0" class="form-control"/>
+          <label for="eficienciaCapPar">Eficiencia</label>
+          <input type="text" id="eficienciaCapPar" value="0" class="form-control"/>
+          <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCapPar"/>
+          <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHoraPar"/>
+        </form>
+      </div>
+     </div><!--Fin del div ventana divVentanaCapHora-->
+    <!-- <div id="divVenParcial">
       <div>Parcial </div>
       <div></div>
-    </div>
+    </div> -->
   <!--  Modal para la captura de número de empleado-->
   <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
   <!-- <div class="modal fade" id="myModal" role="dialog">

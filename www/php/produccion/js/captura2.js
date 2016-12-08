@@ -49,7 +49,7 @@ function principal() {
 	var tmCapPar=$('#tmCapPar');
 	var btnCapPorHoraPar=$('#btnCapPorHoraPar');
 	var btnCapPar = $('#btnCapPar'); 
-	var btnVerCapPar = $('#btnVerCapPar'); 
+	var btnVerCapPar = $('#btnVerCapPar');
 	//aquí termina los objetos de la ventana captura parcial
 	var thRangoHora,tdNumEmpleado,tdEditar;
 	var ventanaAbierta=false;
@@ -181,7 +181,7 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		});
-	}//Aquí termina la función funListaNumParte
+	}
 	function obtenerRate(numParte) {
 		$.post({
 			url:"php/numParteRate.php",
@@ -191,7 +191,7 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		})
-	};//Aquí termina la función obtenerRate
+	};
 	function exitoObtenerRate(data) {
 		numParteCapFinal=data.num_parte;
 		rateNumParteFinal=data.rate;
@@ -203,12 +203,12 @@ function principal() {
 			spanNumParteCap.html(numParteCapFinal);
 			spanRateCap2.html(rateNumParteFinal);
 		}
-	}//Aquí termina la función exitoObtenerRate
+	}
 	btnResetNumParte.on('click',clickResetNumParte);
 	function clickResetNumParte() {
 		inpNumParteCap.val(numParteOriginal);
 		spanRateCap.html(rateNumParteOriginal);
-	}//Aquí termina el evento click del objeto btnResetNumParte
+	}
 	//aquí obtenemos el objeto que constuye el autocomplete y lo que hacemos es obtener el UL para darle un z-index de 9002
 	var  inpNumParteCapUl=$( ".inpNumParteCap" ).autocomplete( "instance" );
 	$(inpNumParteCapUl.bindings[1]).css('z-index','9020');
@@ -233,7 +233,7 @@ function principal() {
 			success:exitoFuncionABtnEmp,
 			type:'POST',
 			error:errorFuncionABtnEmp
-		});
+		})
 	}//fin de la función agregarBtnEmpleado
 	//Inicio de la función exitoFuncionABtnEmp
 	function exitoFuncionABtnEmp(data,textStatus,jqXHR) {
@@ -450,8 +450,6 @@ function principal() {
 				divVentanaPre.jqxWindow('bringToFront');
 		}else if (parseInt(minTotTrabHora)<60) {
 			//agregar todo lo que hacemos para abrir la captura, pero la diferencia es que vamos a usar el TFDB obtenido de la DB, y usarlo como horaInicio del a siguiente captura.
-			divVenPrePar.jqxWindow('open');
-			divVenPrePar.jqxWindow('bringToFront');
 		}
 	}
 	//evento hover de los td
@@ -513,7 +511,7 @@ function principal() {
 	divVentanaCapHora.on('focus',funFocusVentanaDivCapHora);
 	function funFocusVentanaDivCapHora(e) {
 		cantidadEmp.focus().select();
-		//console.log(e);
+		console.log(e);
 	}
 	divTMVentana.on('open',funOpenVenTM);
 	function funOpenVenTM(e) {
@@ -822,50 +820,8 @@ function principal() {
 	});
 
 	//Aquí va ir todo lo relacionado con el parcial de la captura
-	divVenPrePar.jqxWindow(
-	{
-		width:'100%',
-		height:'50%',
-		autoOpen:false,
-		maxHeight:'100px',
-		maxWidth:'310px',
-		minWidth:'10%',
-		minHeight:'10%',
-		cancelButton:btnCapPar,
-		okButton:btnVerCapPar
-
-	});
-
-	divVentanaCapHoraPar.jqxWindow(
-	{
-		width:'100%',
-		height:'50%',
-		autoOpen:false,
-		maxHeight:'140px',
-		maxWidth:'200px',
-		minWidth:'10%',
-		minHeight:'10%'
-	});
-	divVenPrePar.on('close',closeWinDivVenPrePar);
-	function closeWinDivVenPrePar(e) {
-		if (e.args.dialogResult.Cancel) {
-			divVentanaCapHoraPar.jqxWindow('open');
-			divVentanaCapHoraPar.jqxWindow('bringToFront');
-		}
-		if (e.args.dialogResult.OK) {
-			divVenCapHoraEmp.jqxWindow('open');
-			divVenCapHoraEmp.jqxWindow('bringToFront');
-		}
-	}
-	divVentanaCapHoraPar.on('open',abrirVenDivVenCapHoraPar);
-	function abrirVenDivVenCapHoraPar(e) {
-		//obtenemos el td donde se dio el click
-		var tdClick=divVentanaCapHora.data('tdClickeado');
-		var hora=new Date();
-		//cuando buscamos el parcial obtenemos la hora final del último registro, y para la siguiente captura va hacer nuestra hora de inicio.
-		horaIPar.html(horaFTPar);
-		
-	}
+	
+	
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup
 	$.ajaxSetup({
