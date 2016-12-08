@@ -1184,7 +1184,7 @@
     fechaCaptura=fechaC.val();
     hICaptura=$('#horaInicioC').data('timeAutocomplete').getTime();
     hFCaptura=$('#horaFinalC').data('timeAutocomplete').getTime();
-    console.log(hICaptura+""+hFCaptura);
+    //console.log(hICaptura+""+hFCaptura);
     horaInicio= new Date();
     horaFinal= new Date();
     hi=horaInicio;

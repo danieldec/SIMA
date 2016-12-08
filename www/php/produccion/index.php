@@ -802,11 +802,11 @@
       <div>Captura Parcial</div>
       <div>
         <form class="" id="formCapPorHoraPar">
-          <span>Número Empleado: <span id="spanNumEmpleadoCapPar"></span></span>
+          <span># Empleado: <span id="spanNumEmpleadoCapPar"></span></span>
           <span>Hora: <span id="spanHoraCapPar"></span></span>
-          <span>Número Parte: <span id="spanNumParteCapPar"></span></span>
-          <span>Rate: <span id="spanRateCap2Par"></span></span>
-          <span>HoraInicio: <span id="horaIPar"></span></span>
+          <span># Parte: <span id="spanNumParteCapPar"></span></span>
+          <span>Rate: <span id="spanRateCap2Par"></span></span><br> 
+          <span>Hora Inicio: <span id="horaIPar"></span></span><br>
           <label for="cantidadEmpPar">Cantidad</label>
           <input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmpPar" id="cantidadEmpPar"/>
           <label for="tParPar"><abbr title="Minutos Trabajados">MT</abbr></label>

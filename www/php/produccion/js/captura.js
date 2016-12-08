@@ -66,6 +66,7 @@ function principal() {
 	var vTmCapTab,vHrCapTab;
 	var minTotTrabHora;
 	var horaFTPar;
+	var difMin;
 	//incializamos el calendario del modal de la captura y la configuración inicial
 	divFechaCapEmpleados.jqxDateTimeInput(
 		{
@@ -353,6 +354,7 @@ function principal() {
 	$("#"+tablaCapPorHora.prop('id')+'>tbody').on('click','td:nth-of-type(+n+7)',venCapPer);
 	function venCapPer(e) {
 		contador=0;
+		var numEmpleado=$(this).siblings('.idEmpCap').html();
 		var efiTabla=$(this).html();
 		detListNumOrd=$(this).siblings('.idDetLisNumOrdCap').html();
 		var indice=$(this).index();
@@ -860,11 +862,49 @@ function principal() {
 	divVentanaCapHoraPar.on('open',abrirVenDivVenCapHoraPar);
 	function abrirVenDivVenCapHoraPar(e) {
 		//obtenemos el td donde se dio el click
+		var numEmpleado,hora,numParte,rate,eficienciaCapAnte,detAsis,indice,fechaDia,indice;
 		var tdClick=divVentanaCapHora.data('tdClickeado');
+		numEmpleado=tdClick.siblings('.idEmpCap').html();
+		spanNumEmpleadoCapPar.html(numEmpleado);
+		indice=tdClick.index();
+		thRangoHora=tdClick.parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
+		hora=thRangoHora.html();
+		spanHoraCapPar.html(hora);
+		spanNumParteCapPar.html(inpNumParteCap.val());
+		spanRateCap2Par.html(spanRateCap.html());
+		cantidadEmpPar.val(0).focus().select();
+		//vamos a ingresar el tiempo
+		eficienciaCapAnte=tdClick.html();
+		vTmCapTab=tdClick.siblings('.tmCapTab').html();
+		vHrCapTab=tdClick.siblings('.hrCapTab').html();
+		fechaDia=divFechaCapPost.jqxDateTimeInput('getDate');
+		fechaCompletaHoy= obtenerFecha(fechaDia);
 		var hora=new Date();
 		//cuando buscamos el parcial obtenemos la hora final del último registro, y para la siguiente captura va hacer nuestra hora de inicio.
 		horaIPar.html(horaFTPar);
-		
+		horaSplit=horaFTPar.split(':');
+		hora.setHours(horaSplit[0],horaSplit[1],horaSplit[2]);
+		horaIP=hora.getHours();
+		minIP=hora.getMinutes();
+		segIP=hora.getSeconds();
+		if (horaIP<10) {
+			horaIP="0"+horaIP;
+		}
+		if (minIP<10) {
+			minIP="0"+minIP;
+		}
+		if (segIP<10) {
+			segIP="0"+segIP;
+		}
+		//el valor máximo que tendra los minutos parciales de la captura
+		difMin=60-parseInt(minIP);
+		tParPar.val(difMin);
+		//nos va a servir estó para tener la hora final de la captura
+		//hora.setMinutes(hora.getMinutes()+difMin);
+		console.log("minutos: "+ hora.getMinutes()+" horas: "+hora.getHours());
+		console.log(parseInt(horaIP));
+		console.log(parseInt(minIP));
+		console.log(parseInt(segIP));
 	}
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup
