@@ -49,7 +49,9 @@ function principal() {
 	var tmCapPar=$('#tmCapPar');
 	var btnCapPorHoraPar=$('#btnCapPorHoraPar');
 	var btnCapPar = $('#btnCapPar'); 
-	var btnVerCapPar = $('#btnVerCapPar');
+	var btnVerCapPar = $('#btnVerCapPar'); 
+	var divTMVentanaPar = $('#divTMVentanaPar');
+	var copiaTMPar = $('.copiaTMPar','#divTMVentanaPar')
 	//aquí termina los objetos de la ventana captura parcial
 	var thRangoHora,tdNumEmpleado,tdEditar;
 	var ventanaAbierta=false;
@@ -66,6 +68,7 @@ function principal() {
 	var vTmCapTab,vHrCapTab;
 	var minTotTrabHora;
 	var horaFTPar;
+	var difMin;
 	//incializamos el calendario del modal de la captura y la configuración inicial
 	divFechaCapEmpleados.jqxDateTimeInput(
 		{
@@ -181,7 +184,7 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		});
-	}
+	}//Aquí termina la función funListaNumParte
 	function obtenerRate(numParte) {
 		$.post({
 			url:"php/numParteRate.php",
@@ -191,7 +194,7 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		})
-	};
+	};//Aquí termina la función obtenerRate
 	function exitoObtenerRate(data) {
 		numParteCapFinal=data.num_parte;
 		rateNumParteFinal=data.rate;
@@ -203,12 +206,12 @@ function principal() {
 			spanNumParteCap.html(numParteCapFinal);
 			spanRateCap2.html(rateNumParteFinal);
 		}
-	}
+	}//Aquí termina la función exitoObtenerRate
 	btnResetNumParte.on('click',clickResetNumParte);
 	function clickResetNumParte() {
 		inpNumParteCap.val(numParteOriginal);
 		spanRateCap.html(rateNumParteOriginal);
-	}
+	}//Aquí termina el evento click del objeto btnResetNumParte
 	//aquí obtenemos el objeto que constuye el autocomplete y lo que hacemos es obtener el UL para darle un z-index de 9002
 	var  inpNumParteCapUl=$( ".inpNumParteCap" ).autocomplete( "instance" );
 	$(inpNumParteCapUl.bindings[1]).css('z-index','9020');
@@ -233,7 +236,7 @@ function principal() {
 			success:exitoFuncionABtnEmp,
 			type:'POST',
 			error:errorFuncionABtnEmp
-		})
+		});
 	}//fin de la función agregarBtnEmpleado
 	//Inicio de la función exitoFuncionABtnEmp
 	function exitoFuncionABtnEmp(data,textStatus,jqXHR) {
@@ -353,6 +356,7 @@ function principal() {
 	$("#"+tablaCapPorHora.prop('id')+'>tbody').on('click','td:nth-of-type(+n+7)',venCapPer);
 	function venCapPer(e) {
 		contador=0;
+		var numEmpleado=$(this).siblings('.idEmpCap').html();
 		var efiTabla=$(this).html();
 		detListNumOrd=$(this).siblings('.idDetLisNumOrdCap').html();
 		var indice=$(this).index();
@@ -450,6 +454,8 @@ function principal() {
 				divVentanaPre.jqxWindow('bringToFront');
 		}else if (parseInt(minTotTrabHora)<60) {
 			//agregar todo lo que hacemos para abrir la captura, pero la diferencia es que vamos a usar el TFDB obtenido de la DB, y usarlo como horaInicio del a siguiente captura.
+			divVenPrePar.jqxWindow('open');
+			divVenPrePar.jqxWindow('bringToFront');
 		}
 	}
 	//evento hover de los td
@@ -491,7 +497,7 @@ function principal() {
 	divTMVentana.on('close',funCerrarVentanaDivTMVentana);
 	function funCerrarVentanaDivTMVentana(e) {
 		// cantidadEmp.focus();
-		divVentanaCapHora.jqxWindow('focus');
+		
 	}
 	divVentanaCapHora.on('open',funAbrirVentanaDivCapHora);
 	function funAbrirVentanaDivCapHora(e) {
@@ -511,14 +517,15 @@ function principal() {
 	divVentanaCapHora.on('focus',funFocusVentanaDivCapHora);
 	function funFocusVentanaDivCapHora(e) {
 		cantidadEmp.focus().select();
-		console.log(e);
+		//console.log(e);
 	}
 	divTMVentana.on('open',funOpenVenTM);
 	function funOpenVenTM(e) {
 		arregloTiempoMuerto=[];
 		sumaMinTM=0;
 		$.post('captura.php',{pTipoTM:true},dataListTM);
-		$('.ttMCap').focus();
+		$('.ttMCap').focus().val("");
+		$('.minttMCap').val("")
 	}
 	divTMVentana.on('close',funCerrarVenTM);
 	function funCerrarVenTM(e) {
@@ -537,6 +544,9 @@ function principal() {
 
 		}
 		if (e.args.dialogResult.Cancel) {
+			if (sumaMinTM>0) {
+
+			}else{
 			sumaMinTM=0;
 			arregloTiempoMuerto=[];
 			if ($('.copiaTM').length>1) {
@@ -549,7 +559,9 @@ function principal() {
 			$('.ttMCap').val("");
 			$('.minttMCap').val("");
 			tmMinCap.val(0);
+			}
 		}
+		divVentanaCapHora.jqxWindow('focus');
 	}
 	function dataListTM(datos,status) {
     // console.log(datos);
@@ -699,9 +711,9 @@ function principal() {
 			var hrTrabTot="",minTMTot="";
 			hrTrabTot= (parseInt(minTotCap)/60)+parseFloat(vHrCapTab);
 			minTMTot = (parseInt(minTmCap)/60)+parseFloat(vTmCapTab);
-			td.html(efi);
-			td.siblings('.tmCapTab').html(minTMTot.toFixed(2));
-			td.siblings('.hrCapTab').html((hrTrabTot/1).toFixed(2));
+			td.text(efi);
+			td.siblings('.tmCapTab').text(minTMTot.toFixed(2));
+			td.siblings('.hrCapTab').text((hrTrabTot/1).toFixed(2));
 			divVentanaCapHora.jqxWindow('close');
 			// console.log("HOLAMUNDO2");
 			// window.alert("HOLAMUNDO");
@@ -820,8 +832,143 @@ function principal() {
 	});
 
 	//Aquí va ir todo lo relacionado con el parcial de la captura
-	
-	
+	divVenPrePar.jqxWindow(
+	{
+		width:'100%',
+		height:'50%',
+		autoOpen:false,
+		maxHeight:'100px',
+		maxWidth:'310px',
+		minWidth:'10%',
+		minHeight:'10%',
+		cancelButton:btnCapPar,
+		okButton:btnVerCapPar
+
+	});
+
+	divVentanaCapHoraPar.jqxWindow(
+	{
+		width:'100%',
+		height:'250px',
+		autoOpen:false,
+		maxHeight:'250px',
+		maxWidth:'200px',
+		minWidth:'10%',
+		minHeight:'50%'
+	});
+	divTMVentanaPar.jqxWindow(
+	{
+		width:300,
+		height:200,
+		autoOpen:false,
+		okButton:$('#btnAceptarTMPar'),
+		cancelButton:$('#btnCancelTMPar')
+	});
+	divVenPrePar.on('close',closeWinDivVenPrePar);
+	function closeWinDivVenPrePar(e) {
+		if (e.args.dialogResult.Cancel) {
+			divVentanaCapHoraPar.jqxWindow('open');
+			divVentanaCapHoraPar.jqxWindow('bringToFront');
+		}
+		if (e.args.dialogResult.OK) {
+			divVenCapHoraEmp.jqxWindow('open');
+			divVenCapHoraEmp.jqxWindow('bringToFront');
+		}
+	}
+	divVentanaCapHoraPar.on('open',abrirVenDivVenCapHoraPar);
+	function abrirVenDivVenCapHoraPar(e) {
+		//obtenemos el td donde se dio el click
+		var numEmpleado,hora,numParte,rate,eficienciaCapAnte,detAsis,indice,fechaDia,indice;
+		var tdClick=divVentanaCapHora.data('tdClickeado');
+		numEmpleado=tdClick.siblings('.idEmpCap').html();
+		spanNumEmpleadoCapPar.html(numEmpleado);
+		indice=tdClick.index();
+		thRangoHora=tdClick.parent().parent().siblings('thead').children('tr').children('th:nth-child('+(indice+1)+')');
+		hora=thRangoHora.html();
+		spanHoraCapPar.html(hora);
+		spanNumParteCapPar.html(inpNumParteCap.val());
+		spanRateCap2Par.html(spanRateCap.html());
+		cantidadEmpPar.val(0).focus().select();
+		//vamos a ingresar el tiempo
+		eficienciaCapAnte=tdClick.html();
+		vTmCapTab=tdClick.siblings('.tmCapTab').html();
+		vHrCapTab=tdClick.siblings('.hrCapTab').html();
+		fechaDia=divFechaCapPost.jqxDateTimeInput('getDate');
+		fechaCompletaHoy= obtenerFecha(fechaDia);
+		var hora=new Date();
+		//cuando buscamos el parcial obtenemos la hora final del último registro, y para la siguiente captura va hacer nuestra hora de inicio.
+		horaIPar.html(horaFTPar);
+		horaSplit=horaFTPar.split(':');
+		hora.setHours(horaSplit[0],horaSplit[1],horaSplit[2]);
+		horaIP=hora.getHours();
+		minIP=hora.getMinutes();
+		segIP=hora.getSeconds();
+		if (horaIP<10) {
+			horaIP="0"+horaIP;
+		}
+		if (minIP<10) {
+			minIP="0"+minIP;
+		}
+		if (segIP<10) {
+			segIP="0"+segIP;
+		}
+		//el valor máximo que tendra los minutos parciales de la captura
+		difMin=60-parseInt(minIP);
+		tParPar.val(difMin);
+		//nos va a servir estó para tener la hora final de la captura
+		//hora.setMinutes(hora.getMinutes()+difMin);
+		/*console.log("minutos: "+ hora.getMinutes()+" horas: "+hora.getHours());
+		console.log(parseInt(horaIP));
+		console.log(parseInt(minIP));
+		console.log(parseInt(segIP));*/
+	}
+	tmCapPar.on('click',clickTriTmCapPar);
+	function clickTriTmCapPar(e) {
+		divTMVentanaPar.jqxWindow('open');
+		divTMVentanaPar.jqxWindow('bringToFront');
+	}
+
+	divTMVentanaPar.on('open',openDivTMVenPar);
+	function openDivTMVenPar(e) {
+		console.log(e);
+	}
+
+	divTMVentanaPar.on('close',closeDivTMVenPar);
+	function closeDivTMVenPar(e) {
+		if (e.args.dialogResult.OK) {
+			$('.copiaTMPar').each(function (index,objeto) {
+				var i = $(objeto).children('.ttMCap').val();
+				var j = $(objeto).children('.minttMCap').val();
+				arregloTiempoMuerto.push([i,j]);
+			});
+			$.each(arregloTiempoMuerto,function (index,objeto) {
+				sumaMinTM+=parseInt(objeto[1])
+			});
+			tmMinCap.val(sumaMinTM);
+		}
+		if (sumaMinTM<=minTotCap) {
+
+		}
+		if (e.args.dialogResult.Cancel) {
+			if (sumaMinTM>0) {
+
+			}else{
+			sumaMinTM=0;
+			arregloTiempoMuerto=[];
+			if ($('.copiaTM').length>1) {
+				$('.copiaTM').each(function (index,objeto) {
+					if (index>0) {
+						$(objeto).remove();
+					}
+				});
+			}
+			$('.ttMCap').val("");
+			$('.minttMCap').val("");
+			tmMinCap.val(0);
+			}
+		}
+		divVentanaCapHora.jqxWindow('focus');
+	}
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup
 	$.ajaxSetup({

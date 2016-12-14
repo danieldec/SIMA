@@ -50,6 +50,9 @@ function principal() {
 	var btnCapPorHoraPar=$('#btnCapPorHoraPar');
 	var btnCapPar = $('#btnCapPar'); 
 	var btnVerCapPar = $('#btnVerCapPar'); 
+	var divTMVentanaPar = $('#divTMVentanaPar');
+	var copiaTMPar = $('.copiaTMPar','#divTMVentanaPar');
+	var cantTTMPar=$('#cantTTMPar');
 	//aquí termina los objetos de la ventana captura parcial
 	var thRangoHora,tdNumEmpleado,tdEditar;
 	var ventanaAbierta=false;
@@ -491,6 +494,11 @@ function principal() {
 		divTMVentana.jqxWindow('open');
 		divTMVentana.jqxWindow('bringToFront');
 	}
+	//evento ventana divVentanaCapHora cuando obtiene el foco
+	divVentanaCapHora.on('focus',focoDivVenCapHora);
+	function focoDivVenCapHora(e) {
+		eficienciaCap.focus();
+	}
 	//evento cerrar ventana de la ventana divTMVentana
 	divTMVentana.on('close',funCerrarVentanaDivTMVentana);
 	function funCerrarVentanaDivTMVentana(e) {
@@ -515,15 +523,16 @@ function principal() {
 	divVentanaCapHora.on('focus',funFocusVentanaDivCapHora);
 	function funFocusVentanaDivCapHora(e) {
 		cantidadEmp.focus().select();
-		//console.log(e);
 	}
 	divTMVentana.on('open',funOpenVenTM);
 	function funOpenVenTM(e) {
 		arregloTiempoMuerto=[];
 		sumaMinTM=0;
 		$.post('captura.php',{pTipoTM:true},dataListTM);
-		$('.ttMCap').focus();
+		$('.ttMCap').focus().val("");
+		$('.minttMCap').val("");
 	}
+	//evento cerrar ventana de la ventana divTMVentana
 	divTMVentana.on('close',funCerrarVenTM);
 	function funCerrarVenTM(e) {
 		if (e.args.dialogResult.OK) {
@@ -536,9 +545,7 @@ function principal() {
 				sumaMinTM+=parseInt(objeto[1])
 			});
 			tmMinCap.val(sumaMinTM);
-		}
-		if (sumaMinTM<=minTotCap) {
-
+			calcEfi();
 		}
 		if (e.args.dialogResult.Cancel) {
 			sumaMinTM=0;
@@ -553,6 +560,22 @@ function principal() {
 			$('.ttMCap').val("");
 			$('.minttMCap').val("");
 			tmMinCap.val(0);
+			calcEfi();
+		}
+		if (e.args.dialogResult.None) {
+			sumaMinTM=0;
+			arregloTiempoMuerto=[];
+			if ($('.copiaTM').length>1) {
+				$('.copiaTM').each(function (index,objeto) {
+					if (index>0) {
+						$(objeto).remove();
+					}
+				});
+			}
+			$('.ttMCap').val("");
+			$('.minttMCap').val("");
+			tmMinCap.val(0);
+			calcEfi();
 		}
 	}
 	function dataListTM(datos,status) {
@@ -589,7 +612,6 @@ function principal() {
 	//evento focus inputs de la ventana captura
 	cantidadEmp.on('blur',funFocoCantidadEmp);
 	tPar.on('blur',funFocoTPar);
-	eficienciaCap.on('blur',funFocoEficienciaCap);
 	tmMinCap.on('blur',funFocoTmMinCap);
 
 	// Estas son las variables usadas en la captura.
@@ -599,8 +621,6 @@ function principal() {
 	}
 	function funFocoTPar(e) {
 		calcEfi();
-	}
-	function funFocoEficienciaCap(e) {
 	}
 	function funFocoTmMinCap(e) {
 	}
@@ -703,9 +723,9 @@ function principal() {
 			var hrTrabTot="",minTMTot="";
 			hrTrabTot= (parseInt(minTotCap)/60)+parseFloat(vHrCapTab);
 			minTMTot = (parseInt(minTmCap)/60)+parseFloat(vTmCapTab);
-			td.html(efi);
-			td.siblings('.tmCapTab').html(minTMTot.toFixed(2));
-			td.siblings('.hrCapTab').html((hrTrabTot/1).toFixed(2));
+			td.text(efi);
+			td.siblings('.tmCapTab').text(minTMTot.toFixed(2));
+			td.siblings('.hrCapTab').text((hrTrabTot/1).toFixed(2));
 			divVentanaCapHora.jqxWindow('close');
 			// console.log("HOLAMUNDO2");
 			// window.alert("HOLAMUNDO");
@@ -841,12 +861,20 @@ function principal() {
 	divVentanaCapHoraPar.jqxWindow(
 	{
 		width:'100%',
-		height:'50%',
+		height:'250px',
 		autoOpen:false,
-		maxHeight:'140px',
+		maxHeight:'250px',
 		maxWidth:'200px',
 		minWidth:'10%',
-		minHeight:'10%'
+		minHeight:'50%'
+	});
+	divTMVentanaPar.jqxWindow(
+	{
+		width:300,
+		height:200,
+		autoOpen:false,
+		okButton:$('#btnAceptarTMPar'),
+		cancelButton:$('#btnCancelTMPar')
 	});
 	divVenPrePar.on('close',closeWinDivVenPrePar);
 	function closeWinDivVenPrePar(e) {
@@ -901,10 +929,181 @@ function principal() {
 		tParPar.val(difMin);
 		//nos va a servir estó para tener la hora final de la captura
 		//hora.setMinutes(hora.getMinutes()+difMin);
-		console.log("minutos: "+ hora.getMinutes()+" horas: "+hora.getHours());
+		/*console.log("minutos: "+ hora.getMinutes()+" horas: "+hora.getHours());
 		console.log(parseInt(horaIP));
 		console.log(parseInt(minIP));
-		console.log(parseInt(segIP));
+		console.log(parseInt(segIP));*/
+	}
+	tmCapPar.on('click',clickTriTmCapPar);
+	function clickTriTmCapPar(e) {
+		divTMVentanaPar.jqxWindow('open');
+		divTMVentanaPar.jqxWindow('bringToFront');
+	}
+	//toda modificación que se haga en el tiempo muerto del tiempo parcial se deberá realizar en el tiempo muerto sin parcial.
+	divTMVentanaPar.on('open',openDivTMVenPar);
+	function openDivTMVenPar(e) {
+		arregloTiempoMuerto=[];
+		sumaMinTM=0;
+		$.post('captura.php',{pTipoTM:true},dataListTMPar);
+		$('.ttMCapPar').focus().select().val("");
+		$('.minttMCapPar').val("");
+	}
+	function dataListTMPar(datos,status) {
+		var dataListTipoTM=$.parseJSON(datos);
+		if (dataListTipoTM.Validacion=="Exito") {
+			$('#listTMPar').html(dataListTipoTM.Datos);
+		}
+		$('.ttMCapPar').change(function(e) {
+			switch (parseInt(e.target.value)) {
+				case 1:
+		        $(e.target).siblings('.minttMCapPar').val(20);
+		        break;
+		        case 2:
+		        $(e.target).siblings('.minttMCapPar').val(40);
+		        break;
+		        case 3:
+		        $(e.target).siblings('.minttMCapPar').val(5);
+		        break;
+		        case 0:
+		        $(e.target).siblings('.minttMCapPar').val('');
+		        break;
+		        default:
+		        $(e.target).siblings('.minttMCapPar').val(0);
+		    }
+		});
+	}
+	cantTTMPar.on('change',changeCantTTM);
+	function changeCantTTM(e) {
+		numCopias=e.target.value;
+		divCopiaTMCap=copiaTMPar.clone(true);
+		switch (numCopias) {
+			case "1":
+				if ($('.copiaTMPar').length>1) {
+					$('.copiaTMPar').each(function (index,objeto) {
+						if (index>0) {
+							$(objeto).remove();
+						}
+					});
+				}
+				break;
+			case "2":
+				if ($('.copiaTMPar').length<2) {
+					$('.copiaTMPar').after(divCopiaTMCap);
+				}
+				if ($('.copiaTMPar').length>2) {
+					$('.copiaTMPar').each(function (index,objeto) {
+						if (index>1) {
+							$(objeto).remove();
+						}
+					});
+				}
+				break;
+			case "3":
+				var copias=$('.copiaTMPar').length;
+				if (copias<3) {
+					while (copias<3) {
+						$('.copiaTMPar').last().after(divCopiaTMCap);
+						copias++;
+					}
+				}
+				break;
+			case "4":
+				var copias=$('.copiaTMPar').length;
+				if (copias<4) {
+					while (copias<4) {
+						$('.copiaTMPar').last().after(divCopiaTMCap);
+						copias++;
+					}
+				}
+				break;
+			case "5":
+				var copias=$('.copiaTMPar').length;
+				if (copias<5) {
+					while (copias<5) {
+						$('.copiaTMPar').last().after(divCopiaTMCap);
+						copias++;
+					}
+				}
+				break;
+			default:
+		}
+	}
+	divTMVentanaPar.on('close',closeDivTMVenPar);
+	function closeDivTMVenPar(e) {
+		if (e.args.dialogResult.OK) {
+			$('.copiaTMPar').each(function (index,objeto) {
+				var i = $(objeto).children('.ttMCapPar').val();
+				var j = $(objeto).children('.minttMCapPar').val();
+				arregloTiempoMuerto.push([i,j]);
+			});
+			$.each(arregloTiempoMuerto,function (index,objeto) {
+				sumaMinTM+=parseInt(objeto[1])
+			});
+			tmMinCapPar.val(sumaMinTM);
+		}
+		if (sumaMinTM<=minTotCap) {
+
+		}
+		if (e.args.dialogResult.Cancel) {
+			sumaMinTM=0;
+			arregloTiempoMuerto=[];
+			if ($('.copiaTMPar').length>1) {
+				$('.copiaTMPar').each(function (index,objeto) {
+					if (index>0) {
+						$(objeto).remove();
+					}
+				});
+			}
+			$('.ttMCapPar').val("");
+			$('.minttMCapPar').val("");
+			tmMinCapPar.val(0);
+		}
+		divVentanaCapHoraPar.jqxWindow('focus');
+	}
+	divVentanaCapHoraPar.on('focus',funFocusVentanaDivCapHora);
+	function funFocusVentanaDivCapHora(e) {
+		cantidadEmpPar.focus().select();
+	}
+	cantidadEmpPar.on('keyup blur',evtCantidadEmpPar);
+	function evtCantidadEmpPar(e) {
+		var lonCad="";
+		var tipoVar="";
+		var cantidad="";
+		if (e.type=="keyup") {
+			lonCad=$(this).val().length
+			tipoVar=$(this).val()*1;
+			cantidad=$(this).val();
+			if (!isNaN(tipoVar)&&(lonCad>0&&lonCad<6)&&parseInt(cantidad)>0) {
+				calcEfiPar();
+			}
+		}
+		else if (e.type=="blur") {
+			lonCad=$(this).val().length;
+			tipoVar=$(this).val()*1;
+			cantidad=$(this).val();
+			if (!isNaN(tipoVar)&&(lonCad>0&&lonCad<6)&&parseInt(cantidad)>0) {
+				calcEfiPar();
+			}
+		}
+	}
+	tParPar.on('blur',evtTParPar);
+	function evtTParPar(e) {
+		console.log(e)
+		var tParParMin=$(this).val();
+		if (tParParMin>difMin) {
+		divNotificaciones.html("El tiempo parcial actual no puede ser mayor el tiempo parcial  "+ difMin);
+		jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		$(this).val(0);
+		return false;
+		}
+	}
+	tmMinCapPar.on('blur',evtTmMinCapPar);
+	function evtTmMinCapPar(e) {
+		//console.log(e);
+	}
+	function calcEfiPar(e) {
+
 	}
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup

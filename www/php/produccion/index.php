@@ -544,7 +544,7 @@
                           <label for="cantidadEmp">Cantidad</label><input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmp" id="cantidadEmp"/>
                           <label for="tPar"><abbr title="Minutos Trabajados">MT</abbr></label><input class="form-control "type="text" placeholder="Tiempo Parcial" name="tPar" id="tPar"/>
                           <label for="tmMinCap"><abbr title="Tiempo Muerto">TM</abbr></label><input type="text" id ="tmMinCap" name="tmMinCap" value="0" class="form-control"/>
-                          <label for="eficienciaCap">Eficiencia</label><input type="text" id="eficienciaCap" value="0" class="form-control"/>
+                          <label for="eficienciaCap">Eficiencia</label><input type="text" id="eficienciaCap" value="0" class="form-control" readonly="true" />
                           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCap"/>
                           <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHora"/>
                         </form>
@@ -814,10 +814,44 @@
           <label for="tmMinCapPar"><abbr title="Tiempo Muerto">TM</abbr></label>
           <input type="text" id ="tmMinCapPar" name="tmMinCapPar" value="0" class="form-control"/>
           <label for="eficienciaCapPar">Eficiencia</label>
-          <input type="text" id="eficienciaCapPar" value="0" class="form-control"/>
+          <input type="text" id="eficienciaCapPar" value="0" class="form-control" readonly="true" />
           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCapPar"/>
           <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHoraPar"/>
         </form>
+        <div id="divTMVentanaPar">
+          <div>Tiempo Muerto</div>
+          <div>
+            <div class="col-xs-12 container-fluid">
+              <div class="row">
+                <div class="col-xs-6">
+                  <div class="copiaTMPar">
+                    <label for=""><abbr title="Tipo tiempo Muerto">TTM</abbr></label>
+                    <input type="text" class="form-control ttMCapPar" list="listTMPar">
+                    <datalist id="listTMPar">
+                    </datalist>
+                    <label for="">minutos</label>
+                    <input type="text" class="form-control minttMCapPar">
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <span>¿Deseas agregar otro tiempo muerto?</span>
+                  <select id="cantTTMPar">
+                    <option value="1" selected="true">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row text-center">
+                <br>
+                <input type="button" class="btn btn-primary" value="ACEPTAR" id="btnAceptarTMPar">
+                <input type="button" class="btn btn-danger" value="CANCERLAR" id="btnCancelTMPar">
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
      </div><!--Fin del div ventana divVentanaCapHora-->
     <!-- <div id="divVenParcial">
