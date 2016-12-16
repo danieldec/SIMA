@@ -541,10 +541,14 @@
                           <span>Hora: <span id="spanHoraCap"></span></span>
                           <span>Número Parte: <span id="spanNumParteCap"></span></span>
                           <span>Rate: <span id="spanRateCap2"></span></span>
-                          <label for="cantidadEmp">Cantidad</label><input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmp" id="cantidadEmp"/>
-                          <label for="tPar"><abbr title="Minutos Trabajados">MT</abbr></label><input class="form-control "type="text" placeholder="Tiempo Parcial" name="tPar" id="tPar"/>
-                          <label for="tmMinCap"><abbr title="Tiempo Muerto">TM</abbr></label><input type="text" id ="tmMinCap" name="tmMinCap" value="0" class="form-control"/>
-                          <label for="eficienciaCap">Eficiencia</label><input type="text" id="eficienciaCap" value="0" class="form-control" readonly="true" />
+                          <label for="cantidadEmp">Cantidad</label>
+                          <input class="form-control "type="text" placeholder="Cantidad" name ="cantidadEmp" id="cantidadEmp" required="true" />
+                          <label for="tPar"><abbr title="Minutos Trabajados">MT</abbr></label>
+                          <input class="form-control "type="text" placeholder="Tiempo Parcial" name="tPar" id="tPar"/>
+                          <label for="tmMinCap"><abbr title="Tiempo Muerto">TM</abbr></label>
+                          <input type="text" id ="tmMinCap" name="tmMinCap" value="0" class="form-control" readonly="true" />
+                          <label for="eficienciaCap">Eficiencia</label>
+                          <input type="text" id="eficienciaCap" value="0" class="form-control" readonly="true" />
                           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCap"/>
                           <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHora"/>
                         </form>
@@ -812,7 +816,7 @@
           <label for="tParPar"><abbr title="Minutos Trabajados">MT</abbr></label>
           <input class="form-control "type="text" placeholder="Tiempo Parcial" name="tParPar" id="tParPar"/>
           <label for="tmMinCapPar"><abbr title="Tiempo Muerto">TM</abbr></label>
-          <input type="text" id ="tmMinCapPar" name="tmMinCapPar" value="0" class="form-control"/>
+          <input type="text" id ="tmMinCapPar" name="tmMinCapPar" value="0" class="form-control" readonly="true" />
           <label for="eficienciaCapPar">Eficiencia</label>
           <input type="text" id="eficienciaCapPar" value="0" class="form-control" readonly="true" />
           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCapPar"/>

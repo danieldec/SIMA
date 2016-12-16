@@ -1037,7 +1037,7 @@ function principal() {
 				arregloTiempoMuerto.push([i,j]);
 			});
 			$.each(arregloTiempoMuerto,function (index,objeto) {
-				sumaMinTM+=parseInt(objeto[1])
+				sumaMinTM+=parseInt(objeto[1]);
 			});
 			tmMinCapPar.val(sumaMinTM);
 		}
@@ -1075,6 +1075,8 @@ function principal() {
 			cantidad=$(this).val();
 			if (!isNaN(tipoVar)&&(lonCad>0&&lonCad<6)&&parseInt(cantidad)>0) {
 				calcEfiPar();
+			}else{
+				errorCalcEfi($(this),e.type)
 			}
 		}
 		else if (e.type=="blur") {
@@ -1083,27 +1085,150 @@ function principal() {
 			cantidad=$(this).val();
 			if (!isNaN(tipoVar)&&(lonCad>0&&lonCad<6)&&parseInt(cantidad)>0) {
 				calcEfiPar();
+			}else{
+				errorCalcEfi($(this),e.type)
 			}
 		}
 	}
-	tParPar.on('blur',evtTParPar);
+	tParPar.on('blur keyup',evtTParPar);
 	function evtTParPar(e) {
-		console.log(e)
 		var tParParMin=$(this).val();
 		if (tParParMin>difMin) {
-		divNotificaciones.html("El tiempo parcial actual no puede ser mayor el tiempo parcial  "+ difMin);
-		jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+		divNotificaciones.html("El tiempo parcial actual no puede ser mayor el tiempo parcial  " + difMin);
+		jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
-		$(this).val(0);
+		$(this).val(difMin);
+		calcEfiPar();
 		return false;
 		}
+		if (isNaN(tParParMin*1)) {
+			divNotificaciones.html("no se acepta letras o caracteres especiales");
+		jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		$(this).val(difMin);
+		return false;
+		}
+		if (tParParMin.length<0||tParParMin==0) {
+			return false;
+		}
+		calcEfiPar()
 	}
 	tmMinCapPar.on('blur',evtTmMinCapPar);
 	function evtTmMinCapPar(e) {
 		//console.log(e);
 	}
-	function calcEfiPar(e) {
+	//variables usadas para el calculo de la eficiencia y despues de la eficiencia.
 
+	function calcEfiPar() {
+		minTotCap=tParPar.val();
+		tmMinCapPar.val();
+		minTmCap=tmMinCapPar.val();
+		rateCap=spanRateCap2Par.text();
+		minTrabCap=minTotCap - minTmCap;
+		cantidadProgCap=(parseInt(rateCap) * parseInt(minTrabCap))/60;
+		cantidadCap=cantidadEmpPar.val();
+		efiCap=(cantidadCap/cantidadProgCap)*100;
+		eficienciaCapPar.val(efiCap.toFixed(2));
+	}
+	function errorCalcEfi(objeto,evento) {
+		if (evento=="blur") {
+			objeto.val(0).focus().select();
+		}
+		divNotificaciones.html("Cantidad no valida");
+		jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1000}).jqxNotification('open');
+		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+	}
+	//submit de la captura de eficiencia
+	formCapPorHoraPar.on('submit',funEnviarFormPar);
+	//función para enviar el formulario para la captura.
+	function funEnviarFormPar(e) {
+		var fechaCaptura,fecha;
+		fechaCaptura=divFechaCapPost.jqxDateTimeInput('getDate');
+		var horaF  = new Date();
+		var hI=$('#horaIPar').text(),hF,efiCap = eficienciaCapPar.val();
+		//variable que contiene los minutos del tiempo parcial
+		var tPCapPar=$('#tParPar').val();
+		//dividir la el tiempo parcial en un arreglo, para determinar la hora final de la captura
+		var tPArray=hI.split(':');
+		horaF.setHours(tPArray[0]);
+		horaF.setMinutes(parseInt(tPCapPar)+parseInt(tPArray[1]));
+		horaF.setSeconds(0);
+		hF=obtenerHoraCompleta(horaF);
+		fecha=obtenerFecha(fechaCaptura);
+		if (efiCap<=0||efiCap>=200) {
+			divNotificaciones.html("No puede haber eficiencias menores o igual a 0  (cero) o mayores a 200");
+			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			return false;
+		}
+		console.log(fecha+" "+cantidadCap+" "+hI+" "+hF+" "+minTmCap+" "+efiCap+" "+detListNumOrd+" "+detAsis);
+		console.log(arregloTiempoMuerto);
+		//Aquí vamos a enviar el tiempo muerto de la captura
+		if (minTmCap>0) {
+			$.post({
+				url:"php/captura.php",
+				dataType:'json',
+				data:
+				{
+					fecha:fecha,
+					cantidadCap:cantidadCap,
+					hI:hI,
+					hF:hF,
+					minTmCap:minTmCap,
+					efiCap:efiCap,
+					detListNumOrd:detListNumOrd,
+					detAsis:detAsis,
+					pArregloTiempoMuerto:arregloTiempoMuerto
+				},
+				success:exitoFunCapturaPar,
+				type:'POST',
+				error:errorFuncionABtnEmp
+			});
+		}else{
+			//si no hay tiempo muerto  lo enviamos así, sin el arreglo
+			$.post({
+				url:"php/captura.php",
+				dataType:'json',
+				data:
+				{
+					fecha:fecha,
+					cantidadCap:cantidadCap,
+					hI:hI,
+					hF:hF,
+					minTmCap:minTmCap,
+					efiCap:efiCap,
+					detListNumOrd:detListNumOrd,
+					detAsis:detAsis
+				},
+				success:exitoFunCapturaPar,
+				type:'POST',
+				error:errorFuncionABtnEmp
+			});
+		}
+		e.preventDefault();
+	}
+	//función despues de haber realizado la captura del tiempo parcial
+	function exitoFunCapturaPar(data) {
+		if (data.validacion=="exito") {
+			divNotificaciones.html(data.datos);
+			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			var td= divVentanaCapHora.data('tdClickeado');
+			var efi=$('#eficienciaCapPar').val();
+			var efiPar=td.text();
+			efi=(parseFloat(efi)+parseFloat(efiPar))/2;
+			var hrTrabTot="",minTMTot="";
+			hrTrabTot= (parseInt(minTotCap)/60)+parseFloat(vHrCapTab);
+			minTMTot = (parseInt(minTmCap)/60)+parseFloat(vTmCapTab);
+			td.text(efi);
+			td.siblings('.tmCapTab').text(minTMTot.toFixed(2));
+			td.siblings('.hrCapTab').text((hrTrabTot/1).toFixed(2));
+			divVentanaCapHoraPar.jqxWindow('close');
+		}else if (data.validacion=="error") {
+			divNotificaciones.html(data.datos);
+			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		}
 	}
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup
