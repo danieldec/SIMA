@@ -200,6 +200,7 @@ function Principal() {
        source: dataAdapter,
        theme: theme,
        autoheight:true,
+       editable:true,
        pageable:true,
        virtualmode:true,
        sortable: true,
@@ -218,7 +219,7 @@ function Principal() {
    });
    $("#excelExport").jqxButton();
    $("#excelExport").click(function () {
-     $("#jqxgridEmpleados").jqxGrid('exportdata', 'pdf','empleados',true,null,null,true,null,'UTF-8');
+     $("#jqxgridEmpleados").jqxGrid('exportdata', 'xls','empleados','UTF-8');
    });
 }
 /*

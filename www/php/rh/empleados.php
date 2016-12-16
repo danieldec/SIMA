@@ -7,7 +7,7 @@
 	$pagenum = $_POST['pagenum'];
 	$pagesize = $_POST['pagesize'];
 	$start = $pagenum * $pagesize;
-  $consulta="SELECT SQL_CALC_FOUND_ROWS * FROM empleados LIMIT $start, $pagesize"
+  $consulta="SELECT SQL_CALC_FOUND_ROWS * FROM empleados LIMIT $start, $pagesize";
   // get data and store in a json array
   if (isset($_POST['sortdatafield']))
   {

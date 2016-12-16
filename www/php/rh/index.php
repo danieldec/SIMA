@@ -89,7 +89,7 @@
              <div id='jqxWidget'>
               <div id="jqxgridEmpleados"></div>
               <br>
-              <input type="button" value="Export to Excel" id='excelExport' />
+              <input type="button" value="Exportar a Excel" id='excelExport' />
             </div>
           </div>
         </div>
@@ -100,17 +100,59 @@
 
     <!--Aquí empieza el contenido de la pestaña de usuarios -->
     <div class="tab-pane fade" id="usuarios">
-      <div>estoy en el contenido de usuarios</div>
+      <div class="col-xs-6 col-md-6 col-md-offset-3 col-xs-offset-3" style="border: 1px solid blue;">
+        <form id="formUsu">
+          <div class="form-group">
+            <label for="nombreU">Nombre usuario: </label>
+            <input class="form-control" type="text" name="nombreU" id="nombreU" placeholder="Nombre Usuario" required/>
+          </div>
+          <div class="form-group">
+            <label for="nombreU">Contraseña: </label>
+            <input class="form-control" type="password" name="contrasenaU" id="contrasenaU" placeholder="Contraseña" required="true"/>
+          </div>
+          <div class="form-group">
+            <label for="nombreU"># Empleado: </label>
+            <input class="form-control" type="text" name="numEmp" id="numEmp" placeholder="# empleado" required/>
+          </div>
+          <div class="form-group">
+            <label for="perfilU">Perfil</label>
+            <select class="form-control" name="perfilU" id="perfilU" required>
+            <?php 
+              include '../conexion/conexion.php';
+              $consulta="SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'usuarios' AND COLUMN_NAME = 'perfil'";
+              $resultado=$conexion->query($consulta);
+              if (!$resultado) {
+                echo $conexion->errno+"(".$conexion->error.")";
+                exit();
+              }
+              $row = $resultado->fetch_array();
+              echo '<option value="" selected>Escoja una opción</option>';
+              $enumList = explode(",", str_replace("'", "", substr($row['COLUMN_TYPE'], 5, (strlen($row['COLUMN_TYPE'])-6))));
+              foreach($enumList as $value)
+                echo "<option value=\"$value\">$value</option>";
+              echo "</select>";
+             ?>
+            </select>
+          </div>
+          <div class="form-group text-center">
+            <input type="submit" value="Agregar Usuario" class="btn btn-primary text-center form-control">
+          </div>
+        </form>
+      </div>
     </div>
     <!--Aquí termina el contenido de la pestaña de usuarios -->
 
 
     <!--Aquí empieza el contenido de la pestaña de reporte -->
     <div class="tab-pane fade" id="reporte">
-      <h2>Estas en el tab de reporte</h2>
+      <h3>Estas en el tab de reporte</h3>
   </div>
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
-
+  <!-- Notificaciones de errores y exitos al momento de hacer una acción -->
+  <div id="jqxNotRh">
+        <div id="jqxNotRhContent">
+        </div>
+    </div>
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
 
@@ -131,7 +173,8 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.grouping.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxdata.export.js"></script> 
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.export.js"></script> 
-
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.edit.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/rh.js"></script>
 
 </body>
