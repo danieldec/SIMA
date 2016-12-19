@@ -164,7 +164,6 @@ function principal() {
 		source:funListaNumParte,
 		minLength:2,
 		select:function(event,ui) {
-			console.log();
 			if (ui.item.value.length>10) {
 				inpNumParteCap.val(numParteOriginal);
 				return false;

@@ -100,15 +100,15 @@
 
     <!--Aquí empieza el contenido de la pestaña de usuarios -->
     <div class="tab-pane fade" id="usuarios">
-      <div class="col-xs-6 col-md-6 col-md-offset-3 col-xs-offset-3" style="border: 1px solid blue;">
+      <div class="col-xs-6 col-md-6 col-md-offset-3 col-xs-offset-3">
         <form id="formUsu">
           <div class="form-group">
             <label for="nombreU">Nombre usuario: </label>
-            <input class="form-control" type="text" name="nombreU" id="nombreU" placeholder="Nombre Usuario" required/>
+            <input class="form-control" type="text" name="nombreU" id="nombreU" placeholder="Nombre Usuario" required autofocus="true" />
           </div>
           <div class="form-group">
             <label for="nombreU">Contraseña: </label>
-            <input class="form-control" type="password" name="contrasenaU" id="contrasenaU" placeholder="Contraseña" required="true"/>
+            <input class="form-control" type="password" name="contrasenaU" id="contrasenaU" placeholder="CONTRASEÑA" required="true"/>
           </div>
           <div class="form-group">
             <label for="nombreU"># Empleado: </label>
@@ -150,9 +150,8 @@
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
   <!-- Notificaciones de errores y exitos al momento de hacer una acción -->
   <div id="jqxNotRh">
-        <div id="jqxNotRhContent">
-        </div>
-    </div>
+    <div id="jqxNotRhContent"></div>
+  </div>
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
 

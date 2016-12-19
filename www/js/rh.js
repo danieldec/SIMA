@@ -6,11 +6,21 @@ function Principal() {
   var inputNumEmpleado=$('input[name="numEmpleado"]');
   var inputNomEmpleado=$('input[name="nombreEmpleado"]');
   var inputApeEmpleado=$('input[name="apellidoEmpleado"]');
+  var formUsu = $('#formUsu');
+  var formAltaEmpleados = $('#formAltaEmpleados');
+  var numEmp = $('#numEmp');
+  var jqxNotRh = $('#jqxNotRh');
+  var jqxNotRhContent = $('#jqxNotRhContent');
   // var alertAltaEmple;
-  $('.nav-tabs a').on('click',function() {
+  $('.nav-tabs a').on('click',function(e) {
     $(this).tab('show');
+    if ($(this).text()=="USUARIOS") {
+      $("#nombreU").val('').focus;
+      $('#contrasenaU').val('');
+      $('#numEmp').val("");
+      $($('#perfilU>option')['0']).prop('selected','selected');
+    }
   });
-
   //convertir cadena de texto en mayusculas del input
   inputTypeText.each(function () {
     $(this).bind('keyup blur focus',function() {
@@ -26,7 +36,7 @@ function Principal() {
     });
   });
   //insertar usuario a través de ajax
-  $('form').on('submit',function (e) {
+  formAltaEmpleados.on('submit',function (e) {
     inputNumEmpleado.val(cadenaNumEmpleado);
     inputNomEmpleado.val(cadenaNomEmpleado);
     inputApeEmpleado.val(cadenaApeEmpleado)
@@ -78,7 +88,7 @@ function Principal() {
     )
     e.preventDefault();
   });
-/*
+  /*
   //empieza el listado de los empleado
   $('#btnListaE').on('click',function () {
     $.post('empleadosME.php',
@@ -164,64 +174,140 @@ function Principal() {
   //Aquí vamos a usar la libreria de jqwidget en la tabla de empleados
   // prepare the data
   var theme='classic';
-   var source =
-   {
-       datatype: "json",
-       datafields:
-       [
-         { name: 'idempleados',type:'string' },
-         { name: 'nombre',type:'string' },
-         { name: 'apellidos',type:'string' },
-         { name: 'estado',type:'int' }
-       ],
-       cache:false,
-       url: 'empleados.php',
-       type:'POST',
-       root:'Rows',
-       beforeprocessing:function(data) {
-         source.totalrecords=data[0].TotalRows;
-       },
-       sort:function () {
-          $('#jqxgridEmpleados').jqxGrid('updatebounddata','sort');
-       }
-   };
-   var dataAdapter=new $.jqx.dataAdapter(source,
-     {
-       loadComplete:function (data) {
-         console.log(data);
+  var source =
+  {
+    datatype: "json",
+    datafields:
+      [
+        { name: 'idempleados',type:'string'},
+        { name: 'nombre',type:'string'},
+        { name: 'apellidos',type:'string'},
+        { name: 'estado',type:'int'}
+      ],
+    cache:false,
+    url: 'empleados.php',
+    type:'POST',
+    root:'Rows',
+    beforeprocessing:function(data) {
+      source.totalrecords=data[0].TotalRows;
+    },
+    sort:function () {
+      $('#jqxgridEmpleados').jqxGrid('updatebounddata','sort');
+    }
+  };
+  var dataAdapter=new $.jqx.dataAdapter(source,
+    {
+      loadComplete:function (data) {
+        //console.log(data);
         //  console.log("Completado con exito");
-       },
-       loadError:function (xhr, status, error) {
-         window.alert("conexion fallida con el servidor, intente de nuevo");
-       }
-     });
-   $("#jqxgridEmpleados").jqxGrid({
-       width:'100%',
-       source: dataAdapter,
-       theme: theme,
-       autoheight:true,
-       editable:true,
-       pageable:true,
-       virtualmode:true,
-       sortable: true,
-       columnsresize: true,
-       altRows:true,
-       rendergridrows:function(obj) {
-         return obj.data;
-       },
-       columns:
+      },
+      loadError:function (xhr, status, error) {
+        window.alert("conexion fallida con el servidor, intente de nuevo");
+      }
+    });
+  $("#jqxgridEmpleados").jqxGrid(
+    {
+      width:'100%',
+      source: dataAdapter,
+      theme: theme,
+      autoheight:true,
+      editable:true,
+      pageable:true,
+      virtualmode:true,
+      sortable: true,
+      columnsresize: true,
+      altRows:true,
+      rendergridrows:function(obj) {
+        return obj.data;
+      },
+      columns:
        [
          { text: '# empleado', datafield: 'idempleados', width: '20%' },
          { text: 'Nombre', datafield: 'nombre', width: '35%' },
          { text: 'Apellidos', datafield: 'apellidos', width: '35%' },
          { text: 'Estado', datafield: 'estado', width: '10%', columntype:'checkbox' },
        ]
-   });
-   $("#excelExport").jqxButton();
-   $("#excelExport").click(function () {
+     });
+  $("#excelExport").jqxButton();
+  $("#excelExport").click(function () {
      $("#jqxgridEmpleados").jqxGrid('exportdata', 'xls','empleados','UTF-8');
    });
-}
+  //autocomplete del número de empleado.
+  numEmp.autocomplete(
+  {
+    source:listEmp,
+    minLength:2,
+    select: function(event,ui) {
+
+    }
+  });
+  function listEmp(request,response) {
+    console.log(request.term);
+    $.post(
+    {
+      url:'php/listaEmpleados.php',
+      dataType:'json',
+      data:{mosNumEmpl:true,numEmp:request.term},
+      success:function(data) {
+        response(data);
+      },
+      type:'POST',
+      error:errorFuncionAjax
+    });
+  }//fin de la función listEmp
+  //formulario submit 
+  formUsu.on('submit',funFormUsu);
+  function funFormUsu(e) {
+    var nombreUCad=$('#nombreU').val(),numEmpCad=$('#numEmp').val();
+    $('#nombreU').val(nombreUCad.toUpperCase());
+    $('#numEmp').val(numEmpCad.toUpperCase());
+    var datosForm =$(this).serialize();
+    $.post(
+    {
+      url:'php/insertarUsuario.php',
+      dataType:'json',
+      data:{datosForm:datosForm},
+      success:exitoInsertarUsu,
+      type:'POST',
+      error:errorFuncionAjax
+    });
+    e.preventDefault();
+  }//fin de la función funFormUsu
+  function exitoInsertarUsu(data,x,y) {
+    if (data.validacion=="exito") {
+      $("#nombreU").val('');
+      $('#contrasenaU').val('');
+      $('#numEmp').val("");
+      $($('#perfilU>option')['0']).prop('selected','selected');
+      jqxNotRhContent.html(data.datos);
+      jqxNotRh.jqxNotification({template:'success',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+    }else if (data.validacion="error") {
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRhContent.html(data.datos);
+      jqxNotRh.jqxNotification('open');
+    }
+  }
+  //inicializamos la notificaciones que vamos a mostrar al usuario cuando suceda un evento de error o de exito en alguna transacción realizada.
+  jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'});
+  //función error AJAX
+  function errorFuncionAjax(jqXHR,textStatus,errorThrown) {
+    if (jqXHR.status == 0) {
+      jqxNotRhContent.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+      return false;
+    }
+    var errorPHP=jqXHR.responseText;
+    //Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
+    jqxNotRhContent.html(textStatus);
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+    jqxNotRhContent.html(errorPHP);
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+    jqxNotRhContent.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+  }//fin de la función errorFuncionAjax
+}//fin de la función Principal
 /*
 Primer paso pedir  ayuda.
 Ser mejor persona en todo.
