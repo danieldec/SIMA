@@ -4,7 +4,7 @@
   if ($_SERVER["REQUEST_METHOD"]==="POST") {
     $usuario=$_POST['nombreUsuario'];
     $contrasena=$_POST['contrasenaUsuario'];
-    $sql="select * from usuarios where nombre_usuario='$usuario'";
+    $sql="SELECT * FROM usuarios WHERE nombre_usuario='$usuario'";
     $resultado=$conexion->query($sql);
     if ($resultado) {
       $fila=$resultado->fetch_array();
@@ -17,26 +17,23 @@
         switch ($perfil) {
           case 'admin':
               echo $perfil;
-            break;
+              break;
           case 'rh':
               echo $perfil;
-            break;
+              break;
           case 'produccion':
               echo $perfil;
-            break;
-
+              break;
           case 'materiales':
               echo $perfil;
-            break;
-
-          case '':
-            break;
+              break;
+          case 'ing':
+              echo $perfil;
+              break;
           case 'gerencia':
             echo $perfil;
             break;
-
           default:
-
             break;
         }
       }
