@@ -24,8 +24,8 @@
   <div class="container-fluid">
     <div class="row">
       <ul class="nav nav-tabs nav-justified">
-        <li><a href="index.php">BOOM</a></li>
-        <li class="active"><a href="reporte.php">REPORTE</a></li>
+        <li><a href="index.php">NÚMERO DE PARTE</a></li>
+        <li class="active"><a href="reporte.php">CONSULTAS</a></li>
       </ul>
     </div>
   </div>

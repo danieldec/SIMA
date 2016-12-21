@@ -9,7 +9,7 @@
     }
    ?>
   <meta charset="UTF-8">
-  <title>Materiales</title>
+  <title>Ingeniería</title>
   <!-- importar hojas de estilo que estan en la ruta www/css y del admin-->
   <?php include '../hojasEstilo.php'; ?>
   <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
@@ -89,7 +89,7 @@
             	</div>
             	<div class="form-group">
             		<label for="rateNumParte">Rate: </label>
-            		<input class="form-control" type="number" name="rateNumParte" id="rateNumParte" placeholder="Rate" required="true"/>
+            		<input class="form-control" type="number" name="rateNumParte" id="rateNumParte" placeholder="Rate" required="true" min="1" />
             	</div>
             	<div class="form-group">
 	            	<label for="descNumParte">Descripción: </label>
@@ -116,7 +116,7 @@
             	</div>
             	<div class="form-group">
             		<label for="rateNumParteEdit">Rate: </label>
-            		<input class="form-control" type="number" name="rateNumParteEdit" id="rateNumParteEdit" placeholder="Rate" required="true"/>
+            		<input class="form-control" type="number" name="rateNumParteEdit" id="rateNumParteEdit" placeholder="Rate" required="true" min="1" />
             	</div>
             	<div class="form-group">
 	            	<label for="descNumParteEdit">Descripción: </label>

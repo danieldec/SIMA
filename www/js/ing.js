@@ -97,7 +97,7 @@ function principal(e) {
 		rateNumParteReg = $('#rateNumParte').val();
 		$.post(
 		{
-			url:'php/altaNumParte.php',
+			url:'php/altaYModNumParte.php',
 			dataType:'json',
 			data:{datosNumParte:datosNumParte},
 			success:exitoNumParte,
@@ -126,7 +126,7 @@ function principal(e) {
 	function buscarInp(e) {
 		console.log(e)
 	}
-	//evento tr para editar una celda
+	//evento tr para editar de la tabla
 	numParteTabla.on('click','.btnEdit>input',evtClickEditNumParte);
 	function evtClickEditNumParte(e) {
 		venEditNumParte.jqxWindow('open');
@@ -137,7 +137,6 @@ function principal(e) {
 	}
 	venEditNumParte.on('open',openWinVenEdit);
 	function openWinVenEdit(e) {
-		$('#numParteEdit').val(numParteEdt);
 		$('#rateNumParteEdit').val(rateEdt);
 		$('#descNumParteEdit').val(descEdt);
 		if (bajaEdt==1) {
@@ -147,28 +146,44 @@ function principal(e) {
 			$('#spanAltaBaja').text("ALTA");
 			$('#bajaEdit').val(0).removeAttr('checked');
 		}
+		$('#numParteEdit').val(numParteEdt).focus();
 	}
 	$('#bajaEdit').on('change',function(e){
 		if ($(this).is(':checked')) {
+			$('#bajaEdit').removeAttr('checked');
 			if (bajaEdt==1) {
 				divVenPregBaja.jqxWindow('setContent','<p>¿Deseas realmente dar de baja este número de parte?</p><input type="button" id="AceptarBaja" value="Aceptar"><input type="button" id="cancelarBaja" value="Cancelar">');
-				divVenPregBaja.jqxWindow({
-				okButton:$('#AceptarBaja'),
-				cancelButton:$('#cancelarBaja')
-			});
-			divVenPregBaja.jqxWindow('open');
-			divVenPregBaja.jqxWindow('bringToFront');
-		}else if (bajaEdt==0) {
-			divVenPregBaja.jqxWindow('setContent','<p>¿Deseas realmente dar de alta este número de parte?</p><input type="button" id="AceptarBaja" value="Aceptar"><input type="button" id="cancelarBaja" value="Cancelar">');
-			divVenPregBaja.jqxWindow({
-				okButton:$('#AceptarBaja'),
-				cancelButton:$('#cancelarBaja')
-			});
-			divVenPregBaja.jqxWindow('open');
-			divVenPregBaja.jqxWindow('bringToFront');
-		}		
-	}
-	});
+				divVenPregBaja.jqxWindow(
+				{
+					okButton:$('#AceptarBaja'),
+					cancelButton:$('#cancelarBaja'),
+					draggable:false,
+					isModal:true
+				});
+				divVenPregBaja.jqxWindow('open');
+				divVenPregBaja.jqxWindow('bringToFront');
+			}else if (bajaEdt==0) {
+				divVenPregBaja.jqxWindow('setContent','<p>¿Deseas realmente dar de alta este número de parte?</p><input type="button" id="AceptarBaja" value="Aceptar"><input type="button" id="cancelarBaja" value="Cancelar">');
+				divVenPregBaja.jqxWindow(
+					{
+						okButton:$('#AceptarBaja'),
+						cancelButton:$('#cancelarBaja'),
+						draggable:false,
+						isModal:true
+					});
+				divVenPregBaja.jqxWindow('open');
+				divVenPregBaja.jqxWindow('bringToFront');
+			}//fin del else if
+		}//fin del if
+		else{
+			if (bajaEdt==1) {
+				$('#bajaEdit').val(1);
+			}else if (bajaEdt==0) {
+				$('#bajaEdit').val(0);
+			}
+		}
+	});//fin de la función change
+	//evento cerrar ventana 
 	divVenPregBaja.on('close',evtClosePregBaja);
 	function evtClosePregBaja(e) {
 		if (e.args.dialogResult.Cancel==true) {
@@ -193,19 +208,100 @@ function principal(e) {
 			}
 		}
 	}//fin del evento cerrar de la ventana divVenPregBaja
+	divVenPregBaja.on('open',evtOpenDivVenPre);
+	function evtOpenDivVenPre(e) {
+		$(this).find('#AceptarBaja').focus();
+	}
 	formEditNumParte.on('submit',subFormEdit);
 	function subFormEdit(e) {
 		e.preventDefault();
-		var formDatos=$(this).serialize();
 		var formNP=$(this).find('#numParteEdit').val();
 		var formRate=$(this).find('#rateNumParteEdit').val();
 		var formDesc=$(this).find('#descNumParteEdit').val();
 		var formBaja=$(this).find('#bajaEdit').val();
-		console.log(formDatos);
-		console.log(formNP);
-		console.log(formRate);
-		console.log(formDesc);
+		var formDatos=$(this).serialize();
+		var difNP = numParteEdt==formNP;
+		var difRate = rateEdt==formRate;
+		var difDesc = descEdt==formDesc;
+		var difBaja = bajaEdt==formBaja;
+		console.log(difNP);
+		console.log(difRate);
+		console.log(difDesc);
+		console.log(difBaja);
+		console.log(bajaEdt);
 		console.log(formBaja);
+		if (bajaEdt==1) {
+			formBaja
+			if (difNP&&difRate&&difDesc&&difBaja) {
+				return false;
+			}//fin del if
+			else{
+				if (difNP) {
+					$.post(
+						{
+							url:'php/altaYModNumParte.php',
+							dataType:'json',
+							data:{formDatos:formDatos},
+							success:exitoModNumParte,
+							type:'POST',
+							error:errorFuncionAjax
+						});
+				}/*fin del if*/else{
+					$.post(
+						{
+							url:'php/altaYModNumParte.php',
+							dataType:'json',
+							data:{numParteEdt:numParteEdt,formDatos:formDatos},
+							success:exitoModNumParte,
+							type:'POST',
+							error:errorFuncionAjax
+						});
+				}//fin del else
+			}//fin del else
+		}/*fin del if*/
+		else if (bajaEdt==0) {
+			if (difNP&&difRate&&difDesc&&difBaja) {
+				return false;
+			}//fin del if
+			else{
+				if (difNP) {
+					$.post(
+						{
+							url:'php/altaYModNumParte.php',
+							dataType:'json',
+							data:{formDatos:formDatos},
+							success:exitoModNumParte,
+							type:'POST',
+							error:errorFuncionAjax
+						});
+				}/*fin del if*/else{
+					$.post(
+						{
+							url:'php/altaYModNumParte.php',
+							dataType:'json',
+							data:{numParteEdt:numParteEdt,formDatos:formDatos},
+							success:exitoModNumParte,
+							type:'POST',
+							error:errorFuncionAjax
+						});
+				}//fin del else
+			}//fin del else
+		}//fin del elseIf
+	}//fin de la función subFormEdit
+	//función respuesta después del post
+	function exitoModNumParte(datos,x,y) {
+		if (datos.validacion=="exito") {
+			jqxNotIngContent.html(datos.datos);
+			jqxNotIng.jqxNotification({template:'success',width:'200px',height:'auto'});
+			jqxNotIng.jqxNotification('open');
+			venEditNumParte.jqxWindow('close');
+			actualizarTabla();
+		}else if (datos.validacion="error") {
+			jqxNotIngContent.html(datos.datos);
+			jqxNotIng.jqxNotification({template:'error',width:'300px',height:'auto'});
+			jqxNotIng.jqxNotification('open');
+		}
+		console.log(datos);
 	}
 	//función que atrapa los errores ocurridos cuando hacemos un ajax
 	function errorFuncionAjax(jqXHR,textStatus,errorThrown) {
