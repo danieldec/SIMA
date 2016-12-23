@@ -357,7 +357,7 @@ function principal() {
 	function venCapPer(e) {
 		contador=0;
 		var numEmpleado=$(this).siblings('.idEmpCap').html();
-		var efiTabla=$(this).html();
+		var efiTabla=$(this).text();
 		detListNumOrd=$(this).siblings('.idDetLisNumOrdCap').html();
 		var indice=$(this).index();
 		detAsis=$(this).siblings('.idDetAsisCap').html();
@@ -429,6 +429,14 @@ function principal() {
 					type:'POST',
 					error:errorFuncionABtnEmp
 			});//fin del post
+			divVentanaCapHora.data({
+					'numParte':inpNumParteCap.val(),
+					'rate':spanRateCap.html(),
+					'fechaHoy':fechaCompletaHoy,
+					'detListNumOrd':detListNumOrd,
+					'detAsis':detAsis,
+					'tdClickeado':$(this)
+				});
 		}//fin del else
 	}// fin de la función venCapPer
 	//función respuesta minutosTrab
@@ -820,6 +828,16 @@ function principal() {
 		cancelButton: $('#btnCanVenPre'),
 		okButton:$('#btnAcepVenPre')
 	});
+	//iniciamos una ventana para visualizar las capturas
+	divVenCapHoraEmp.jqxWindow({
+		width:'100%',
+		height:'100%',
+		autoOpen:true,
+		maxHeight:'200px',
+		maxWidth:'700px',
+		minWidth:'50px',
+		minHeight:'80px'
+	});
 	//eventos relacionados con la ventana de l a pregunta
 	divVentanaPre.on('close',eventoCerrar);
 	function eventoCerrar(e) {
@@ -827,20 +845,32 @@ function principal() {
 			//Aquí vamos a programar la otra ventana donde mostrara los resultados de la captura
 			divVenCapHoraEmp.jqxWindow('open');
 			divVenCapHoraEmp.jqxWindow('bringToFront');
-			// divVenCapHoraEmp.jqxWindow('bringToFront');
+			$.post(
+			{
+				url:"php/capturaPorEmpleado.php",
+				dataType:'json',
+				data:
+				{
+					prueba:"prueba"
+				},
+				success:exitoMosCap,
+				type:'POST',
+				error:errorFuncionABtnEmp
+			})
 		}else if(e.args.dialogResult.Cancel) {
 		}
 	}
-	//iniciamos una ventana para visualizar las capturas
-	divVenCapHoraEmp.jqxWindow({
-		width:'100%',
-		height:'50%',
-		autoOpen:false,
-		maxHeight:'140px',
-		maxWidth:'200px',
-		minWidth:'10%',
-		minHeight:'10%'
-	});
+	function exitoMosCap(e) {
+		divNotificaciones.html(e);
+		console.log(e)
+		jqxNotiModCap.jqxNotification(
+			{
+				template:'error',
+				autoClose:true,
+				autoCloseDelay:1500
+			}).jqxNotification('open');
+		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+	}
 
 	//Aquí va ir todo lo relacionado con el parcial de la captura
 	divVenPrePar.jqxWindow(
@@ -1065,6 +1095,7 @@ function principal() {
 	}
 	cantidadEmpPar.on('keyup blur',evtCantidadEmpPar);
 	function evtCantidadEmpPar(e) {
+		//ERROR cada vez que el input esta vaciO o tiene valor 0 muestra el mensaje de error
 		var lonCad="";
 		var tipoVar="";
 		var cantidad="";
@@ -1084,7 +1115,7 @@ function principal() {
 			cantidad=$(this).val();
 			if (!isNaN(tipoVar)&&(lonCad>0&&lonCad<6)&&parseInt(cantidad)>0) {
 				calcEfiPar();
-			}else{
+			}else if (!isNaN(tipoVar)&&(lonCad>1&&lonCad<6)){
 				errorCalcEfi($(this),e.type)
 			}
 		}
@@ -1102,7 +1133,7 @@ function principal() {
 		}
 		if (isNaN(tParParMin*1)) {
 			divNotificaciones.html("no se acepta letras o caracteres especiales");
-		jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		$(this).val(difMin);
 		return false;

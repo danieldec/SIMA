@@ -137,6 +137,7 @@ function principal(e) {
 	}
 	venEditNumParte.on('open',openWinVenEdit);
 	function openWinVenEdit(e) {
+		$('#numParteEdit').val(numParteEdt);
 		$('#rateNumParteEdit').val(rateEdt);
 		$('#descNumParteEdit').val(descEdt);
 		if (bajaEdt==1) {
@@ -146,7 +147,6 @@ function principal(e) {
 			$('#spanAltaBaja').text("ALTA");
 			$('#bajaEdit').val(0).removeAttr('checked');
 		}
-		$('#numParteEdit').val(numParteEdt).focus();
 	}
 	$('#bajaEdit').on('change',function(e){
 		if ($(this).is(':checked')) {
@@ -292,7 +292,7 @@ function principal(e) {
 	function exitoModNumParte(datos,x,y) {
 		if (datos.validacion=="exito") {
 			jqxNotIngContent.html(datos.datos);
-			jqxNotIng.jqxNotification({template:'success',width:'200px',height:'auto'});
+			jqxNotIng.jqxNotification({template:'error',width:'300px',height:'auto'});
 			jqxNotIng.jqxNotification('open');
 			venEditNumParte.jqxWindow('close');
 			actualizarTabla();

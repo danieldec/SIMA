@@ -790,6 +790,25 @@
         Ventana Capturas por Hora
       </div>
       <div>
+        <div class="contenidoVenCapHEmp">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="fechaCap">Fecha</th>
+                <th class="numEmpCap"># Empleado</th>
+                <th class="nomEmpCap">Nombre</th>
+                <th class="numOrdCap"># Orden</th>
+                <th class="numParteCap"># parte</th>
+                <th class="rateCap">rate</th>
+                <th class="efiCap">Eficiencia</th>
+                <th class="cantidadCap">Cantidad</th>
+                <th class="tiempoMCap"><abbr title="Tiempo Muerto">TM</abbr></th>
+                <th class="numUsuCap"># Usu</th>
+                <th class="nombreUsuCap"><abbr title="Nombre Usuario">NU</abbr></th>
+              </tr>
+            </thead>
+          </table>
+        </div>
       </div>
     </div>
     <div id="divVenPrePar">
@@ -822,7 +841,7 @@
           <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCapPar"/>
           <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHoraPar"/>
         </form>
-        <div id="divTMVentanaPar">
+        <div id="divTMVentanaPar" hidden>
           <div>Tiempo Muerto</div>
           <div>
             <div class="col-xs-12 container-fluid">
