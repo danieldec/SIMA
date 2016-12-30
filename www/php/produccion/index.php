@@ -791,15 +791,18 @@
       </div>
       <div>
         <div class="contenidoVenCapHEmp">
-          <table class="table">
+          <table class="table table-bordered" id="tablaConCap">
             <thead>
               <tr>
+                <th class="numCap"># Cap</th>
                 <th class="fechaCap">Fecha</th>
                 <th class="numEmpCap"># Empleado</th>
                 <th class="nomEmpCap">Nombre</th>
                 <th class="numOrdCap"># Orden</th>
                 <th class="numParteCap"># parte</th>
                 <th class="rateCap">rate</th>
+                <th class="hiCap"><abbr title="Hora Inicio">HI</abbr></th>
+                <th class="hfCap"><abbr title="Hora Final">HF</abbr></th>
                 <th class="efiCap">Eficiencia</th>
                 <th class="cantidadCap">Cantidad</th>
                 <th class="tiempoMCap"><abbr title="Tiempo Muerto">TM</abbr></th>
@@ -807,6 +810,7 @@
                 <th class="nombreUsuCap"><abbr title="Nombre Usuario">NU</abbr></th>
               </tr>
             </thead>
+            <tbody></tbody>
           </table>
         </div>
       </div>
@@ -838,7 +842,7 @@
           <input type="text" id ="tmMinCapPar" name="tmMinCapPar" value="0" class="form-control" readonly="true" />
           <label for="eficienciaCapPar">Eficiencia</label>
           <input type="text" id="eficienciaCapPar" value="0" class="form-control" readonly="true" />
-          <input class="form-control btn btn-success"type="button"  value="Tiempo Muerto" id="tmCapPar"/>
+          <input class="form-control btn btn-success" type="button"  value="Tiempo Muerto" id="tmCapPar"/>
           <input type="submit" class="form-control btn btn-info" value="CAPTURAR" id="btnCapPorHoraPar"/>
         </form>
         <div id="divTMVentanaPar" hidden>

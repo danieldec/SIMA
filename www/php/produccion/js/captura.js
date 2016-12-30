@@ -53,6 +53,7 @@ function principal() {
 	var divTMVentanaPar = $('#divTMVentanaPar');
 	var copiaTMPar = $('.copiaTMPar','#divTMVentanaPar');
 	var cantTTMPar=$('#cantTTMPar');
+	var tablaConCap = $('#tablaConCap');
 	//aquí termina los objetos de la ventana captura parcial
 	var thRangoHora,tdNumEmpleado,tdEditar;
 	var ventanaAbierta=false;
@@ -201,10 +202,16 @@ function principal() {
 		spanRateCap.html(rateNumParteFinal);
 		inpNumParteCap.val(numParteCapFinal);
 		var ventanaAbierta=divVentanaCapHora.jqxWindow('isOpen');
+		var venAbiertadivVentanaCapHoraPar=divVentanaCapHoraPar.jqxWindow('isOpen');
 		if (ventanaAbierta) {
 			numParteCapFinal=inpNumParteCap.val();
 			spanNumParteCap.html(numParteCapFinal);
 			spanRateCap2.html(rateNumParteFinal);
+		}
+		if (venAbiertadivVentanaCapHoraPar) {
+			numParteCapFinal=inpNumParteCap.val();
+			spanNumParteCapPar.text(numParteCapFinal);
+			spanRateCap2Par.text(rateNumParteFinal);
 		}
 	}//Aquí termina la función exitoObtenerRate
 	btnResetNumParte.on('click',clickResetNumParte);
@@ -833,8 +840,8 @@ function principal() {
 		width:'100%',
 		height:'100%',
 		autoOpen:true,
-		maxHeight:'200px',
-		maxWidth:'700px',
+		maxHeight:'300px',
+		maxWidth:'900px',
 		minWidth:'50px',
 		minHeight:'80px'
 	});
@@ -845,33 +852,9 @@ function principal() {
 			//Aquí vamos a programar la otra ventana donde mostrara los resultados de la captura
 			divVenCapHoraEmp.jqxWindow('open');
 			divVenCapHoraEmp.jqxWindow('bringToFront');
-			$.post(
-			{
-				url:"php/capturaPorEmpleado.php",
-				dataType:'json',
-				data:
-				{
-					prueba:"prueba"
-				},
-				success:exitoMosCap,
-				type:'POST',
-				error:errorFuncionABtnEmp
-			})
 		}else if(e.args.dialogResult.Cancel) {
 		}
 	}
-	function exitoMosCap(e) {
-		divNotificaciones.html(e);
-		console.log(e)
-		jqxNotiModCap.jqxNotification(
-			{
-				template:'error',
-				autoClose:true,
-				autoCloseDelay:1500
-			}).jqxNotification('open');
-		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
-	}
-
 	//Aquí va ir todo lo relacionado con el parcial de la captura
 	divVenPrePar.jqxWindow(
 	{
@@ -1260,6 +1243,50 @@ function principal() {
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}
+	//evento abrir, de la ventana divVenCapHoraEmp 
+	divVenCapHoraEmp.on('open',funOpenDivCapH);
+	function funOpenDivCapH(e) {
+		var hIC=thRangoHora.attr('data-h'), hICon = new Date(),hIConF = new Date();
+		hICon.setHours(hIC);
+		hICon.setMinutes(0);
+		hICon.setSeconds(0);
+		hIConF.setHours(hIC);
+		hIConF.setMinutes(59);
+		hIConF.setSeconds(0);
+		hICI=obtenerHoraCompleta(hICon);
+		hICF=obtenerHoraCompleta(hIConF);
+		detAsisEmpl=divVentanaCapHora.data('detAsis');
+		$.post(
+		{
+			url:"php/capturaPorEmpleado.php",
+			dataType:'json',
+			data:
+			{
+				hICI:hICI,
+				hICF:hICF,
+				detAsisEmpl:detAsisEmpl
+			},
+			success:exitoMosCap,
+			type:'POST',
+			error:errorFuncionABtnEmp
+		});
+		console.log(e)
+	}
+	divVenCapHoraEmp.on('close',funCloseDivCapH);
+	function funCloseDivCapH(e) {
+		console.log(e)
+	}
+	function exitoMosCap(datos) {
+		if (datos.validacion=="exito") {
+			console.log(tablaConCap.children('tbody'));
+			tablaConCap.children('tbody').html(datos.datos);
+		}else if (datos.validacion="error") {
+			divNotificaciones.html(data.datos);
+			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		}
+	}//fin de la función exitoMosCap
+
 	//Aquí termina todo lo relacionado con el parcial de la captura
 	//AjaxSetup
 	$.ajaxSetup({
