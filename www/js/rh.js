@@ -11,16 +11,27 @@ function Principal() {
   var numEmp = $('#numEmp');
   var jqxNotRh = $('#jqxNotRh');
   var jqxNotRhContent = $('#jqxNotRhContent');
+  var altaEmpleados = $('#altaEmpleados');
+  var empleadosTabla = $('#empleadosTabla');
+  var venEditEmp = $('#venEditEmp');
+  var formEditNumEmp = $('#formEditNumEmp');
   // var alertAltaEmple;
   $('.nav-tabs a').on('click',function(e) {
     $(this).tab('show');
     if ($(this).text()=="USUARIOS") {
-      $("#nombreU").val('').focus;
+      $("#nombreU").val('').focus();
       $('#contrasenaU').val('');
       $('#numEmp').val("");
       $($('#perfilU>option')['0']).prop('selected','selected');
     }
   });
+  venEditEmp.jqxWindow(
+    {
+      width:'300px',
+      height:'380px',
+      autoOpen:false,
+      showCollapseButton:true
+    });
   //convertir cadena de texto en mayusculas del input
   inputTypeText.each(function () {
     $(this).bind('keyup blur focus',function() {
@@ -88,6 +99,158 @@ function Principal() {
     )
     e.preventDefault();
   });
+  //evento modal cuando se abre
+  altaEmpleados.on('shown.bs.modal',function() {
+    $('#inpNumEmpleado').focus();
+  });
+  function actualizaTabEmp() {
+    $.post({
+      url:'php/empleados.php',
+      dataType:'json',
+      data:{numEmpleado:true},
+      success:exitoTablaEmpleado,
+      type:'POST',
+      error:errorFuncionAjax
+    });
+  }//fin de la función actualizar tabla
+  function exitoTablaEmpleado(data,x,y) {
+    if (data.validacion=="exito") {
+      tablaPlug(data);
+    }else if (data.validacion=="error") {
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRhContent.html(data.datos);
+      jqxNotRh.jqxNotification('open');
+    }
+  }//fin de la función exitoTablaEmpleados
+  function tablaPlug(data) {
+    empleadosTabla.DataTable().destroy();
+    empleadosTabla.children('tbody').html(data.datos);
+    empleadosTabla.DataTable({
+      "language":{
+        "url":"../../json/Spanish.json",
+      },
+      stateSave: true
+    });
+  }
+  //evento botón editar empleado.
+  empleadosTabla.on('click','.btnEditEmp',evtClickBtn);
+  function evtClickBtn(e) {
+    var coordenadasBtn= $(this).position();
+    var coorX=$('#divConFluidTaEmp').outerWidth();
+    var venOpen = venEditEmp.jqxWindow(
+      {
+        position:
+        {
+          x: coorX+10,
+          y: coordenadasBtn.top+80
+        }
+      });
+    if (venOpen) {
+      venEditEmp.jqxWindow('close');
+      venEditEmp.jqxWindow('open');
+    }else{
+      venEditEmp.jqxWindow('open');
+    }
+    var numEmp = $(this).parent().siblings('.idEmp').text();
+    var nombreEmp = $(this).parent().siblings('.nom').text();
+    var apellEmp = $(this).parent().siblings('.ape').text();
+    var estado = $(this).parent().siblings('.est').text();
+    venEditEmp.data(
+      {
+        numEmp:numEmp,
+        nombreEmp:nombreEmp,
+        apellEmp:apellEmp,
+        estado:estado
+      });
+  }//fin de la función evtClickBtn
+  //eventos ventana venEditEmp cuando se abre o cierra
+  venEditEmp.on('close open',venEditEmpOpenOClose);
+  function venEditEmpOpenOClose(e) {
+    if (e.type=="close") {
+
+    }
+    else if (e.type=="open") {
+      $('#nombreEmpEdit').val(venEditEmp.data('nombreEmp'));
+      $('#apellEmpEdit').val(venEditEmp.data('apellEmp'));
+      $('#numEmpEdit').val(venEditEmp.data('numEmp')).focus();
+      $('#editEstadoEdit').val(venEditEmp.data('estado'));
+      $('#editEstadoEdit').removeAttr('checked');
+      //nos va a indicar si es baja o alta.
+      var estado = venEditEmp.data('estado');
+      if (estado==1) {
+        $('#spanEstado').text("Baja");
+      }//fin del if
+      else if (estado==0) {
+        $('#spanEstado').text("Alta");
+      }//fin del else if
+    }//fin del else 
+
+  }//fin de la función
+  formEditNumEmp.on('submit',submEditEmp);
+  function submEditEmp(e) {
+    e.preventDefault();
+    var numEmpSubmit = $('#numEmpEdit').val();
+    var nomEmpSubmit = $('#nombreEmpEdit').val();
+    var apellSubmit = $('#apellEmpEdit').val();
+    var estadoSubmit = $('#editEstadoEdit').val();
+    $('#editEstadoEdit').val(venEditEmp.data('estado'));
+    if ( numEmpSubmit == venEditEmp.data('numEmp') && nomEmpSubmit==venEditEmp.data('nombreEmp') &&  apellSubmit == venEditEmp.data('apellEmp') && estadoSubmit == venEditEmp.data('estado')) {
+      return false;
+    }//fin del if
+    else{
+      var datos = $(this).serialize();
+      if (numEmpSubmit != venEditEmp.data('numEmp')) {
+        $.post(
+          {
+            url:'php/empleados.php',
+            dataType:'json',
+            data:{numEmpleadoEdit:true,datos:datos,numEmpSubmit:venEditEmp.data('numEmp')},
+            success:exitoEditEmpleado,
+            type:'POST',
+            error:errorFuncionAjax,
+          });
+      }else{
+        $.post(
+          {
+            url:'php/empleados.php',
+            dataType:'json',
+            data:{numEmpleadoEdit:true,datos:datos},
+            success:exitoEditEmpleado,
+            type:'POST',
+            error:errorFuncionAjax
+          });
+      }
+    }//fin del else if
+  }//fin de la función submEditEmp
+  function exitoEditEmpleado(datos,x,y) {
+    if (datos.validacion=="exito") {
+      jqxNotRhContent.html(datos.datos);
+      jqxNotRh.jqxNotification({template:'success',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+      venEditEmp.jqxWindow('close');
+      actualizaTabEmp();
+    }
+    else if (datos.validacion=="error") {
+      jqxNotRhContent.html(datos.datos);
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+    }
+  }//fin de la función exitoEditEmpleado
+  $('#editEstadoEdit').on('change',evtChangeChecbox);
+  function evtChangeChecbox(e) {
+    var estado = $(this).val();
+    if (estado == 0 && $('#spanEstado').text() == "Alta") {
+      $(this).val(1);
+    }else if (estado==1 && $('#spanEstado').text() == "Alta") {
+      $(this).val(0);
+    }
+    if (estado == 1 && $('#spanEstado').text() == "Baja") {
+      $(this).val(0);
+    }else if (estado == 0 && $('#spanEstado').text() == "Baja") {
+      $(this).val(1);
+    }
+  }//fin de la función evtChangeChecbox
+  actualizaTabEmp();
   /*
   //empieza el listado de los empleado
   $('#btnListaE').on('click',function () {
@@ -171,6 +334,7 @@ function Principal() {
       e.preventDefault();
     }
   });
+  /*
   //Aquí vamos a usar la libreria de jqwidget en la tabla de empleados
   // prepare the data
   var theme='classic';
@@ -231,7 +395,7 @@ function Principal() {
   $("#excelExport").jqxButton();
   $("#excelExport").click(function () {
      $("#jqxgridEmpleados").jqxGrid('exportdata', 'xls','empleados','UTF-8');
-   });
+   });*/
   //autocomplete del número de empleado.
   numEmp.autocomplete(
   {
@@ -287,7 +451,8 @@ function Principal() {
       jqxNotRhContent.html(data.datos);
       jqxNotRh.jqxNotification('open');
     }
-  }
+  }//fin de la funcion exitoInsertarUsu
+
   //inicializamos la notificaciones que vamos a mostrar al usuario cuando suceda un evento de error o de exito en alguna transacción realizada.
   jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'});
   //función error AJAX
@@ -307,6 +472,7 @@ function Principal() {
     jqxNotRhContent.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
     jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
   }//fin de la función errorFuncionAjax
+
 }//fin de la función Principal
 /*
 Primer paso pedir  ayuda.

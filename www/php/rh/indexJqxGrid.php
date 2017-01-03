@@ -15,7 +15,6 @@
   <link rel="stylesheet" href="../../css/styles/jqx.base.css" type="text/css" />
   <link rel="stylesheet" href="../../css/styles/jqx.classic.css" type="text/css" />
   <link rel="stylesheet" href="../../css/styles/jqx.bootstrap.css" type="text/css" />
-  <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="../../css/rh.css" charset="utf-8">
 </head>
 <body>
@@ -33,13 +32,13 @@
   </div>
   <!--Aquí termina el menú del área de RH  -->
   <!--Aquí empieza el contenido de las pestañas de empleados, usuarios y reporte -->
-  <div class="tab-content col-md-12 col-xs-12">
+  <div class="tab-content">
     <br>
     <!--Aquí empieza el contenido de la pestaña empleados-->
     <div class="tab-pane fade in active" id="empleados">
       <div class="row">
         <div class="container-fluid">
-          <div class="col-md-offset-2 col-md-5 text-center">
+          <div class="col-md-offset-3 col-md-6 text-center">
             <a class="btn btn-primary btn-block" href="#altaEmpleados" data-toggle="modal">ALTA EMPLEADOS</a>
             <!--Empieza mi Modal o ventana emergente-->
             <div class="modal fade" id="altaEmpleados">
@@ -84,21 +83,14 @@
       </div>
       <br>
       <!--Botón lista empleados-->
-      <div class="row divTablaEmp col-md-12 col-xs-12">
-        <div class="col-md-9 col-xs-9">
-          <div class="container-fluid" id='divConFluidTaEmp'>
-          <table class="table hover" id="empleadosTabla">
-            <thead>
-              <tr>
-                <th># Empleado</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Estado</th>
-                <th>Editar</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <div class="container-fluid">
+             <div id='jqxWidget'>
+              <div id="jqxgridEmpleados"></div>
+              <br>
+              <input type="button" value="Exportar a Excel" id='excelExport' />
+            </div>
           </div>
         </div>
       </div>
@@ -159,40 +151,9 @@
   <div id="jqxNotRh">
     <div id="jqxNotRhContent"></div>
   </div>
-  <!--Ventana para editar un EMPLEADOS :D-->
-  <div id="venEditEmp">
-    <div>Editar número de empleado</div>
-    <div>
-      <div class="col-xs-12 col-md-12">
-        <form id="formEditNumEmp">
-          <div class="form-group">
-            <label for="numEmpEdit">Número de empleado: </label>
-            <input class="form-control" type="text" name="numEmpEdit" id="numEmpEdit" placeholder="Número de empleado" required autofocus="true" />
-          </div>
-          <div class="form-group">
-            <label for="nombreEmp">Nombre: </label>
-            <input class="form-control" type="text" name="nombreEmp" id="nombreEmpEdit" placeholder="Nombre" required="true" min="1" />
-          </div>
-          <div class="form-group">
-            <label for="apellEmpEdit">Apellidos: </label>
-            <input class="form-control" type="text" name="apellEmpEdit" id="apellEmpEdit" placeholder="Apellidos"/>
-          </div>
-          <div class="form-group text-center">
-          <span id="spanEstado"></span>
-            <input type="checkbox" class="form-control" value="" id="editEstadoEdit" name="editEstado">
-          </div>
-          <div class="form-group text-center">
-            <input type="submit" value="Guardar" class="btn btn-primary text-center form-control"/>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!--Aquí acaba la ventana para editar un EMPLEADO :D-->
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
-  <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
+
   <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxdata.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxbuttons.js"></script>
@@ -212,7 +173,6 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.export.js"></script> 
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.edit.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
-  <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
   <script type="text/javascript" src="../../js/rh.js"></script>
 
 </body>

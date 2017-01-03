@@ -14,6 +14,7 @@ function principal(e) {
 	var formEditNumParte = $('#formEditNumParte');
 	var numperoParteReg;
 	var rateNumParteReg;
+	var posicionBtnEdit;
 	//variables para la edición del número de parte
 	var numParteEdt,rateEdt,descEdt,bajaEdt;
 	var divVenPregBaja = $('#divVenPregBaja');
@@ -129,6 +130,15 @@ function principal(e) {
 	//evento tr para editar de la tabla
 	numParteTabla.on('click','.btnEdit>input',evtClickEditNumParte);
 	function evtClickEditNumParte(e) {
+		posicionBtnEdit=$(this).position();
+		venEditNumParte.jqxWindow(
+		{
+			position:
+			{
+				x:posicionBtnEdit.left-170,
+				y:posicionBtnEdit.top
+			}
+		});
 		venEditNumParte.jqxWindow('open');
 		numParteEdt = $(this).parent().siblings('.numParte').text();
 		rateEdt = $(this).parent().siblings('.rate').text();
@@ -149,6 +159,7 @@ function principal(e) {
 		}
 	}
 	$('#bajaEdit').on('change',function(e){
+		var posicionCheck=$(this).position();
 		if ($(this).is(':checked')) {
 			$('#bajaEdit').removeAttr('checked');
 			if (bajaEdt==1) {
@@ -158,7 +169,8 @@ function principal(e) {
 					okButton:$('#AceptarBaja'),
 					cancelButton:$('#cancelarBaja'),
 					draggable:false,
-					isModal:true
+					isModal:true,
+					position:{x:posicionBtnEdit.left+130,y:posicionBtnEdit.top+50}
 				});
 				divVenPregBaja.jqxWindow('open');
 				divVenPregBaja.jqxWindow('bringToFront');
@@ -292,7 +304,7 @@ function principal(e) {
 	function exitoModNumParte(datos,x,y) {
 		if (datos.validacion=="exito") {
 			jqxNotIngContent.html(datos.datos);
-			jqxNotIng.jqxNotification({template:'error',width:'300px',height:'auto'});
+			jqxNotIng.jqxNotification({template:'success',width:'300px',height:'auto'});
 			jqxNotIng.jqxNotification('open');
 			venEditNumParte.jqxWindow('close');
 			actualizarTabla();

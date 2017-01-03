@@ -231,9 +231,9 @@ function principal() {
 		var numOrden=$(modCapNumOrd).data('numOrden');
 		var idEmpleado=inpAgrNEmpNOrd.val();
 		if ((idEmpleado.length>=0&&idEmpleado.length<=3)||idEmpleado==""||idEmpleado.length>6) {
-			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd}).find('.jqx-notification-content').html("Ingresa un número de empleado valido");
-			inpAgrNEmpNOrd.select().focus();
+			inpAgrNEmpNOrd.val('').select().focus();
 			return false;
 		}
 		var respuesta=$.post({
@@ -249,12 +249,12 @@ function principal() {
 	function exitoFuncionABtnEmp(data,textStatus,jqXHR) {
 		if (data.validacion=="Exito") {
 			divNotificaciones.html(data.datos)
-			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'success',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			inpAgrNEmpNOrd.val('');
 		}else if (data.validacion=="Error") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			inpAgrNEmpNOrd.val('');
 		}
@@ -262,7 +262,7 @@ function principal() {
 	function errorFuncionABtnEmp(jqXHR,textStatus,errorThrown) {
 		if (jqXHR.status == 0) {
 			divNotificaciones.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
-			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;
 		}
@@ -730,7 +730,7 @@ function principal() {
 	function exitoFunCaptura(data) {
 		if (data.validacion=="exito") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'success'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			var td= divVentanaCapHora.data('tdClickeado');
 			var efi=$('#eficienciaCap').val();
@@ -745,7 +745,7 @@ function principal() {
 			// window.alert("HOLAMUNDO");
 		}else if (data.validacion=="error") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}
@@ -839,7 +839,7 @@ function principal() {
 	divVenCapHoraEmp.jqxWindow({
 		width:'100%',
 		height:'100%',
-		autoOpen:true,
+		autoOpen:false,
 		maxHeight:'300px',
 		maxWidth:'900px',
 		minWidth:'50px',
@@ -1170,7 +1170,7 @@ function principal() {
 		fecha=obtenerFecha(fechaCaptura);
 		if (efiCap<=0||efiCap>=200) {
 			divNotificaciones.html("No puede haber eficiencias menores o igual a 0  (cero) o mayores a 200");
-			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;
 		}
@@ -1224,7 +1224,7 @@ function principal() {
 	function exitoFunCapturaPar(data) {
 		if (data.validacion=="exito") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'success'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'success',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			var td= divVentanaCapHora.data('tdClickeado');
 			var efi=$('#eficienciaCapPar').val();
@@ -1239,7 +1239,7 @@ function principal() {
 			divVentanaCapHoraPar.jqxWindow('close');
 		}else if (data.validacion=="error") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}
@@ -1282,7 +1282,7 @@ function principal() {
 			tablaConCap.children('tbody').html(datos.datos);
 		}else if (datos.validacion="error") {
 			divNotificaciones.html(data.datos);
-			$(jqxNotiModCap).jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}//fin de la función exitoMosCap

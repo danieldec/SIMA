@@ -48,20 +48,22 @@
       <div class="row" id="divRowNumParte">
         <div class="container-fluid">
           <div class="col-md-6 col-md-push-3 text-center" id="divColNumParte">
-            <table class="table hover" id="numParteTabla">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th># de parte</th>
-                  <th>Rate</th>
-                  <th>Descripción</th>
-                  <th>Estado</th>
-                  <th>Editar</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="table hover" id="numParteTabla">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th># de parte</th>
+                    <th>Rate</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Editar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -95,7 +97,7 @@
 	            	<label for="descNumParte">Descripción: </label>
 	            	<input class="form-control" type="text" name="descNumParte" id="descNumParte" placeholder="Descripción"/>
 	          	</div>
- 				<div class="form-group text-center">
+              <div class="form-group text-center">
             		<input type="submit" value="Agregar Número de parte" class="btn btn-primary text-center form-control">
           		</div>
         	</form>
@@ -136,9 +138,8 @@
   <!--Aquí acaba la ventana para editar un número de parte :D-->
   <!--modal ventana verificar si desea dar de baja el número de parte-->
   <div id="divVenPregBaja">
-  	<div>¿Pregunta?</div>
-  	<div>
-	</div>
+    <div>¿Pregunta?</div>
+  	<div></div>
   </div>
   <!--modal ventana verificar si desea dar de baja el número de parte-->
 
