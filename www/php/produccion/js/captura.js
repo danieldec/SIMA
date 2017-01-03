@@ -316,6 +316,7 @@ function principal() {
 		var fechaDia=divFechaCapEmpleados.jqxDateTimeInput('getDate');
 		fechaCompletaHoy = obtenerFecha(fechaDia);
 		var numOrden=$(modCapNumOrd).data('numOrden');
+		$('#folioVenCap').text(numOrden);
 		$.post({
 			url:"php/listaCapturaFolio.php",
 			dataType:'json',
@@ -730,7 +731,7 @@ function principal() {
 	function exitoFunCaptura(data) {
 		if (data.validacion=="exito") {
 			divNotificaciones.html(data.datos);
-			jqxNotiModCap.jqxNotification({template:'success'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'success',autoClose:true}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			var td= divVentanaCapHora.data('tdClickeado');
 			var efi=$('#eficienciaCap').val();
@@ -745,7 +746,7 @@ function principal() {
 			// window.alert("HOLAMUNDO");
 		}else if (data.validacion=="error") {
 			divNotificaciones.html(data.datos);
-			jqxNotiModCap.jqxNotification({template:'error'}).jqxNotification('open');
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}

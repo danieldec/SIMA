@@ -84,7 +84,7 @@
                     <div class="col-xs-2 text-center"><label>Fecha Requerimiento</label></div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-2 text-center col-xs-offset-1"><input class="form-control" name="numOrden" id="inpNumOrden"required type="number" value="<?php
+                  <div class="col-xs-2 text-center col-xs-offset-1"><input class="form-control" name="numOrden" id="inpNumOrden"required type="number " value="<?php
                   //Aquí vamos a insertar el último registro de el número de parte
                     if (isset($fila)) {
                       echo 1+$fila['id'];
