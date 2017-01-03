@@ -70,8 +70,13 @@
 	function errorDB($resultado,$conexion,$datos)
 	{
 		if (!$resultado) {
-			$datos['validacion']='error';
-			$datos['datos']=$conexion->errno."(".$conexion->error.")";
+			if ($conexion->errno==1062) {
+				$datos['validacion']='error';
+				$datos['datos']="Número de parte ya existe.";
+			}else{
+				$datos['validacion']='error';
+				$datos['datos']=$conexion->errno."(".$conexion->error.")";
+			}
 			echo json_encode($datos,JSON_UNESCAPED_UNICODE);
 			exit();
 		}

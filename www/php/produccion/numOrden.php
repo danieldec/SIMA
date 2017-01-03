@@ -82,7 +82,7 @@
   //busqueda de numero de partes por .Ajax
   if (isset($_POST['pPalabraC'])) {
     $busqueda=$_POST['pPalabraC'];
-    $consulta="select num_parte from num_parte where num_parte like '%$busqueda%'order by num_parte limit 5";
+    $consulta="SELECT num_parte FROM num_parte WHERE num_parte LIKE '%$busqueda%' AND estado = '1' order by num_parte limit 5";
     $resultado=$conexion->query($consulta);
     if (!$resultado) {
       echo "Error:".mysqli_error($conexion);

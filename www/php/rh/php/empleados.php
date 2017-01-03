@@ -57,8 +57,13 @@
 		}//fin del else
 		$resultado = $conexion->query($consulta);
 		if (!$resultado) {
-			$datos['datos']=$conexion->errno."(".$conexion->error.")";
-			$datos['validacion']="error";
+			if ($conexion->errno==1062) {
+				$datos['validacion']='error';
+				$datos['datos']="Número de empleado ya existe.";
+			}else{
+				$datos['datos']=$conexion->errno."(".$conexion->error.")";
+				$datos['validacion']="error";
+			}
 			echo json_encode($datos,JSON_UNESCAPED_UNICODE);
 			exit();
 		}

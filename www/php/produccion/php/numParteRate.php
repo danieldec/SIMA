@@ -2,7 +2,7 @@
   include_once '../../conexion/conexion.php';
   if (isset($_POST['numParte'])&&isset($_POST['lista'])) {
    $numParte=$_POST['numParte'];
-   $consulta="SELECT np.num_parte, np.rate FROM num_parte np WHERE np.num_parte LIKE '%$numParte%' LIMIT 5;";
+   $consulta="SELECT np.num_parte, np.rate FROM num_parte np WHERE np.num_parte LIKE '%$numParte%' AND np.estado = '1' LIMIT 5;";
    $resultado=$conexion->query($consulta);
    $datos=array();
    if (!$resultado) {
