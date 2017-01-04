@@ -152,8 +152,45 @@
 
     <!--Aquí empieza el contenido de la pestaña de reporte -->
     <div class="tab-pane fade" id="reporte">
-      <h3>Estas en el tab de reporte</h3>
-  </div>
+      <div class="col-md-12 col-xs-12">
+        <div class="container-fluid">
+          <form action="" id="formBufi">
+            <fieldset>
+              <legend>Reporte Eficiencia</legend>
+              <label for="">Todo</label>
+              <input type="radio" name="tipoConsul" id="radTodo" checked value="t">
+              <label for="">por numero de empleado</label>
+              <input type="radio" name="tipoConsul" id="radEmp" value="e"><br>
+              <div id="divForm">
+                <div id="divNumEmp">
+                  <label for="">Número de empleado</label>
+                  <input type="text" id="inpNuEmp" disabled name="inpNuEmp" required>
+                </div>
+                <label for="">Fecha Inicio:</label>
+                <div id="divFechaI"></div>
+                <label for="">Fecha Final</label>
+                <div id="divFechaF"></div>
+              </div>
+              <input type="submit" value="Buscar" class="btn btn-default">
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-xs-12">
+          <div class="container-fluid">
+            <table class="table table-bordered" id="tablaEfiCap">
+              <thead>
+                
+              </thead>
+              <tbody>
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
   <!-- Notificaciones de errores y exitos al momento de hacer una acción -->
   <div id="jqxNotRh">
@@ -213,6 +250,11 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.edit.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxdatetimeinput.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxcalendar.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
+  
   <script type="text/javascript" src="../../js/rh.js"></script>
 
 </body>

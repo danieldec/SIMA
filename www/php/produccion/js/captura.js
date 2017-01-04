@@ -104,12 +104,12 @@ function principal() {
 	YYYY/mm/dd*/
 	function obtenerFecha(fechaDia) {
 		this.fechaDia=fechaDia;
-		if (this.fechaDia.getMonth()<10) {
+		if (parseInt(this.fechaDia.getMonth())<9) {
 			mes=0+""+(this.fechaDia.getMonth()+1);
 		}else{
 			mes=this.fechaDia.getMonth()+1;
 		}
-		if (this.fechaDia.getDate()<10) {
+		if (parseInt(this.fechaDia.getDate())<10) {
 			dia=0+""+this.fechaDia.getDate();
 		}else{
 			dia=this.fechaDia.getDate();

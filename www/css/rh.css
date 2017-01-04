@@ -30,3 +30,12 @@ tbody>tr:hover{
 tr>td>input{
   text-transform: uppercase;
 }
+#divFechaI,#divFechaF{
+  display: inline-block;
+}
+#divForm{
+  display: inline-flex;
+}
+#divNumEmp{
+  display: none;
+}

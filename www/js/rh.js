@@ -15,6 +15,8 @@ function Principal() {
   var empleadosTabla = $('#empleadosTabla');
   var venEditEmp = $('#venEditEmp');
   var formEditNumEmp = $('#formEditNumEmp');
+  var divFechaI = $('#divFechaI');
+  var divFechaF = $('#divFechaF');
   // var alertAltaEmple;
   $('.nav-tabs a').on('click',function(e) {
     $(this).tab('show');
@@ -31,6 +33,29 @@ function Principal() {
       height:'380px',
       autoOpen:false,
       showCollapseButton:true
+    });
+  //gadget reloj del jqxWidget
+  divFechaI.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
+    });
+  divFechaF.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
     });
   //convertir cadena de texto en mayusculas del input
   inputTypeText.each(function () {
@@ -452,6 +477,140 @@ function Principal() {
       jqxNotRh.jqxNotification('open');
     }
   }//fin de la funcion exitoInsertarUsu
+  //eventos, variables funciones, relacionado con la eficiencia de la captura
+  var formBufi = $('#formBufi');
+  var radTodo = $('#radTodo');
+  var radEmp = $('#radEmp');
+  var inpNuEmp = $('#inpNuEmp');
+  var divNumEmp = $('#divNumEmp');
+  var tablaEfiCap = $('#tablaEfiCap');
+  $('input[name="tipoConsul"]').on('change',evtChaRadBtn);
+  //evento change de los radiobuttons
+  function evtChaRadBtn(e) {
+    var valRadBtn = $(this).val();
+    var displayDivNumEmp = divNumEmp.css('display');
+    var disabledInpNuEmp = inpNuEmp.attr('disabled');
+    if (valRadBtn=="t") {
+      if (displayDivNumEmp == "block" && disabledInpNuEmp == undefined) {
+        divNumEmp.css('display','none');
+        inpNuEmp.prop('disabled',true);
+      }
+    } else if (valRadBtn=='e') {
+      if (displayDivNumEmp == "none" && disabledInpNuEmp == "disabled") {
+        divNumEmp.css('display','initial');
+        inpNuEmp.removeAttr('disabled');
+        inpNuEmp.val("").focus();
+      }
+    }
+  }
+  formBufi.on('submit',evtSubForB);
+  function evtSubForB(e) {
+    var valRadBtn = $("input[name='tipoConsul']:checked").val();
+    var fechaIB = divFechaI.jqxDateTimeInput('getDate');
+    var fechaFB = divFechaF.jqxDateTimeInput('getDate');
+    //console.log(fechaIB);
+    //console.log(fechaFB);
+    if (fechaIB == null || fechaFB == null) {
+      jqxNotRhContent.html("Se deben llenar los campos de la fecha");
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+      return false;
+    }
+    var rangoDias= ((((fechaFB.valueOf()-fechaIB.valueOf())/1000)/24)/60)/60;
+    var fechaIForm = obtenerFecha(fechaIB);
+    var fechaFForm = obtenerFecha(fechaFB);
+    //console.log(fechaIForm);
+    //console.log(fechaFForm);
+    if(rangoDias>=0&&rangoDias<=6){
+      if (valRadBtn=="t") {
+        $.post(
+          {
+            url:'php/consultaEfi.php',
+            dataType:'json',
+            data:
+            {
+             fechaIForm:fechaIForm,
+             fechaFForm:fechaFForm,
+             dias:rangoDias,
+             datosForm:$(this).serialize()
+            },
+            success:exitFormConsulta,
+            type:'POST',
+            error:errorFuncionAjax
+          });
+        //console.log($(this).serialize());
+      }
+      if (valRadBtn=="e") {
+        $.post(
+          {
+            url:'php/consultaEfi.php',
+            dataType:'json',
+            data:
+            {
+             fechaIForm:fechaIForm,
+             fechaFForm:fechaFForm,
+             dias:rangoDias,
+             datosForm:$(this).serialize()
+            },
+            success:exitFormConsulta,
+            type:'POST',
+            error:errorFuncionAjax
+          });
+        console.log("vamos a consultar eficiencia por empleado");
+        console.log($(this).serialize());
+      }
+    }else{
+      if (rangoDias>6) {
+        jqxNotRhContent.html("La selección de las fechas debe ser menor a 7 días");
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }else{
+        jqxNotRhContent.html("La fecha inicio debe ser menor a la fecha final");
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }
+    }
+    e.preventDefault();
+  }//fin de la función evtSubForB;
+  function exitFormConsulta(datos,x,y) {
+    if (datos.validacion=="exito") {
+      //mostrar datos después que haya estado lista la tabla eliminar registros.
+      console.log(datos);
+      if (datos.tc=="t") {
+        tablaEfiCap.children('thead').html("");
+        tablaEfiCap.children('tbody').html("");
+        tablaEfiCap.children('thead').html(datos.datos.thead);
+        tablaEfiCap.children('tbody').html(datos.datos.tbody);
+      }else if (datos.tc=="e") {
+        tablaEfiCap.children('thead').html("");
+        tablaEfiCap.children('tbody').html("");
+        tablaEfiCap.children('thead').html(datos.datos.thead);
+        tablaEfiCap.children('tbody').html(datos.datos.tbody);
+      }
+    }else if (datos.validacion="error") {
+      tablaEfiCap.children('thead').html("");
+      tablaEfiCap.children('tbody').html("");
+      jqxNotRhContent.html("No se encontraron registros");
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+    }
+  }
+
+  //función para obtener fecha
+  function obtenerFecha(fechaDia) {
+    this.fechaDia=fechaDia;
+    if (parseInt(this.fechaDia.getMonth())<9) {
+      mes=0+""+(this.fechaDia.getMonth()+1);
+    }else{
+      mes=this.fechaDia.getMonth()+1;
+    }
+    if (parseInt(this.fechaDia.getDate())<10) {
+      dia=0+""+this.fechaDia.getDate();
+    }else{
+      dia=this.fechaDia.getDate();
+    }
+    return this.fechaDia.getFullYear()+"/"+mes+"/"+dia;
+  }//fin de la función obtenerFecha
 
   //inicializamos la notificaciones que vamos a mostrar al usuario cuando suceda un evento de error o de exito en alguna transacción realizada.
   jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'});
@@ -459,18 +618,18 @@ function Principal() {
   function errorFuncionAjax(jqXHR,textStatus,errorThrown) {
     if (jqXHR.status == 0) {
       jqxNotRhContent.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
-      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto',autoClose: false});
       jqxNotRh.jqxNotification('open');
       return false;
     }
     var errorPHP=jqXHR.responseText;
     //Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
     jqxNotRhContent.html(textStatus);
-    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto',autoClose: false}).jqxNotification('open');
     jqxNotRhContent.html(errorPHP);
-    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto',autoClose: false}).jqxNotification('open');
     jqxNotRhContent.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
-    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+    jqxNotRh.jqxNotification({template:'error',width:'auto',height:'auto',autoClose: false}).jqxNotification('open');
   }//fin de la función errorFuncionAjax
 
 }//fin de la función Principal
