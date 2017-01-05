@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="../../css/styles/jqx.classic.css" type="text/css" />
   <link rel="stylesheet" href="../../css/styles/jqx.bootstrap.css" type="text/css" />
   <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="../../css/buttons.dataTables.min.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="../../css/rh.css" charset="utf-8">
 </head>
 <body>
@@ -230,6 +231,13 @@
   <!--importar los scripts desde la ruta www/js y los js de rh-->
   <?php include '../scriptsPiePag.php';?>
   <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
+  <script src="../../js/dataTables.buttons.min.js" charset="utf-8"></script>
+  <script src="../../js/buttons.flash.min.js" charset="utf-8"></script>
+  <script src="../../js/jszip.min.js" charset="utf-8"></script>
+  <script src="../../js/pdfmake.min.js" charset="utf-8"></script>
+  <script src="../../js/vfs_fonts.js" charset="utf-8"></script>
+  <script src="../../js/buttons.html5.min.js" charset="utf-8"></script>
+  <script src="../../js/buttons.print.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxdata.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxbuttons.js"></script>

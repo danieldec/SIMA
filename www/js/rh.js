@@ -561,6 +561,8 @@ function Principal() {
       }
     }else{
       if (rangoDias>6) {
+        tablaEfiCap.children('thead').html("");
+        tablaEfiCap.children('tbody').html("");
         jqxNotRhContent.html("La selección de las fechas debe ser menor a 7 días");
         jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
         jqxNotRh.jqxNotification('open');
@@ -575,24 +577,77 @@ function Principal() {
   function exitFormConsulta(datos,x,y) {
     if (datos.validacion=="exito") {
       //mostrar datos después que haya estado lista la tabla eliminar registros.
-      console.log(datos);
+      //console.log(datos);
       if (datos.tc=="t") {
-        tablaEfiCap.children('thead').html("");
-        tablaEfiCap.children('tbody').html("");
-        tablaEfiCap.children('thead').html(datos.datos.thead);
-        tablaEfiCap.children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').children('thead').html(datos.datos.thead);
+        $('#tablaEfiCap').DataTable().destroy();
+        $('#tablaEfiCap').children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').DataTable(
+        {
+          "language":
+          {
+            "url":"../../json/Spanish.json"
+          },
+          stateSave: true,
+          dom: 'Bfrtip',
+          buttons:
+          [
+            'copy',
+            {
+              extend:'excelHtml5',
+              title:'reporteEfi'
+            },
+            {
+              extend:'pdfHtml5',
+              title:'reporteEfi'
+            },
+            'print'
+          ]          
+        });
       }else if (datos.tc=="e") {
-        tablaEfiCap.children('thead').html("");
-        tablaEfiCap.children('tbody').html("");
-        tablaEfiCap.children('thead').html(datos.datos.thead);
-        tablaEfiCap.children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').children('thead').html(datos.datos.thead);
+        $('#tablaEfiCap').DataTable().destroy();
+        $('#tablaEfiCap').children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').DataTable(
+        {
+          "language":
+          {
+            "url":"../../json/Spanish.json"
+          },
+          stateSave: true,
+          dom: 'Bfrtip',
+          buttons:
+          [
+            'copy',
+            {
+              extend:'excelHtml5',
+              title:'reporteEfi'
+            },
+            {
+              extend:'pdfHtml5',
+              title:'reporteEfi'
+            },
+            'print'
+          ]          
+        });
       }
     }else if (datos.validacion="error") {
+
+      if (datos.errorE==1) {
+        jqxNotRhContent.html(datos.datos);
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }else if(datos.errorC==1){
+        jqxNotRhContent.html(datos.datos);
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }else{
+        jqxNotRhContent.html("No se encontraron registros");
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }
       tablaEfiCap.children('thead').html("");
       tablaEfiCap.children('tbody').html("");
-      jqxNotRhContent.html("No se encontraron registros");
-      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
-      jqxNotRh.jqxNotification('open');
     }
   }
 
