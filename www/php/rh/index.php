@@ -153,44 +153,94 @@
 
     <!--Aquí empieza el contenido de la pestaña de reporte -->
     <div class="tab-pane fade" id="reporte">
-      <div class="col-md-12 col-xs-12">
-        <div class="container-fluid">
-          <form action="" id="formBufi">
-            <fieldset>
-              <legend>Reporte Eficiencia</legend>
-              <label for="">Todo</label>
-              <input type="radio" name="tipoConsul" id="radTodo" checked value="t">
-              <label for="">por numero de empleado</label>
-              <input type="radio" name="tipoConsul" id="radEmp" value="e"><br>
-              <div id="divForm">
-                <div id="divNumEmp">
-                  <label for="">Número de empleado</label>
-                  <input type="text" id="inpNuEmp" disabled name="inpNuEmp" required>
-                </div>
-                <label for="">Fecha Inicio:</label>
-                <div id="divFechaI"></div>
-                <label for="">Fecha Final</label>
-                <div id="divFechaF"></div>
-              </div>
-              <input type="submit" value="Buscar" class="btn btn-default">
-            </fieldset>
-          </form>
+      <div class="container-fluid">
+        <div class="row">
+          <ul class="nav nav-tabs nav-pills nav-justified">
+            <li class="active"><a href="#repEfi">EFICIENCIA</a></li>
+            <li><a href="#repEnt">ENTRENAMIENTO</a></li>
+          </ul>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12 col-xs-12">
-          <div class="container-fluid">
-            <table class="table table-bordered" id="tablaEfiCap">
-              <thead>
-                
-              </thead>
-              <tbody>
-                
-              </tbody>
-            </table>
+      <div class="tab-content col-md-12 col-xs-12">
+        <div class="tab-pane fade in active" id="repEfi">
+          <div class="row">
+            <div class="container-fluid">
+              <div class="col-md-12 col-xs-12">
+                <div class="container-fluid">
+                  <form action="" id="formBufi">
+                    <fieldset>
+                      <legend>Reporte Eficiencia</legend>
+                      <label for="">Todo</label>
+                      <input type="radio" name="tipoConsul" id="radTodo" checked value="t">
+                      <label for="">por numero de empleado</label>
+                      <input type="radio" name="tipoConsul" id="radEmp" value="e"><br>
+                      <div id="divForm">
+                        <div id="divNumEmp">
+                          <label for="">Número de empleado</label>
+                          <input type="text" id="inpNuEmp" disabled name="inpNuEmp" required>
+                        </div>
+                        <label for="">Fecha Inicio:</label>
+                        <div id="divFechaI"></div>
+                        <label for="">Fecha Final</label>
+                        <div id="divFechaF"></div>
+                      </div>
+                      <input type="submit" value="Buscar" class="btn btn-default">
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 col-xs-12">
+                  <div class="container-fluid">
+                    <table class="table table-bordered table-condensed table-responsive" id="tablaEfiCap">
+                      <thead></thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="repEnt">
+          <div class="row">
+            <div class="container-fluid">
+              <div class="col-md-12 col-xs-12">
+                <div class="container-fluid">
+                <form action="" id="formRepEnt">
+                  <fieldset>
+                    <legend>REPORTE ENTRENAMIENTO</legend>
+                    <label for="divFechaIRE">Fecha Inicio: </label>
+                    <div id="divFechaIRE"></div>
+                    <label for="divFechaFRE">Fecha Final: </label>
+                    <div id="divFechaFRE"></div>
+                    <input type="submit" value="Buscar" class="btn btn-default">
+                  </fieldset>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="container-fluid">
+                <table class="table table-bordered" id="tablaRepEnt">
+                  <thead>
+                    <th># Empleado</th>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>hrs</th>
+                    <th>Número Parte</th>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+                </div>
+              </div>
           </div>
         </div>
       </div>
+
     </div>
   <!--Aquí termina el contenido de las pestañas de empleados, usuarios y reporte -->
   <!-- Notificaciones de errores y exitos al momento de hacer una acción -->

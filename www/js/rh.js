@@ -505,6 +505,11 @@ function Principal() {
   }
   formBufi.on('submit',evtSubForB);
   function evtSubForB(e) {
+    console.log(tablaEfiCap.children('tbody').html().length)
+    console.log(tablaEfiCap.children('thead').html().length)
+    if (tablaEfiCap.children('tbody').html().length>0 && tablaEfiCap.children('thead').html().length>0) {
+      $('#tablaEfiCap').DataTable().destroy();
+    }
     var valRadBtn = $("input[name='tipoConsul']:checked").val();
     var fechaIB = divFechaI.jqxDateTimeInput('getDate');
     var fechaFB = divFechaF.jqxDateTimeInput('getDate');
@@ -575,13 +580,13 @@ function Principal() {
     e.preventDefault();
   }//fin de la función evtSubForB;
   function exitFormConsulta(datos,x,y) {
+    console.log(datos);
     if (datos.validacion=="exito") {
       //mostrar datos después que haya estado lista la tabla eliminar registros.
       //console.log(datos);
       if (datos.tc=="t") {
         $('#tablaEfiCap').children('thead').html(datos.datos.thead);
-        $('#tablaEfiCap').DataTable().destroy();
-        $('#tablaEfiCap').children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap>tbody').html(datos.datos.tbody);
         $('#tablaEfiCap').DataTable(
         {
           "language":
@@ -606,7 +611,6 @@ function Principal() {
         });
       }else if (datos.tc=="e") {
         $('#tablaEfiCap').children('thead').html(datos.datos.thead);
-        $('#tablaEfiCap').DataTable().destroy();
         $('#tablaEfiCap').children('tbody').html(datos.datos.tbody);
         $('#tablaEfiCap').DataTable(
         {
@@ -632,7 +636,6 @@ function Principal() {
         });
       }
     }else if (datos.validacion="error") {
-
       if (datos.errorE==1) {
         jqxNotRhContent.html(datos.datos);
         jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
@@ -648,9 +651,118 @@ function Principal() {
       }
       tablaEfiCap.children('thead').html("");
       tablaEfiCap.children('tbody').html("");
+      //$('#tablaEfiCap').DataTable().clear().draw();
     }
   }
+  //Aquí estaran todas las variables, eventos y funciones del reporte de entrenamiento
+  var formRepEnt = $('#formRepEnt');
+  var divFechaIRE = $('#divFechaIRE');
+  var divFechaFRE = $('#divFechaFRE');
+  var tablaRepEnt = $('#tablaRepEnt');
+  divFechaIRE.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
+    });
+  divFechaFRE.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
+    });
+  //evento submit del formulario
+  formRepEnt.on('submit',evtSubRepEnt);
+  function evtSubRepEnt(e) {
+    var fechaIB = divFechaIRE.jqxDateTimeInput('getDate');
+    var fechaFB = divFechaFRE.jqxDateTimeInput('getDate');
+    if (fechaIB == null || fechaFB == null) {
+      jqxNotRhContent.html("Se deben llenar los campos de la fecha");
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+      return false;
+    }
+    var fechaIForm = obtenerFecha(fechaIB);
+    var fechaFForm = obtenerFecha(fechaFB);
+    var rangoDias= ((((fechaFB.valueOf()-fechaIB.valueOf())/1000)/24)/60)/60;
+    if(rangoDias>=0&&rangoDias<=6){
+      $.post(
+          {
+            url:'php/reporteEnt.php',
+            dataType:'json',
+            data:
+            {
+             fechaIForm:fechaIForm,
+             fechaFForm:fechaFForm,
+             dias:rangoDias,
+             repEnt:true
+            },
+            success:exFormRepEnt,
+            type:'POST',
+            error:errorFuncionAjax
+          });
+    }//fin del if
+    else{
+      if (rangoDias>6) {
+        tablaEfiCap.children('thead').html("");
+        tablaEfiCap.children('tbody').html("");
+        jqxNotRhContent.html("La selección de las fechas debe ser menor a 7 días");
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }
+      else{
+        jqxNotRhContent.html("La fecha inicio debe ser menor a la fecha final");
+        jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNotRh.jqxNotification('open');
+      }
+    }
+    e.preventDefault();
+  }
 
+  //función exito del formulario
+  function exFormRepEnt(datos,x,y) {
+    if (datos.validacion=="exito") {
+      tablaRepEnt.DataTable().destroy();
+      tablaRepEnt.children('tbody').html(datos.datos);
+      tablaRepEnt.DataTable(
+        {
+          "language":
+          {
+            "url":"../../json/Spanish.json"
+          },
+          stateSave: true,
+          dom: 'Bfrtip',
+          buttons:
+          [
+            'copy',
+            {
+              extend:'excelHtml5',
+              title:'reporteEfi'
+            },
+            {
+              extend:'pdfHtml5',
+              title:'reporteEfi'
+            },
+            'print'
+          ]          
+        });
+
+    }else if (datos.validacion="error") {
+      jqxNotRhContent.html("La fecha inicio debe ser menor a la fecha final");
+      jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNotRh.jqxNotification('open');
+    }
+  }
   //función para obtener fecha
   function obtenerFecha(fechaDia) {
     this.fechaDia=fechaDia;
