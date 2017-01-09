@@ -71,9 +71,9 @@
     <!--Aquí termina el contenido de la pestaña num parte-->
 
     <!--Aquí empieza el contenido de la pestaña de consultas -->
-    <div class="tab-pane fade" id="reporte">
+    <div class="tab-pane fade" id="divTabreporte">
       <div>estoy en el contenido de reporte</div>
-     </div>
+    </div>
   </div>
   <!--Aquí termina el contenido de las pestañas de consultas-->
   <div id="jqxNotIng">

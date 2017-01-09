@@ -39,3 +39,9 @@ tr>td>input{
 #divNumEmp{
   display: none;
 }
+#divFechaI,#divFechaF{
+  margin-left: 8px;
+}
+.fechasRepEnt{
+  display: inline-flex;
+}

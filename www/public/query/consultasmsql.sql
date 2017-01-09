@@ -37,3 +37,13 @@ INNER JOIN empleados as e ON e.idempleados = da.empleados_idempleados
 WHERE c.fecha BETWEEN '2016-10-31' AND '2016-11-02'
 GROUP BY nm.num_parte,e.idempleados,c.fecha
 ORDER BY c.fecha ASC,np.num_parte ASC,e.nombre ASC
+
+SELECT *, COUNT(dtm.idcaptura) FROM captura AS  c
+INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_Lista_NumOrden = c.iddetalle_Lista_NumOrdenCap
+INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia = dln.iddetalle_asistenciaDetList
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis AND nm.num_parte='11321'
+INNER JOIN empleados as e ON e.idempleados = da.empleados_idempleados
+LEFT JOIN detalleTiempoM AS dtm ON dtm.idcaptura = c.idcaptura
+LEFT JOIN tiempo_muerto AS tm ON tm.idtiempo_muerto = dtm.idtiempo_muerto
+WHERE c.fecha='2017-01-06'  AND c.idcaptura = '687'
+ORDER BY `c`.`hora_final`  ASC

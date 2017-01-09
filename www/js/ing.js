@@ -236,12 +236,12 @@ function principal(e) {
 		var difRate = rateEdt==formRate;
 		var difDesc = descEdt==formDesc;
 		var difBaja = bajaEdt==formBaja;
-		console.log(difNP);
+		/*console.log(difNP);
 		console.log(difRate);
 		console.log(difDesc);
 		console.log(difBaja);
 		console.log(bajaEdt);
-		console.log(formBaja);
+		console.log(formBaja);*/
 		if (bajaEdt==1) {
 			formBaja
 			if (difNP&&difRate&&difDesc&&difBaja) {

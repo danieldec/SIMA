@@ -6,7 +6,7 @@
 	$dias = $_POST['dias'];
 	$repEnt = $_POST['repEnt'];
   	$datos = array();
-  	$consulta="SELECT c.fecha, nm.num_parte,e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombre,ROUND(SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60) - (c.tiempo_muerto/60),1) as tT
+  	$consulta="SELECT c.fecha, nm.num_parte,e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombre,ROUND(SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60) - (c.tiempo_muerto/60),2) as tT
 	FROM captura AS  c
 	INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_Lista_NumOrden = c.iddetalle_Lista_NumOrdenCap
 	INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia = dln.iddetalle_asistenciaDetList
@@ -29,8 +29,8 @@
 		$tbody.="<tr><td>$fila->idempleados</td>";
 		$tbody.="<td>$fila->nombre</td>";
 		$tbody.="<td class='text-center'>$fila->fecha</td>";
-		$tbody.="<td class='text-center'>$fila->num_parte</td>";
-		$tbody.="<td class='text-center'>$fila->tT</td></tr>";
+		$tbody.="<td class='text-center'>$fila->tT</td>";
+		$tbody.="<td class='text-center'>$fila->num_parte</td></tr>";
 	}
 	$datos['datos']=$tbody;
   	echo json_encode($datos,JSON_UNESCAPED_UNICODE);

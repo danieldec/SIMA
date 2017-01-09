@@ -211,11 +211,15 @@
                 <form action="" id="formRepEnt">
                   <fieldset>
                     <legend>REPORTE ENTRENAMIENTO</legend>
-                    <label for="divFechaIRE">Fecha Inicio: </label>
-                    <div id="divFechaIRE"></div>
-                    <label for="divFechaFRE">Fecha Final: </label>
-                    <div id="divFechaFRE"></div>
-                    <input type="submit" value="Buscar" class="btn btn-default">
+                    <div class="fechasRepEnt">
+                      <label for="divFechaIRE">Fecha Inicio:</label>
+                      <div id="divFechaIRE"></div>
+                    </div>
+                    <div class="fechasRepEnt">
+                      <label for="divFechaFRE">Fecha Final:</label>
+                      <div id="divFechaFRE"></div>
+                      <input type="submit" value="Buscar" class="btn btn-default">
+                    </div>
                   </fieldset>
                 </form>
                 </div>
