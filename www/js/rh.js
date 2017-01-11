@@ -208,7 +208,7 @@ function Principal() {
       else if (estado==0) {
         $('#spanEstado').text("Alta");
       }//fin del else if
-    }//fin del else 
+    }//fin del else
 
   }//fin de la función
   formEditNumEmp.on('submit',submEditEmp);
@@ -431,7 +431,7 @@ function Principal() {
     }
   });
   function listEmp(request,response) {
-    console.log(request.term);
+    // console.log(request.term);
     $.post(
     {
       url:'php/listaEmpleados.php',
@@ -444,7 +444,7 @@ function Principal() {
       error:errorFuncionAjax
     });
   }//fin de la función listEmp
-  //formulario submit 
+  //formulario submit
   formUsu.on('submit',funFormUsu);
   function funFormUsu(e) {
     var nombreUCad=$('#nombreU').val(),numEmpCad=$('#numEmp').val();
@@ -607,7 +607,7 @@ function Principal() {
               title:'reporteEfi'
             },
             'print'
-          ]          
+          ]
         });
       }else if (datos.tc=="e") {
         $('#tablaEfiCap').children('thead').html(datos.datos.thead);
@@ -632,7 +632,7 @@ function Principal() {
               title:'reporteEfi'
             },
             'print'
-          ]          
+          ]
         });
       }
     }else if (datos.validacion="error") {
@@ -659,6 +659,8 @@ function Principal() {
   var divFechaIRE = $('#divFechaIRE');
   var divFechaFRE = $('#divFechaFRE');
   var tablaRepEnt = $('#tablaRepEnt');
+  var fechaIFormRE="";
+  var fechaFFormRE="";
   divFechaIRE.jqxDateTimeInput(
     {
       width:'150px',
@@ -692,8 +694,9 @@ function Principal() {
       jqxNotRh.jqxNotification('open');
       return false;
     }
-    var fechaIForm = obtenerFecha(fechaIB);
-    var fechaFForm = obtenerFecha(fechaFB);
+    //ESTAS DOS VARIABLES PASARAN A SER GLOBALES POR QUE LAS VOY A USAR EN EL NOMBRE DEL REPORTE
+    fechaIFormRE = obtenerFecha(fechaIB);
+    fechaFFormRE = obtenerFecha(fechaFB);
     var rangoDias= ((((fechaFB.valueOf()-fechaIB.valueOf())/1000)/24)/60)/60;
     if(rangoDias>=0&&rangoDias<=6){
       $.post(
@@ -702,8 +705,8 @@ function Principal() {
             dataType:'json',
             data:
             {
-             fechaIForm:fechaIForm,
-             fechaFForm:fechaFForm,
+             fechaIForm:fechaIFormRE,
+             fechaFForm:fechaFFormRE,
              dias:rangoDias,
              repEnt:true
             },
@@ -747,18 +750,19 @@ function Principal() {
             'copy',
             {
               extend:'excelHtml5',
-              title:'reporteEfi'
+              title:'dia(s) '+fechaIFormRE+' al '+fechaFFormRE
             },
             {
               extend:'pdfHtml5',
-              title:'reporteEfi'
+              title:'dia(s) '+fechaIFormRE+' al '+fechaFFormRE
             },
             'print'
-          ]          
+          ]
         });
-
+        console.log(fechaIFormRE);
+        console.log(fechaFFormRE);
     }else if (datos.validacion="error") {
-      jqxNotRhContent.html("La fecha inicio debe ser menor a la fecha final");
+      jqxNotRhContent.html(datos.datos);
       jqxNotRh.jqxNotification({template:'error',width:'300px',height:'auto'});
       jqxNotRh.jqxNotification('open');
     }

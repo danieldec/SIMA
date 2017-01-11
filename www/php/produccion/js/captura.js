@@ -48,8 +48,8 @@ function principal() {
 	var eficienciaCapPar=$('#eficienciaCapPar');
 	var tmCapPar=$('#tmCapPar');
 	var btnCapPorHoraPar=$('#btnCapPorHoraPar');
-	var btnCapPar = $('#btnCapPar'); 
-	var btnVerCapPar = $('#btnVerCapPar'); 
+	var btnCapPar = $('#btnCapPar');
+	var btnVerCapPar = $('#btnVerCapPar');
 	var divTMVentanaPar = $('#divTMVentanaPar');
 	var copiaTMPar = $('.copiaTMPar','#divTMVentanaPar');
 	var cantTTMPar=$('#cantTTMPar');
@@ -194,7 +194,7 @@ function principal() {
 			success:exitoObtenerRate,
 			type:'POST',
 			error:errorFuncionABtnEmp
-		})
+		});
 	};//Aquí termina la función obtenerRate
 	function exitoObtenerRate(data) {
 		numParteCapFinal=data.num_parte;
@@ -1244,7 +1244,7 @@ function principal() {
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}
-	//evento abrir, de la ventana divVenCapHoraEmp 
+	//evento abrir, de la ventana divVenCapHoraEmp
 	divVenCapHoraEmp.on('open',funOpenDivCapH);
 	function funOpenDivCapH(e) {
 		var hIC=thRangoHora.attr('data-h'), hICon = new Date(),hIConF = new Date();

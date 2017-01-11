@@ -126,7 +126,7 @@
           <div class="form-group">
             <label for="perfilU">Perfil</label>
             <select class="form-control" name="perfilU" id="perfilU" required>
-            <?php 
+            <?php
               include '../conexion/conexion.php';
               $consulta="SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'usuarios' AND COLUMN_NAME = 'perfil'";
               $resultado=$conexion->query($consulta);
@@ -307,8 +307,8 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.columnsresize.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.filter.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.grouping.js"></script>
-  <script type="text/javascript" src="../../js/jqwidget/jqxdata.export.js"></script> 
-  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.export.js"></script> 
+  <script type="text/javascript" src="../../js/jqwidget/jqxdata.export.js"></script>
+  <script type="text/javascript" src="../../js/jqwidget/jqxgrid.export.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxgrid.edit.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
@@ -316,7 +316,6 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxcalendar.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
-  
   <script type="text/javascript" src="../../js/rh.js"></script>
 
 </body>

@@ -1,4 +1,4 @@
-<?php 
+<?php
   include_once '../../conexion/conexion.php';
   if (isset($_POST['fechaIForm'])&&isset($_POST['fechaFForm'])&&isset($_POST['dias'])&&isset($_POST['repEnt'])) {
   	$fechaIForm = $_POST['fechaIForm'];
@@ -6,7 +6,7 @@
 	$dias = $_POST['dias'];
 	$repEnt = $_POST['repEnt'];
   	$datos = array();
-  	$consulta="SELECT c.fecha, nm.num_parte,e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombre,ROUND(SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60) - (c.tiempo_muerto/60),2) as tT
+  	$consulta="SELECT c.fecha, nm.num_parte,e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombre,ROUND(SUM(((TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio)))/60)/60) - SUM(c.tiempo_muerto/60),2) as tT
 	FROM captura AS  c
 	INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_Lista_NumOrden = c.iddetalle_Lista_NumOrdenCap
 	INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia = dln.iddetalle_asistenciaDetList

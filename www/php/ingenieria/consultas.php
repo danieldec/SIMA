@@ -15,7 +15,7 @@
   <?php include '../hojasEstilo.php'; ?>
   <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
   <link rel="stylesheet" href="../../css/styles/jqx.base.css" />
-  <link rel="stylesheet" href="../../css/rh.css" charset="utf-8">
+  <link rel="stylesheet" href="../../css/ing.css" charset="utf-8">
 </head>
 <body>
   <!--Barra de navegación-->
@@ -58,19 +58,41 @@
                 <form action="" id="formConPar">
                   <fieldset>
                     <legend>Capturas por número de parte</legend>
-                    <label for="">fecha</label>
-                    <div id="divFeI"></div>
-                    <label for="">fecha</label>
-                    <div id="divFeF"></div>
-                    <input type="submit" value="buscar">
+                    <div class="divFormDisp">
+                      <label for="numParteConsul">Número de parte:</label>
+                      <input type="text" name="numParteConsul" id="numParteConsul" class="" autofocus>
+                      <label for="">Fecha Inicio:</label>
+                      <div id="divFeI"></div>
+                      <label for="">Fecha <Final:></Final:></label>
+                      <div id="divFeF"></div>
+                      <input type="submit" value="buscar" class="btn btn-default" id="btnEnvFormNP">
+                    </div>
                   </fieldset>
                 </form>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12 col-xs-12">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, reiciendis iste libero culpa nisi ducimus amet alias quam ipsam, illum impedit quo aperiam quas sunt labore magni, facilis tempora veniam.
-                </p>
+                <table id="tablaConsulNP" class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th># captura</th>
+                      <th>Fecha</th>
+                      <th># Empleado</th>
+                      <th>Nombre</th>
+                      <th><abbr title="Número de parte">NP</abbr></th>
+                      <th>Rate</th>
+                      <th>Cantidad</th>
+                      <th><abbr title="Hora Inicio">HI</abbr></th>
+                      <th><abbr title="Hora Final">HF</abbr></th>
+                      <th>Eficiencia</th>
+                      <th><abbr title="minutos totales tiempo muerto captura">MTTMC</abbr></th>
+                      <th><abbr title="minutos tiempo muerto">MTM</abbr></th>
+                      <th><abbr title="Tipo tiempo muerto">TTM</abbr></th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </div>
