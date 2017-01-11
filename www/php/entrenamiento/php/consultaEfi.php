@@ -1,4 +1,4 @@
-<?php
+<?php 
 	include '../../conexion/conexion.php';
 	if (isset($_POST['fechaIForm'])&&isset($_POST['fechaFForm'])&&isset($_POST['dias'])&&isset($_POST['datosForm'])) {
 		$datos = array();

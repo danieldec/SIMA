@@ -49,6 +49,10 @@
             mensajeIngreso();
             window.location.href="php/ingenieria/";
             break;
+          case 'entrenamiento':
+            mensajeIngreso();
+            window.location.href="php/entrenamiento/";
+            break;
           default:
           $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(5000);
         }

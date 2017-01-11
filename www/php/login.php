@@ -32,6 +32,8 @@
               break;
           case 'gerencia':
             echo $perfil;
+          case 'entrenamiento':
+            echo $perfil;
             break;
           default:
             break;

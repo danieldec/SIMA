@@ -47,7 +47,7 @@
     }
     if ($resultado->num_rows==0) {
       $datos['validacion']="error";
-      $datos['datos']="No se encontraron registros del número de parte ".$numParte;
+      $datos['datos']="No se encontraron registros del número de parte "."<span>$numParte</span>";
       echo json_encode($datos,JSON_UNESCAPED_UNICODE);
       exit();
     }
@@ -66,8 +66,8 @@
       $tbody.="<td>$fila->eficiencia</td>";
       $tbody.="<td>$fila->tiempo_muerto</td>";
       if ($fila->minutos==NULL) {
-        $tbody.="<td>0</td>";
-        $tbody.="<td>0</td></tr>";
+        $tbody.="<td></td>";
+        $tbody.="<td></td></tr>";
       }else{
         $tbody.="<td>$fila->minutos</td>";
         $tbody.="<td>$fila->descripcion</td></tr>";
