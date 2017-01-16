@@ -13,7 +13,7 @@
     $eficiencia=$_POST['efiCap'];
     $detalleAsistencia=$_POST['detAsis'];
     $detalleListaNumOrd=$_POST['detListNumOrd'];
-    $horaIFin=date("H:i:s",strtotime("+59 minutes",strtotime($horaInicio)));
+    $horaIFin=date("H:i:s",strtotime("-1 minutes",strtotime($horaFinal)));
     $idUsu=$_SESSION['idusuario'];
     $consulta="SELECT * FROM captura as c
     INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap

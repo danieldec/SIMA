@@ -333,13 +333,13 @@ function principal() {
 			$('#tablaCapPorHora>tbody').html(data.datos);
 			$('#ventanaCapPorHora').jqxWindow({
 				width:'100%',
-				height:'350px',
+				height:'400px',
 				autoOpen:true,
 				maxHeight:'700px',
 				maxWidth:'900px',
 				minWidth:'10%',
 				minHeight:'10%',
-				position:'top',
+				position:'top, left',
 				cancelButton: $('#inpCancelVentana')
 			}).jqxWindow('open');
 			$('#ventanaCapPorHora').jqxWindow('focus');
