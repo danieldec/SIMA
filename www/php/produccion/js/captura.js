@@ -1172,7 +1172,7 @@ function principal() {
 		if (efiCap<=0||efiCap>=200) {
 			divNotificaciones.html("No puede haber eficiencias menores o igual a 0  (cero) o mayores a 200");
 			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
-			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd+1000});
 			return false;
 		}
 		console.log(fecha+" "+cantidadCap+" "+hI+" "+hF+" "+minTmCap+" "+efiCap+" "+detListNumOrd+" "+detAsis);

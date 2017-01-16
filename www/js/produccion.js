@@ -1396,7 +1396,7 @@
       console.log("OKEY");
       $.post('captura.php',{pIdCaptura:idCaptura,pNumOrdenEC:numOrdenEC,pFechaEC:fechaEC},respuestaElimCaptura)
     }else{
-      console.log("NOP");
+      // console.log("NOP");
       return false;
     }
   });
