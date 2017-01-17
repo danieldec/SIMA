@@ -286,7 +286,7 @@ function principal() {
 			height:'50%',
 			autoOpen:false,
 			maxHeight:'700px',
-			maxWidth:'900px',
+			maxWidth:'950px',
 			minWidth:'10%',
 			minHeight:'10%',
 			cancelButton: $('#inpCancelVentana')
@@ -336,17 +336,19 @@ function principal() {
 				height:'400px',
 				autoOpen:true,
 				maxHeight:'700px',
-				maxWidth:'900px',
+				maxWidth:'950px',
 				minWidth:'10%',
 				minHeight:'10%',
 				position:'top, left',
 				cancelButton: $('#inpCancelVentana')
 			}).jqxWindow('open');
 			$('#ventanaCapPorHora').jqxWindow('focus');
-			$('#tablaCapPorHora').DataTable({
+			$('#tablaCapPorHora').DataTable(
+				{
 				"language":{
 					"url":"../../json/Spanish.json"
-				}
+				},
+				"order": [[ 1, "asc" ]]
 			});
 			numParteOriginal=data.numParte;
 			rateNumParteOriginal=data.rate;
@@ -354,7 +356,7 @@ function principal() {
 			spanRateCap.html(rateNumParteOriginal);
 		}else if (data.validacion=="Error") {
 			divNotificaciones.html(data.datos);
-			console.log(data.datos);
+			//console.log(data.datos);
 			jqxNotiModCap.jqxNotification({template:'error',width:'300',height:'auto'}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			return false;

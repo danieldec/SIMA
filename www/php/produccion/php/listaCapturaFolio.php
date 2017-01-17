@@ -7,7 +7,7 @@
 		$consulta="SELECT e.idempleados,dln.iddetalle_Lista_NumOrden, da.iddetalle_asistencia, CONCAT_WS(' ',e.nombre,e.apellidos)as nombre FROM  detalle_asistencia da
 		INNER JOIN detalle_Lista_NumOrden dln ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND dln.idnum_ordenDetLis='$numOrden'
 		INNER JOIN empleados e ON da.empleados_idempleados=e.idempleados
-		WHERE da.iddetalle_asistencia IN (SELECT dln.iddetalle_asistenciaDetList FROM detalle_Lista_NumOrden dln WHERE dln.idnum_ordenDetLis ='$numOrden') AND da.asistencia_fecha='$fechaCalendario';";
+		WHERE da.iddetalle_asistencia IN (SELECT dln.iddetalle_asistenciaDetList FROM detalle_Lista_NumOrden dln WHERE dln.idnum_ordenDetLis ='$numOrden') AND da.asistencia_fecha='$fechaCalendario' ORDER BY dln.iddetalle_Lista_NumOrden ASC;";
 		$resultado=$conexion->query($consulta);
 		if (!$resultado) {
 			$datos['validacion']="Error";

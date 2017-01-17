@@ -391,14 +391,19 @@
     inpNumEmpAsis.val(cadNumEmpList.trim());
     inpFeAsis=$('#inpFeAsis').val();
     inpNumEmp=inpNumEmpAsis.val();
-    console.log(inpFeAsis + " " + inpNumEmp);
+    // console.log(inpFeAsis + " " + inpNumEmp);
     //este $.post se encuentra en la línea 22 del archivo asistencia.php
-    $.post('asistencia.php',{pInpFeAsis:inpFeAsis,pInpNumEmp:inpNumEmp,pHoy:hoy},postLista);
+    $.post('asistencia.php',
+    {
+      pInpFeAsis:inpFeAsis,
+      pInpNumEmp:inpNumEmp,
+      pHoy:hoy
+    },postLista);
     function postLista(data,status) {
       // comprobamos que datos nos arrojo el post
       // console.log("datos: "+data+" respuesta: "+status);
       var capError= data.substr(0,1);
-      console.log(capError);
+      // console.log(capError);
       var banBtnMos=true;
       if (data.substr(1,2)=="YA") {
         if (btnMosLisFecha.html()=="Mostrar Lista Asistencia") {
