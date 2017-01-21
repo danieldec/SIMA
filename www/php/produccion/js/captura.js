@@ -317,11 +317,12 @@ function principal() {
 		var fechaDia=divFechaCapEmpleados.jqxDateTimeInput('getDate');
 		fechaCompletaHoy = obtenerFecha(fechaDia);
 		var numOrden=$(modCapNumOrd).data('numOrden');
+		var numParte=$('#spanNPNO').html();
 		$('#folioVenCap').text(numOrden);
 		$.post({
 			url:"php/listaCapturaFolio.php",
 			dataType:'json',
-			data:{numOrden:numOrden,fechaCompletaHoy:fechaCompletaHoy},
+			data:{numOrden:numOrden,fechaCompletaHoy:fechaCompletaHoy,numParte:numParte},
 			success:exitoFunListaEmpleados,
 			type:'POST',
 			error:errorFuncionABtnEmp
@@ -353,6 +354,8 @@ function principal() {
 			});
 			numParteOriginal=data.numParte;
 			rateNumParteOriginal=data.rate;
+			// console.log(numParteOriginal);
+			// console.log(rateNumParteOriginal);
 			inpNumParteCap.val(numParteOriginal);
 			spanRateCap.html(rateNumParteOriginal);
 			var fechaCapturaM=divFechaCapEmpleados.jqxDateTimeInput('getDate');

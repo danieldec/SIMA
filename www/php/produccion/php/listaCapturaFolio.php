@@ -1,8 +1,9 @@
 <?php
 	include_once '../../conexion/conexion.php';
-	if (isset($_POST['numOrden'])&&isset($_POST['fechaCompletaHoy'])) {
+	if (isset($_POST['numOrden'])&&isset($_POST['fechaCompletaHoy'])&&isset($_POST['numParte'])) {
 		$datos = array();
 		$numOrden=$_POST['numOrden'];
+		$numParte=$_POST['numParte'];
 		$fechaCalendario=$_POST['fechaCompletaHoy'];
 		$consulta="SELECT e.idempleados,dln.iddetalle_Lista_NumOrden, da.iddetalle_asistencia, CONCAT_WS(' ',e.nombre,e.apellidos)as nombre FROM  detalle_asistencia da
 		INNER JOIN detalle_Lista_NumOrden dln ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND dln.idnum_ordenDetLis='$numOrden'
@@ -44,7 +45,7 @@
 		}
 		$datos['datos']=$tbody;
 		//hacemos otra consulta a la base de datos para extraer el rate del número de parte
-		$consulta="SELECT np.rate, np.num_parte FROM num_parte as np INNER JOIN num_orden as nm ON nm.num_parte=np.num_parte AND nm.idnum_orden='$numOrden'";
+		$consulta="SELECT np.rate, np.num_parte FROM num_parte as np INNER JOIN num_orden as nm ON nm.num_parte=np.num_parte AND nm.idnum_orden='$numOrden' AND nm.num_parte='$numParte'";
 		$resultado=$conexion->query($consulta);
 		if (!$resultado) {
 			$datos['validacion']="Error";

@@ -828,7 +828,7 @@
     $('#spanNOMC').html(numOMODCAP);
     $('#spanNPMC').html(numPMODCAP);
     $('#spanNOMC').html($('#spanNOMC').html()+capNumOrden);
-    $('#spanNPMC').html($('#spanNPMC').html()+capNumParte);
+    $('#spanNPMC').html($('#spanNPMC').html()+"<span id='spanNPNO'>"+capNumParte+"</span>");
     $('#divColListEmp').empty().append(modDatos.Datos);
     // console.log(modDatos.Datos);
   }
