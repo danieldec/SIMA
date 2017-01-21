@@ -247,12 +247,12 @@ function principal() {
 	}//fin de la función agregarBtnEmpleado
 	//Inicio de la función exitoFuncionABtnEmp
 	function exitoFuncionABtnEmp(data,textStatus,jqXHR) {
-		if (data.validacion=="Exito") {
+		if (data.validacion=="exito") {
 			divNotificaciones.html(data.datos)
 			jqxNotiModCap.jqxNotification({template:'success',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 			inpAgrNEmpNOrd.val('');
-		}else if (data.validacion=="Error") {
+		}else if (data.validacion=="error") {
 			divNotificaciones.html(data.datos);
 			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
