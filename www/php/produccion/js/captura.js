@@ -1,7 +1,7 @@
 $(document).ready(principal);
 function principal() {
 	//variables usadas globalmente
-	var zInd=$('#modCapNumOrd').css('zIndex');
+	var zInd=9010;
 	var inpAgrNEmpNOrd=$('.inpAgrNEmpNOrd',"#modCapNumOrd");
 	var inpAnadirEmp=$('.inpAnadirEmp','#modCapNumOrd');
 	var jqxNotiModCap=$('#jqxNotiModCap');
@@ -142,7 +142,7 @@ function principal() {
 			inpAgrNEmpNOrd.val(ui.item.value);
 			inpAnadirEmp.trigger('click');
 		}
-	});
+	});//fin del autcomplete
 	//Aquí termina el método del autocomplete()
 	//Aquí empieza el metodo listaEmpleados
 	function listaEmpleados(request,response) {
@@ -260,6 +260,7 @@ function principal() {
 		}
 	}//fin de la función exitoFuncionABtnEmp
 	function errorFuncionABtnEmp(jqXHR,textStatus,errorThrown) {
+		$('#inpFeNO').removeAttr('disabled').val(valSubmit);
 		if (jqXHR.status == 0) {
 			divNotificaciones.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
 			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
@@ -1177,8 +1178,8 @@ function principal() {
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd+1000});
 			return false;
 		}
-		console.log(fecha+" "+cantidadCap+" "+hI+" "+hF+" "+minTmCap+" "+efiCap+" "+detListNumOrd+" "+detAsis);
-		console.log(arregloTiempoMuerto);
+		//console.log(fecha+" "+cantidadCap+" "+hI+" "+hF+" "+minTmCap+" "+efiCap+" "+detListNumOrd+" "+detAsis);
+		//console.log(arregloTiempoMuerto);
 		//Aquí vamos a enviar el tiempo muerto de la captura
 		if (minTmCap>0) {
 			$.post({
@@ -1273,15 +1274,15 @@ function principal() {
 			type:'POST',
 			error:errorFuncionABtnEmp
 		});
-		console.log(e)
+		//console.log(e)
 	}
 	divVenCapHoraEmp.on('close',funCloseDivCapH);
 	function funCloseDivCapH(e) {
-		console.log(e)
+		//console.log(e)
 	}
 	function exitoMosCap(datos) {
 		if (datos.validacion=="exito") {
-			console.log(tablaConCap.children('tbody'));
+			//console.log(tablaConCap.children('tbody'));
 			tablaConCap.children('tbody').html(datos.datos);
 		}else if (datos.validacion="error") {
 			divNotificaciones.html(data.datos);
@@ -1289,8 +1290,96 @@ function principal() {
 			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		}
 	}//fin de la función exitoMosCap
-
 	//Aquí termina todo lo relacionado con el parcial de la captura
+	// Aquí vamos a declarar todo lo relacionado con la busqueda de los número de orden, eventos, variables y funciones.
+	formListNO = $('#formListNO');
+	feNOI = $('#feNOI');
+	feNOF = $('#feNOF');
+	feNOI.jqxDateTimeInput(
+		{
+			width: '150px',
+			height: '25px',
+			culture:'es-ES',
+			formatString: "d",
+			showFooter:true,
+			clearString:'Limpiar',
+			todayString:'Hoy',
+			disabled:false,
+			showWeekNumbers:true
+	}).jqxDateTimeInput('setDate',new Date(fechaDia.getFullYear(),fechaDia.getMonth(),fechaDia.getDate()-1));
+	feNOF.jqxDateTimeInput(
+		{
+			width: '150px',
+			height: '25px',
+			culture:'es-ES',
+			formatString: "d",
+			showFooter:true,
+			clearString:'Limpiar',
+			todayString:'Hoy',
+			disabled:false,
+			showWeekNumbers:true
+	}).jqxDateTimeInput('setDate',new Date(fechaDia.getFullYear(),fechaDia.getMonth(),fechaDia.getDate()+1));
+	formListNO.on('submit',listaNumOrdB);
+	function listaNumOrdB(e) {
+		var fechaI = feNOI.jqxDateTimeInput('getDate');
+		var fechaF = feNOF.jqxDateTimeInput('getDate');
+		if (fechaI==null || fechaF==null) {
+			divNotificaciones.html("Debes llenar los campos de la fecha");
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			return false;
+		}
+		var fechaCI = obtenerFecha(fechaI);
+		var fechaCF = obtenerFecha(fechaF);
+		var diasR= ((((fechaF.valueOf()-fechaI.valueOf())/1000)/24)/60)/60;
+		if (diasR>6) {
+			divNotificaciones.html("Los días seleccionados no debe pasar de las 7 días");
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			return false;
+		}
+		if (diasR<0) {
+			divNotificaciones.html("La fecha inicio no debe ser mayor a la fecha final");
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			return false;
+		}
+		$.post(
+			{
+				url:"php/numOrdList.php",
+				dataType:'json',
+				data:
+				{
+					fechaCI:fechaCI,
+					fechaCF:fechaCF
+				},
+				success:exitoNumList,
+				type:'POST',
+				error:errorFuncionABtnEmp,
+				beforeSend:befAjaxListNumB
+			});
+		e.preventDefault();
+	}//fin de la función listaNumOrdB
+	var valSubmit=$('#inpFeNO').val();
+	function exitoNumList(datos,x,y) {
+		$('#inpFeNO').removeAttr('disabled').val(valSubmit);
+		if (datos.validacion=="exito") {
+			$('#tablaCaptura').DataTable().destroy();
+      $('#tablaCaptura>tbody').empty();
+      // console.log(tbody.Datos);
+      $('#tablaCaptura>tbody').append(datos.datos);
+      $('#tablaCaptura').DataTable({
+        "language":{
+          "url":"../../json/Spanish.json"
+        }
+      });
+		}else if (datos.validacion=="error") {
+			divNotificaciones.html(datos.datos);
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			return false;
+		}
+		// console.log(datos);
+	}
+	function befAjaxListNumB(e) {
+		$('#inpFeNO').prop('disabled','true').val("Buscando..");
+	}
 	//AjaxSetup
 	$.ajaxSetup({
 		error:function(jqXHR,textStatus,errorThrown) {

@@ -160,7 +160,7 @@ label{
 #tablaCaptura_filter>label>input{
   height: inherit;
 }
-#tablaCaptura>tbody>tr>td:nth-of-type(2),#tablaCaptura>tbody>tr>td:nth-of-type(3),#tablaCaptura>tbody>tr>td:nth-of-type(4){
+#tablaCaptura>tbody>tr>td:nth-of-type(3),#tablaCaptura>tbody>tr>td:nth-of-type(4),#tablaCaptura>tbody>tr>td:nth-of-type(5){
   width: 10%;
   background-color: rgb(217, 213, 190);
 }
@@ -294,6 +294,33 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #tablaCapPorHora>tbody>tr>td.nombre{
   font-size: 0.8em;
 }
+#spanFechaPagina{
+  font-size: 1.3em;
+  font-weight: bolder;
+  letter-spacing: 2px;
+}
+#inpNumParte{
+  text-transform: uppercase;
+}
+/*#divFormNOB{
+  display: inline-flex;
+}*/
+#divFormNOB,#divFormNOB2{
+  display: inline-flex;
+  padding-top:5px;
+  margin-left: 5px;
+}
+#divFormNOB3{
+  display: inline-flex;
+  margin-left: 5px;
+}
+#divFormNOB>label, #divFormNOB2>label{
+  font-size: 15px;
+  padding-top: 5px;
+}
+#formListNO{
+  margin-top: 10px;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;
@@ -351,4 +378,11 @@ td>.capturaEmpleados, .detalleNumOrden{
 }
 .inpAgrNEmpNOrd{
   text-transform: uppercase;
+}
+.h2Tit{
+  margin: 0 0;
+}
+.btnElimLista{
+  cursor: pointer;
+  color: blue;
 }

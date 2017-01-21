@@ -97,8 +97,8 @@
         echo "<tr><td>$contador</td>";
         echo "<td>".$fila['idempleados']."</td>";
         echo "<td>".$fila['Nombre']."</td>";
-        echo "<td>".$fila['iddetalle_asistencia']."</td>";
-        echo "<td>Eliminar</td></tr>";
+        echo "<td class='detAsis'>".$fila['iddetalle_asistencia']."</td>";
+        echo "<td class='btnElimLista'>Eliminar</td></tr>";
       }
   }
   function mostrarNumEmple()

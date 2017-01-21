@@ -31,14 +31,14 @@
     $errorConsulta;
     $tiempo=time();
     $dia=date("Y-m-d");
-    $consulta="select MAX(idnum_orden) as id from num_orden";
+    $consulta="SELECT MAX(idnum_orden) AS id FROM num_orden";
     $resultado=$conexion->query($consulta);
     if (!$resultado) {
       $errorConsulta=mysqli_error($conexion);
     }else {
       $fila=$resultado->fetch_array();
     }
-    $consultaFA="select MAX(asistencia.fecha) as fechaAsis from asistencia";
+    $consultaFA="SELECT MAX(asistencia.fecha) AS fechaAsis FROM asistencia";
     $resultadoFA=$conexion->query($consulta);
     if (!$resultadoFA) {
       echo "Error(".$conexion->errno.")$conexion->error";
@@ -51,9 +51,10 @@
   <div class="row">
     <div id="divFechaPagina" class="col-sm-12 text-right well">
       <?php include '../diaSemana.php';
+      setlocale(LC_TIME , 'es_MX.utf8');
       $fecha="";
-      $diaSem=diaSemana();
-      $fecha="Hoy es ".$diaSem." ".date('d/M/Y');
+      //$fecha="Hoy es ".strftime('%A')." ".date('d/M/Y');
+      $fecha = "Hoy es ".strtoupper(strftime('%A',strtotime(date('Y/m/d'))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
       echo "<span id='spanFechaPagina'>".$fecha."</span>";
       ?>
     </div>
@@ -77,14 +78,15 @@
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
               <div class="container-fluid well">
                 <div class="row">
-                    <div class="col-xs-2 col-xs-offset-1 text-center"><label>Folio</label></div>
+                    <div class="col-xs-2 text-center"><label>Folio</label></div>
                     <div class="col-xs-2 text-center"><label>Número de Parte</label></div>
+                    <div class="col-xs-2 text-center"><label>Rate NP</label></div>
                     <div class="col-xs-2 text-center"><label>Parcial</label></div>
                     <div class="col-xs-2 text-center"><label><abbr title="Requerimiento">REQ</abbr></label></div>
                     <div class="col-xs-2 text-center"><label>Fecha Requerimiento</label></div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-2 text-center col-xs-offset-1"><input class="form-control" name="numOrden" id="inpNumOrden"required type="number " value="<?php
+                  <div class="col-xs-2 text-center "><input class="form-control" name="numOrden" id="inpNumOrden"required type="number" autofocus value="<?php
                   //Aquí vamos a insertar el último registro de el número de parte
                     if (isset($fila)) {
                       echo 1+$fila['id'];
@@ -98,6 +100,7 @@
                     <ul id="listaNumParte" class="list-unstyled">
                     </ul>
                   </div>
+                  <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="rateNumP" name="rateNumP" type="number" disabled/></div>
                   <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpParcial" name="parcial" required type="number" disabled/></div>
                   <div class="col-xs-2 text-center"><input min="0" value="0" class="form-control" id="inpCantReq" name="cantReq" required type="number"/></div>
                   <div class="col-xs-2 text-center"><input class="form-control" name="fNumOrden" id="inpFNumOrden"required type="date" value="<?php echo $dia?>"/></div>
@@ -156,6 +159,7 @@
             <div class="row">
               <div class="container-fluid col-md-12">
                 <div class="col-md-6 container-fluid" id="colPrim">
+                  <h2 class="text-center h2Tit">Agregar fecha de asistencia</h2>
                   <div class="row">
                     <div class="col-md-6">
                       <input type="date" class="form-control" name="inpAsistencia" id="inpFechAsis" value="<?php echo $dia ?>"/>
@@ -169,7 +173,7 @@
                   </div>
                   <div class="row">
                     <div class="col-md-12">
-                      <h2 class="text-center">Lista Asistencia</h2>
+                      <h2 class="text-center h2Tit">Agregar empleados a lista de  asistencia</h2>
                       <form class="" id="formListAsis"action="#" method="post">
                         <input type="date" class="form-control" name="inpFeAsis" id="inpFeAsis" required value="<?php echo $dia;?>">
                         <input type="text" class="form-control" name="inpNumEmpAsis" id="inpNumEmpAsis" required value="" placeholder="# de empleado">
@@ -255,6 +259,27 @@
                 </div>
               </div>
               <div class="tab-pane fade" id="capNumOrd">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-12 col-xs-12 text-center">
+                        <form action="" id="formListNO" class="">
+                          <div style="display:inline-flex">
+                            <div id="divFormNOB">
+                              <label for="">De:</label>
+                              <div id="feNOI"></div>
+                            </div>
+                            <div id="divFormNOB2">
+                              <label for="">Hasta:</label>
+                              <div id="feNOF"></div>
+                            </div>
+                            <div id="divFormNOB3">
+                              <input type="submit" name="inpFeNO" id="inpFeNO" value="Buscar" class="btn btn-default form-control"/>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
                 <div class="col-md-8 col-md-offset-2 container-fluid">
                   <h2 class="text-center">Lista Numero de Ordenes</h2>
                   <div class="row">
@@ -264,9 +289,10 @@
                           <thead>
                             <tr>
                               <th>#</th>
+                              <th>FECHA</th>
                               <th>No. de Orden</th>
                               <th>No. de Parte</th>
-                              <th>ESTATUS</th>
+                              <th>Estatus</th>
                               <th>Captura</th>
                               <th>Detalle</th>
                             </tr>
@@ -288,7 +314,8 @@
                               }
                               $contador=1;
                               while ($fila=$resultado->fetch_array()) {
-                                echo '<tr><td>'.$contador.'</td>';
+                                  echo '<tr><td>'.$contador.'</td>';
+                                  echo '<td class="tdFecha">'.$fila['fecha'].'</td>';
                                   echo '<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
                                   echo '<td class="tdCapNumPart">'.$fila['num_parte'].'</td>';
                                   echo '<td>'.$fila['STATUS'].'</td>';

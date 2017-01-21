@@ -55,7 +55,7 @@
             break;
           default:
           $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(5000);
-        }
+        }//fin del switch
       }
     );
     e.preventDefault();

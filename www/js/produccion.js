@@ -46,6 +46,7 @@
   var horaFinalC=$('#horaFinalC');
   var btnBNONP=$('#btnBNONP');
   var inpBNONP=$('#inpBNONP');
+  var jqxNotiModCap = $('#jqxNotiModCap');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -126,30 +127,38 @@
     }
   })
   //Evento que asocia a la tab cuando carga por completo el
-  navPill.on('show.bs.tab',function() {
-    var nombreTab=$(this).text();
-    switch (nombreTab) {
-      case "CAPTURA":
-      //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
-      // console.log(hoy);
-      $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy},listCapNumOrd);
-      break;
-      case "NÚMERO DE ORDEN":
-        inpNumParte.focus().select();
-      break;
-      case "ASISTENCIA":
-      $("#txtAreCom").focus();
-      break;
-      case "REQUERIMIENTOS":
+  navPill.on('show.bs.tab shown.bs.tab',function(e) {
+    if (e.type=="shown") {
+      inpNumOrden.focus().select();
+    }
+    if (e.type=="show") {
+      var nombreTab=$(this).text();
+      switch (nombreTab) {
+        case "CAPTURA":
+        //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
+        // console.log(hoy);
+        $.post('captura.php',
+        {
+          pBandListaNumOrd:bandListaNumOrd,
+          pHoy:hoy
+        },listCapNumOrd);
+        break;
+        case "NÚMERO DE ORDEN":
+        // inpNumOrden.focus();
+        break;
+        case "ASISTENCIA":
+        $("#txtAreCom").focus();
+        break;
+        case "REQUERIMIENTOS":
         //vamos  a crear la tabla de requerimientos a partir de la información obtenida de la base de datos.
         var fechaHoy=$('#hoy').val();
         var reqNumOrden=true;
         $.post('requerimientos.php',{pFechaHoy:fechaHoy,pReqNumOrden:reqNumOrden},reqNumOrdenPost);
-      break;
-      default:
+        break;
+        default:
+      }
     }
   });
-  inpNumParte.focus();
   var mensaBD=$('#mensajeBD');
   var inpFNumOrden=$('#inpFNumOrden');
   var hoy=$('#hoy').val();
@@ -165,7 +174,7 @@
   fechaCompleta=ano+"-"+mes+"-"+dia;
   //hasta aquí se acaba lo de la fecha.
   if (fechaCompleta==!inpFNumOrden.val()) {
-    console.log("revisar la fecha de la computadora");
+    //console.log("revisar la fecha de la computadora");
     inpFNumOrden.val("").attr('disabled','');
     alert("revisar la fecha de la computadora");
   }
@@ -174,10 +183,80 @@
   }else{
     mensaBD.addClass('alert alert-danger text-center').hide().fadeOut(10000);
   }
-  //función para mostrar hora con javascript
+  //vamos a realizar el autocomplete
+  inpNumParte.autocomplete({
+		source:listaNumParteEx,
+		minLength:2,
+		select:function(event,ui) {
+      inpNumParte.val(ui.item.value);
+			var nParteSelect=inpNumParte.val();
+      inpCantReq.focus().select();
+      funObtRate();
+		}
+	});//fin del autcomplete
+	//Aquí termina el método del autocomplete()
+	//Aquí empieza el metodo listaEmpleados
+	function listaNumParteEx(request,response) {
+		$.post({
+			url:"php/numParte.php",
+			dataType:'json',
+			data:{numParte:request.term},
+			success:function (data) {
+				response(data);
+			},
+			type:'POST',
+      error:errorFuncionABtnEmp
+		});
+	}//fin de la función listaEmpleados.
+  function funObtRate() {
+    var nParteSelect=inpNumParte.val();
+    $.post({
+			url:"php/numParte.php",
+			dataType:'json',
+			data:{nParteSelect:nParteSelect,np:true},
+			success:exitoFunObRate,
+			type:'POST',
+      error:errorFuncionABtnEmp
+		});
+  }//fin de la función funObtRate
+  function exitoFunObRate(datos,x,y) {
+    if (datos.validacion=="exito") {
+      var rate = datos.datos;
+      $('#rateNumP').val(rate);
+    }else if (datos.validacion=="error") {
+      divNotificaciones.html(datos.datos);
+      jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+      $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+    }
+  }
+  //evento relacionado con los input de numpare y requerimiento para traer el dato del rate del numero de parte
+  $('#inpNumParte,#inpCantReq').on('blur focusin',evtInpReqNP);
+  function evtInpReqNP(e) {
+    var rateNP=$('#rateNumP').val();
+    var longRateNP=$('#rateNumP').val().length;
+    /*if (e.currentTarget.id=="inpNumParte"&&e.type=='blur') {
+      console.log("estamos saliendo del input con id inpNumParte con el evento blur");
+    }*/
+    if ((e.currentTarget.id=='inpCantReq'&&e.type=='focusin')||rateNP==0||longRateNP<2) {
+      if ($('#inpNumParte').val()==0||$('#inpNumParte').val().length<2||$('#inpNumParte').val().length>10) {
+        if ($('#rateNumP').val()!=0&&$('#rateNumP').val().length>1) {
+          $('#rateNumP').val('0');
+        }
+      }
+      var nParteSelect=inpNumParte.val();
+      $.post({
+  			url:"php/numParte.php",
+  			dataType:'json',
+  			data:{nParteSelect:nParteSelect,np:true},
+  			success:exitoFunObRate,
+  			type:'POST',
+        error:errorFuncionABtnEmp
+  		});
+    }
+  }
 
   //busqueda de los número de parte en el input NumParte
-  inpNumParte.bind('keyup keydown keypressed blur',function(e) {
+  /*inpNumParte.on('keyup keydown keypressed blur',function(e) {
     if (e.type=="keyup"&&e.which!=219) {
       cadNumParte=$(this).val().toUpperCase();
       var palabraC=$(this).val();
@@ -200,11 +279,11 @@
     }
     //capturamos la tacla de tab para una condición si es correcto el número de parte
     if (e.which==9) {
-      console.log(typeof inpNumParte.val()+" "+inpNumParte.val().length);
+      //console.log(typeof inpNumParte.val()+" "+inpNumParte.val().length);
       if (inpNumParte.val().length>0) {
         $('#listaNumParte').hide();
         parNumParte=inpNumParte.val();
-        console.log(parNumParte);
+        //console.log(parNumParte);
       }
       //ocultamos la lista cuando presionamos la tecla tab
     //   $.post('numOrden.php',{
@@ -218,8 +297,9 @@
           inpCantReq.val(0).removeAttr('disabled');
       }
     }
-  });
-  $('#inpCantReq').on('focusin',function(e) {
+  });//fin delevento keyup keydown keypressed blur del input inpNumParte*/
+  /*$('#inpCantReq').on('focusin',function(e) {
+    console.log(e);
     parNumParte=inpNumParte.val();
     if ($('ul>li>b').html()==inpNumParte.val()) {
       $('#listaNumParte').hide();
@@ -229,11 +309,33 @@
         pParNumParte:parNumParte
       },obtenerParcial
     )
-    }
-
+  }
   });
 
-  //formulario para generar número de parte
+  function obtenerParcial(data,status) {
+    //console.log(data+" "+status);
+    if (!(data==0)) {
+      inpFNumOrden.focus();
+      var cantidadReq;
+      inpParcial.val(data);
+      var parcial=inpParcial.val();
+      cantidadReq=window.prompt("Ingresa la cantidad");
+      canReq=parseInt(cantidadReq);
+      //console.log(canReq);
+      if (cantidadReq===null||isNaN(canReq)||canReq<parcial) {
+        //console.log(parseInt(cantidadReq) +" "+cantidadReq);
+        window.alert("Verifica la cantidad ingresada sea mayor que el parcial o que hayas ingresado un número");
+        //console.log("ingresa una cantidad");
+        return;
+      }
+      var total=cantidadReq-parcial;
+      inpCantReq.val(total);
+      inpCantReq.attr('disabled','disabled');
+    }else{
+    }
+  }//fin de la función obtenerParcial*/
+  //formulario para generar número de orden
+
   formNumOrden.on('submit',function(e) {
     e.preventDefault();
     var vNumOrden=$('#inpNumOrden').val();
@@ -242,7 +344,7 @@
     var vFechaNumOrden=$('#inpFNumOrden').val();
     var vNumUsuario=$('#inpNumUsuario').val();
     var fechaMostrar=vFechaNumOrden.split('-').reverse().join('-');
-    console.log(parNumParte);
+    //console.log(parNumParte);
     if (vCantidadReq<1) {
       window.alert("no has ingresado ninguna CANTIDAD");
       return;
@@ -269,38 +371,17 @@
               inpCantReq.val(0);
               inpCantReq.removeAttr('disabled');
               inpParcial.val(0);
-              inpNumParte.focus();
+              inpNumOrden.focus();
             }
           });//muestre el último registro del número de orden
         }
       });
     }else{
-      console.log("no hola");
+      //console.log("no hola");
     }
 
   });
-  function obtenerParcial(data,status) {
-    console.log(data+" "+status);
-    if (!(data==0)) {
-      inpFNumOrden.focus();
-      var cantidadReq;
-      inpParcial.val(data);
-      var parcial=inpParcial.val();
-      cantidadReq=window.prompt("Ingresa la cantidad");
-      canReq=parseInt(cantidadReq);
-      console.log(canReq);
-      if (cantidadReq===null||isNaN(canReq)||canReq<parcial) {
-        console.log(parseInt(cantidadReq) +" "+cantidadReq);
-        window.alert("Verifica la cantidad ingresada sea mayor que el parcial o que hayas ingresado un número");
-        console.log("ingresa una cantidad");
-        return;
-      }
-      var total=cantidadReq-parcial;
-      inpCantReq.val(total);
-      inpCantReq.attr('disabled','disabled');
-    }else{
-    }
-  }
+
   $('#formMosNumOrd').on('submit',function(e) {
     e.preventDefault();
     fechaInicial=inpFechIni.val();
@@ -309,7 +390,7 @@
       alert("La fecha inicial (DE) debe ser menor a la final(hasta)");
       return;
     }
-    console.log("Estamos en el formulario para mostrar los numero de orden"+"\nfecha Inicial: "+fechaInicial+ "\nfecha Final: "+ fechaFinal);
+    //console.log("Estamos en el formulario para mostrar los numero de orden"+"\nfecha Inicial: "+fechaInicial+ "\nfecha Final: "+ fechaFinal);
     $.post('numOrden.php',{pFechaInicial:fechaInicial,pFechaFinal:fechaFinal},numOrdenAMostrar);
   });
   function numOrdenAMostrar(data,status) {
@@ -328,7 +409,7 @@
   function Asistencia() {
     var fechAsis=$("#inpFechAsis").val();
     var comentAsis=$('#txtAreCom').val();
-    console.log(fechAsis+" "+comentAsis);
+    //console.log(fechAsis+" "+comentAsis);
     $.post('asistencia.php',{pFechAsis:fechAsis,pComentAsis:comentAsis},postAsistencia)
   };
   //función del $.post Asistencia
@@ -360,14 +441,15 @@
       $('#txtAreCom').val('');
       return divBtnFechAsis.after(divMensajeError).siblings('div:last-child').html(mensajeError);
     }else{
-      console.log(data);
-      console.log(divBtnFechAsis.siblings().size());
+      // console.log(data);
+      // console.log(divBtnFechAsis.siblings().size());
       $('#txtAreCom').val('')
       return divBtnFechAsis.after(divMensajeExito).siblings('div:last-child').append(mensajeExito);
     }
   }//fin de la función regresaMensaje
   //evento de click en el botón agregar
-  inpNumEmpAsis.bind('keyup blur focus',mayusNumEmple);
+  //vamos a poner en comentario los eventos keyup blur y focus del input inpNumEmpAsis
+  /*inpNumEmpAsis.on('keyup blur focus',mayusNumEmple);
   //con esta función vamos a convertir las letras en mayusculas
   function mayusNumEmple(e) {
     //console.log(e.type);
@@ -382,15 +464,40 @@
       cadNumEmpList=$(this).val().toUpperCase();
         break;
       default:
-    }
-  }
+    }//fin del switch
+  }//fin de los eventos del input inpNumEmpAsis*/
+  //vamos agregar el autocomplete de la asistencia
+  inpNumEmpAsis.autocomplete({
+		source:listaEmpleados,
+		minLength:2,
+		select:function(event,ui) {
+			inpNumEmpAsis.val(ui.item.value);
+			cadNumEmpList=inpNumEmpAsis.val();
+		}
+	});//fin del autcomplete
+	//Aquí termina el método del autocomplete()
+	//Aquí empieza el metodo listaEmpleados
+	function listaEmpleados(request,response) {
+		$.post({
+			url:"php/empleadoAsis.php",
+			dataType:'json',
+			data:{empListA:request.term,Emp:true},
+			success:function (data) {
+				response(data);
+			},
+			type:'POST',
+      error:errorFuncionABtnEmp
+		});
+	}//fin de la función listaEmpleados.
   //enviamos los datos de la lista a asistencia.php
-  formListAsis.on('submit',listaEmpleados);
-  function listaEmpleados(e) {
+  formListAsis.on('submit',listaEmpleadosF);
+  function listaEmpleadosF(e) {
     e.preventDefault();
     inpNumEmpAsis.val(cadNumEmpList.trim());
     inpFeAsis=$('#inpFeAsis').val();
     inpNumEmp=inpNumEmpAsis.val();
+    console.log(inpNumEmp);
+    console.log(inpFeAsis);
     // console.log(inpFeAsis + " " + inpNumEmp);
     //este $.post se encuentra en la línea 22 del archivo asistencia.php
     $.post('asistencia.php',
@@ -412,6 +519,9 @@
             $.post('asistencia.php',{pHoy:hoy,pBAnBtnMos:banBtnMos},listEmplBtnLisFech);
           }
         }
+        divNotificaciones.html("Agregado con Exito");
+        jqxNotiModCap.jqxNotification({template:'success',autoClose:true,autoCloseDelay:500}).jqxNotification('open');
+        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':9008});
       }
       if (capError=="E") {
         menListNumOpe.addClass('alert alert-danger col-md-12 text-center').html('<span>'+data.substr(1)+'</span>').show().fadeOut(5000);
@@ -434,7 +544,7 @@
     var numEmpTd=$(this).html();
     if ($(this).css('background-color')=="rgb(137, 185, 235)") {
       $(this).css('background-color','white').siblings().css({'background-color':$(this).css('background-color')});
-      console.log("dentro de la función busNumEmpTabla");
+      //console.log("dentro de la función busNumEmpTabla");
       return;
     }
     if (numEmpTd==auxNumEmpl) {
@@ -449,7 +559,7 @@
   function btnMostrarOcultar() {
     var banBtnMos=true;
     var tituloBtn=$(this).html();
-    console.log(tituloBtn);
+    //console.log(tituloBtn);
     switch (tituloBtn) {
       case 'Mostrar Lista Asistencia':
         $('#tablaListaEmpleados').show();
@@ -572,7 +682,7 @@
   btnBNONP.on('click',buscarNONP);
   function buscarNONP() {
     valorABuscar=inpBNONP.val().toUpperCase();
-    console.log(valorABuscar);
+    //console.log(valorABuscar);
     $('.lisNumPart').each(function () {
       var numParte=$("#"+$(this).children('span').prop('id')).html();
       if (numParte==valorABuscar) {
@@ -582,9 +692,9 @@
     });
     $('.spanNumOrd').each(function () {
       var x = $(this).html();
-      console.log(x);
+      //console.log(x);
       if (x==valorABuscar) {
-        console.log("HL");
+        //console.log("HL");
         $(this).siblings('.list-group').children('.lisNumPart').show();
         $(this).siblings('.list-group').find('.inpCLNE').focus();
         return false;
@@ -595,7 +705,7 @@
   divListNumOrden.on('click','.inpBtnLisNumEmp',liNumParte);
   function liNumParte(e) {
     var btnPresionado=$(this);
-    console.log(btnPresionado);
+    //console.log(btnPresionado);
     //guardamos el objeto del input
     var valInpNumEmp=$(this).prev().prev();
     //guardamos el número de orden de nuestra lista
@@ -640,7 +750,7 @@
         //si ocurrio un error dejamos en blanco el input
         btnPresionado.prev().prev().val("");
         //desplegamos el error ocurrido en un alert
-        console.log($('#menListNumOrdNumOp'));
+        //console.log($('#menListNumOrdNumOp'));
         var mensaje="<div id='menListNumOrdNumOp'class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+data+"</div>";
         if (!($('#menListNumOrdNumOp').length==1)) {
           btnPresionado.after(mensaje);
@@ -649,7 +759,7 @@
           btnPresionado.after(mensaje);
         }
       }
-      console.log(data);
+      //console.log(data);
       $('.inpCLNE').focus();
     }
   }//fin de la función liNumParte
@@ -673,7 +783,7 @@
     numOrdenL=$(this).parent().parent().parent().parent().parent().parent().parent().parent('.list-group-item').children('.spanNumOrd').html();
     numEmpleadoL=$(this).parent().siblings('span').html();
     var fecha=hoy;
-    console.log(fecha);
+    //console.log(fecha);
     $.post('captura.php',{pNumEmpleado:numEmpleadoL,pNumOrd:numOrdenL,pF:fecha},funElimNumEmplListNumOrd);
   }
   function funElimNumEmplListNumOrd(data,status) {
@@ -681,18 +791,18 @@
     if (datosJson.Validacion=="Exito") {
       var idDataList=liNumEmpleado.parent().siblings('datalist').prop('id');
       dataList=liNumEmpleado.parent().siblings('datalist');
-      console.log(datosJson);
+      //console.log(datosJson);
       liNumEmpleado.remove();
       var fecha=hoy;
       $.post('captura.php',{pFecha:fecha,pNumOrdenL:numOrdenL},postElimNumEmpl);
     }
     function postElimNumEmpl(data) {
-      console.log(data);
+      //console.log(data);
       var jsonDatos=$.parseJSON(data);
       dataList.html(jsonDatos.optionNumEmpl);
       // dataList.parent().parent().parent().parent().parent() .parent('.list-group-item').children('.spanNumOrd').html(jsonDatos.cantEmplNumOrd);
-      console.log(jsonDatos);
-      console.log(dataList.parent().parent().parent().parent().parent('.list-group-item').children('span.badge').html(jsonDatos.cantEmplNumOrd));
+      // console.log(jsonDatos);
+      // console.log(dataList.parent().parent().parent().parent().parent('.list-group-item').children('span.badge').html(jsonDatos.cantEmplNumOrd));
     }
     if (datosJson.Validacion=="ErrorDB") {
       window.alert("Error inesperado favor de contactar al administrador: "+"\n"+datosJson.Datos);
@@ -747,21 +857,21 @@
       $('#tablaDetCap>div.modal-dialog.modal-lg').css('width',"100%");
       // console.log(data);
     } catch (e) {
-      console.log(e);
-      console.log(data);
+      //console.log(e);
+      //console.log(data);
     }
   }
 
   //evento Buton para realizar la captura
   //vamos a construir la tabla de Lista Número de Ordenes, con el método $.post, en la pestaña de CAPTURA
-  $.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy,pInicio:true},listCapNumOrd);
+  //$.post('captura.php',{pBandListaNumOrd:bandListaNumOrd,pHoy:hoy,pInicio:true},listCapNumOrd);
   function listCapNumOrd(data,status) {
     //converir los string en datos Json.
     var jsonDatos=$.parseJSON(data);
     // console.log(jsonDatos);
     if (jsonDatos.Validacion=="Error") {
       var dia=jsonDatos.Datos;
-      console.log(dia);
+      //console.log(dia);
       // console.log($(mensajeErrorGenerico));
       mensajeErrorGenericoAux=$(mensajeErrorGenerico);
       var numHijosMenErr=mensajeErrorGenericoAux[0].childNodes.length
@@ -809,9 +919,9 @@
         break;
         case 'Captura Numero de Empleado':
         $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple).fail(function(jqXHR,textStatus,errorThrown) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          // console.log(jqXHR);
+          // console.log(textStatus);
+          // console.log(errorThrown);
         });
         break;
         case 'Asignar Número de Empleado a Número de Orden':
@@ -831,7 +941,7 @@
         // $('#tableCapNumEmp').DataTable();
       }
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
   //evento Boton del modal, Captura por número de orden.
@@ -900,7 +1010,7 @@
       }
       $('#fechaC').val(fechaCompleta);
       $('#cantidadC','#modalCaptura').focus().select();
-      console.log($('#fechaC').val());
+      //console.log($('#fechaC').val());
 
       var hora= fecha.getHours(),minutos=fecha.getMinutes(),segundos=fecha.getSeconds();
       if (hora<10) {
@@ -914,9 +1024,9 @@
       horaCompleta=hora+":"+minutos+":"+segundos;
       var miFecha=new Date();
       miFecha.setHours(hora,minutos,segundos);
-      console.log(miFecha.valueOf());
-      console.log(miFecha.getMinutes());
-      console.log(horaCompleta);
+      // console.log(miFecha.valueOf());
+      // console.log(miFecha.getMinutes());
+      // console.log(horaCompleta);
       var idDetListaNumOrden=$('#'+numEmpleadoC).val();
     }
   }//fin de la función cargComplModalCaptura
@@ -943,7 +1053,7 @@
       // $('#'+idModalTiempoMuerto+' .modal-body').css('background-color','green');
       // $.post('ttm.php.formCaptura').serialize(),respuestaTiempoM);
     }else if (valorRadioTT=="no") {
-      console.log("entraste Aquí al radio button de no");
+      //console.log("entraste Aquí al radio button de no");
       $('#tmC').val('0');
       arregloTiempoMuerto=[];
       $.post('captura.php',{capNumParte},calcEficiencia);
@@ -1055,10 +1165,10 @@
   });
   modalTiempoMuerto.on('click','#btnEliminarTTM',function() {
     var divTTM=$('#modalTiempoMuerto .modal-body>.divFormTTM');
-    console.log(divTTM);
+    //console.log(divTTM);
     divTTM.each(function(index,elemento) {
-      console.log($(this).attr('class'));
-      console.log(index);
+      //console.log($(this).attr('class'));
+      //console.log(index);
       if (index==0) {
         $(this).removeClass('divSelecionadoElim');
       }
@@ -1075,8 +1185,8 @@
     var fechaValid=$('#fechaC').val();
     var hIValid=$('#horaInicioC').data('timeAutocomplete').getTime();
     var hFValid=$('#horaFinalC').data('timeAutocomplete').getTime();
-    console.log(hIValid);
-    console.log(hFValid);
+    //(hIValid);
+    //console.log(hFValid);
     if (hFCaptura!=hFValid|| hICaptura!=hIValid||cantValid!=cantidad||fechaValid!=fechaCaptura) {
       window.alert("Vuelve a calcular eficiencia");
       cantidadC.focus().select();
@@ -1089,7 +1199,7 @@
     horaF=$(e.target).find('#horaFinalC');
     horaI.val(hIValid);
     horaF.val(hFValid);
-    console.log("hF"+horaF.val()+"HI"+horaI.val());
+    //console.log("hF"+horaF.val()+"HI"+horaI.val());
     // if (horaI.val().length==5) {
     //   horaI.val($(e.target).find('#horaInicioC').val()+":00");
     // }else if (horaF.val().length==5) {
@@ -1102,7 +1212,7 @@
       $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm},postFormCaptura);
       return false;
     }
-    console.log(datosForm);
+    //console.log(datosForm);
     // Aquí enviamos el tiempo muerto al servidor
     $.post('captura.php',{pIdEmpleado:idEmpleado,pIdDetAsis:idDetAsis,pDatosForm:datosForm,pArregloTiempoMuerto:arregloTiempoMuerto},postFormCaptura)
   };
@@ -1111,8 +1221,8 @@
       datosJson=$.parseJSON(data);
     } catch (e) {
       $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+e+'</p>').css({'margin-top':'10px','font-size':'17px'}));
-      console.log(data);
-      console.log(e);
+      //console.log(data);
+      //console.log(e);
       return false;
     }
     // console.log(datosJson);
@@ -1120,8 +1230,8 @@
   }
   //aquí mostramos los tipos de validación que tenemos al momento de hacer la captura errores de la base de datos, errores que no deberian pasar como caputuras duplicadas
   function alertasCaptura(datosJson) {
-    console.log(datosJson);
-    console.log(datosJson.Validacion);
+    //console.log(datosJson);
+    //console.log(datosJson.Validacion);
     switch (datosJson.Validacion) {
       case "ErrorDB":
         $("#formCaptura").append($(divAlertMenCaptura).addClass("alert-danger").html('<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+'<p class="text-center">Error Inesperado: '+datosJson.Datos+'</p>').css({'margin-top':'10px','font-size':'15px'}));
@@ -1198,8 +1308,8 @@
     inpHoraFinal=hFCaptura.split(':');
     horaInicio.setHours(inpHoraInicio[0],inpHoraInicio[1],inpHoraInicio[2]);
     horaFinal.setHours(inpHoraFinal[0],inpHoraFinal[1],inpHoraFinal[2]);
-    console.log(horaInicio);
-    console.log(horaFinal);
+    //(horaInicio);
+    //console.log(horaFinal);
     if (horaInicio.valueOf()==horaFinal.valueOf()) {
       window.alert("La hora inicio no puede ser igual a la hora final");
       capturarC.addClass('disabled btn-default').prop('disabled','disabled').removeClass('btn-primary');
@@ -1231,7 +1341,7 @@
       return false;
     }
     if (horaInicioAux.toTimeString()>=horaFinal.toTimeString()) {
-      console.log("Bien hecho :D");
+      //console.log("Bien hecho :D");
     }else{
       window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
       $("#horaFinalC").focus().select();
@@ -1245,9 +1355,9 @@
       $('#horaFinalC').focus();
       return false;
     }
-    console.log("Minutos totales: "+ minNP);
+    //console.log("Minutos totales: "+ minNP);
     minTrab=minNP-minTM;
-    console.log("Minutos Trabajados: "+ minTrab);
+    //console.log("Minutos Trabajados: "+ minTrab);
     cantProg=(rateNP/60)*minTrab;
     eficiencia=(cantidad/cantProg)*100;
     eficienciaM=eficiencia.toFixed(2);
@@ -1344,8 +1454,8 @@
         }
       });
     } catch (e) {
-        console.log(e);
-        console.log(data);
+        //console.log(e);
+        //(data);
     }
     // console.log(datos);
     // console.log(data);
@@ -1353,7 +1463,7 @@
   tablaReq.on('dblclick','.parReq',calcularBalance);
   function calcularBalance(e) {
     colorFondo=$(this).css('background-color');
-    console.log(colorFondo);
+    //console.log(colorFondo);
     $(this).prop('contenteditable','true').css('background-color','rgb(129, 129, 129)').blur(function() {
       // console.log(window.localStorage.getItem(parReqNumOrdR));
       parReqNumOrdR=$(this).siblings('.numOrdReq').html();
@@ -1386,8 +1496,8 @@
         window.alert(datos.Datos);
       }
     } catch (e) {
-      console.log(e);
-      console.log(data);
+      //console.log(e);
+      //console.log(data);
     }
   }
   //eliminar captura
@@ -1398,7 +1508,7 @@
     var idCaptura=$(this).parent().siblings('.idCap').text();
     var respuesta=window.confirm("Deseas eliminar esta captura "+ idCaptura +"número de empleado"+ empleado);
     if (respuesta==true) {
-      console.log("OKEY");
+      //console.log("OKEY");
       $.post('captura.php',{pIdCaptura:idCaptura,pNumOrdenEC:numOrdenEC,pFechaEC:fechaEC},respuestaElimCaptura)
     }else{
       // console.log("NOP");
@@ -1435,8 +1545,8 @@
         window.alert("OQUELA QUIEN SABE QUE PASO");
       }
     } catch (e) {
-      console.log(data);
-      console.log(e);
+      //console.log(data);
+      //console.log(e);
     } finally {
 
     }
@@ -1459,7 +1569,7 @@
       $('#tablaEditCap tbody').html(datos.Datos);
       inicioValEditCap();
     } catch (e) {
-      console.log(data);
+      //console.log(data);
     }
   }//fin de la funcion postTabEditCap
 
@@ -1475,7 +1585,7 @@
     eficienciaECVI=$('.efiEC','#tablaEditCap').html();
     minTMECVI=$('.tmEC','#tablaEditCap').html();
     cantidadECVI=$('#inpCantEC','#tablaEditCap').val();
-    console.log(idCapEC+" "+horaIECVI+" "+horaFECVI+" "+eficienciaECVI+" "+minTMECVI+" "+cantidadECVI);
+    //console.log(idCapEC+" "+horaIECVI+" "+horaFECVI+" "+eficienciaECVI+" "+minTMECVI+" "+cantidadECVI);
   }
   //evento click de la tabla donde vamos a modificar el tiempo muerto de la captura, Y VAMOS A CONSTRUIR la tabla por si tiene tiempo muerto o agregar tiempo muerto a la captura. y el input donde esta el tiempo muerto traer las opciones que tenemos en la base de datos.
   $('#modEditCap').on('click','.tmEC',tmEC);
@@ -1496,7 +1606,7 @@
       $('.tableTMEC').html(table);
       //esta función podremos usar los datos ya actualizados para actualizar el tm en pantalla
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
     calcTM();
   }
@@ -1512,7 +1622,7 @@
   }
   function resultadoELTMEC(data,status) {
     try {
-      console.log(data);
+      //console.log(data);
       var datos=$.parseJSON(data);
       if (datos.Validacion=="Error") {
         window.alert(datos.Datos);
@@ -1524,7 +1634,7 @@
         $('.btnEC','#tablaEditCap').removeAttr('disabled');
       }
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
   function dataListTTM2(datos,status) {
@@ -1560,7 +1670,7 @@
     var minCap=$('.tmEC','#tablaEditCap').html();
     var idTM=$('.inpTMEC').val();
     var minutosTM=$('.inpMinEC').val();
-    console.log(idTM);
+    //console.log(idTM);
     if (idTM.length<1||(minutosTM.length<1||minutosTM==0)) {
       if (idTM.length<1) {
         $('.inpTMEC').focus();
@@ -1589,7 +1699,7 @@
         window.alert(datos.Datos);
       }
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
   function calcTM(e) {
@@ -1621,7 +1731,7 @@
     }
     $.post('captura.php',{idCapEC:idCapEC,npCE:true},function(data,status) {
       try {
-        console.log(data);
+        //console.log(data);
         var datos=$.parseJSON(data);
         var rateNP=datos.Datos;
         var cantidad=$('#inpCantEC').val()
@@ -1649,7 +1759,7 @@
         horaFinalDBD=new Date();
         horaFinalDBD.setHours(horaFSDB[0],horaFSDB[1],horaFSDB[2]);
 
-        console.log(horaInicioDBD-horaInicioD);
+        //console.log(horaInicioDBD-horaInicioD);
         if (horaInicioDBD-horaInicioD>0) {
           window.alert("no se admite esta captura");
           return false;
@@ -1671,32 +1781,32 @@
         var minutosTrab=minutos-sumaTM;
         var cantidadProg=(rateNP/60)*minutosTrab;
         var eficiencia=((cantidad/cantidadProg)*100).toFixed(2);
-        console.log(cantidadProg);
-        console.log(eficiencia);
+        //console.log(cantidadProg);
+        //console.log(eficiencia);
         $('.efiEC','#tablaEditCap').html(eficiencia);
         // console.log(minutos);
         // console.log(minutosTrab);
         // console.log(sumaTM);
       } catch (e) {
-        console.log(e);
+        //console.log(e);
       }
     });
   }//aquí termina la función calcTM
   $('#tablaEditCap').on('change','#inpCantEC,#inpHIEC,#inpHFEC',function(e) {
-    console.log(e);
+    //console.log(e);
     calcEC();
   });
   function calcEC() {
     $.post('captura.php',{idCapEC:idCapEC,npCE:true},function(data,status) {
       try {
-        console.log(data);
+        //console.log(data);
         var datos=$.parseJSON(data);
         var rateNP=datos.Datos;
         var cantidad=$('#inpCantEC','#tablaEditCap').val()
         var sumaTM=$('.tmEC ','#tablaEditCap').html();
         horaIEC=$('#inpHIEC','#tablaEditCap').data('timeAutocomplete').getTime();
         horaFEC=$('#inpHFEC','#tablaEditCap').data('timeAutocomplete').getTime();
-        console.log(horaIEC+" "+horaFEC);
+        //console.log(horaIEC+" "+horaFEC);
         horaIS=horaIEC.split(':');
         horaFS=horaFEC.split(':');
         horaInicioD=new Date();
@@ -1718,7 +1828,7 @@
         horaFinalDBD=new Date();
         horaFinalDBD.setHours(horaFSDB[0],horaFSDB[1],horaFSDB[2]);
 
-        console.log(horaInicioDBD-horaInicioD);
+        //console.log(horaInicioDBD-horaInicioD);
         if (horaInicioDBD-horaInicioD>0) {
           window.alert("no se admite esta captura");
           return false;
@@ -1732,7 +1842,7 @@
         horaInicioAux=horaInicioAux+3600000;
         horaInicioAux= new Date(horaInicioAux);
         if (horaInicioAux.toTimeString()>=horaFinalD.toTimeString()) {
-          console.log("Bien hecho :D");
+          //console.log("Bien hecho :D");
         }else{
           window.alert("La hora final debe ser igual o menor a esta hora "+horaInicioAux.toLocaleTimeString());
           return false;
@@ -1740,8 +1850,8 @@
         var minutosTrab=minutos-sumaTM;
         var cantidadProg=(rateNP/60)*minutosTrab;
         var eficiencia=((cantidad/cantidadProg)*100).toFixed(2);
-        console.log(cantidadProg);
-        console.log(eficiencia);
+        //console.log(cantidadProg);
+        //console.log(eficiencia);
         $('.efiEC','#tablaEditCap').html(eficiencia);
         // console.log(minutos);
         // console.log(minutosTrab);
@@ -1752,7 +1862,7 @@
           $('.btnEC').removeAttr('disabled');
         }
       } catch (e) {
-        console.log(e);
+        //console.log(e);
       }
     });
   }//fin del metodo calcEC
@@ -1795,11 +1905,11 @@
     try {
       var datos= $.parseJSON(data);
       window.alert(datos.Validacion+" --> "+datos.Datos);
-      console.log(data);
+      //console.log(data);
       $('.btnEC').prop('disabled');
     } catch (e) {
-      console.log(e);
-      console.log(data);
+      //console.log(e);
+      //console.log(data);
     }
   }
   //----------aquí termina todo lo relacionado con la edición de la captura-----------------
@@ -1833,7 +1943,7 @@
         divNotificaciones.html("No hay conexión con el servidor,por favor espere ó llame al administrador");
         $(jqxNotiModCap).jqxNotification({template:'error'});
         $(jqxNotiModCap).jqxNotification('open');
-        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+        $('#jqxNotificationDefaultContainer-top-right').css({'z-index':9010});
         return false;
       } else if (jqXHR.status == 404) {
         alert('Requested page not found [404]');
@@ -1858,16 +1968,34 @@
     autoClose: false,
     template: "error"
     });
+  //vamos a gregar un evento si hay un error en el AJAX
+  function errorFuncionABtnEmp(jqXHR,textStatus,errorThrown) {
+		if (jqXHR.status == 0) {
+			divNotificaciones.html("No hay conexión con el servidor, por favor intente más tarde o llame al administrador");
+			jqxNotiModCap.jqxNotification({template:'error',autoClose:true,autoCloseDelay:1500}).jqxNotification('open');
+			$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+			return false;
+		}
+		var errorPHP=jqXHR.responseText;
+		//Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
+		divNotificaciones.html(textStatus);
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
+		divNotificaciones.html(errorPHP);
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		divNotificaciones.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+	}//fin de la función errorFuncionABtnEmp
 });//fin del la función del ready
 
 //función click de la lista de los número de parte #listaNumParte
-function set_item(item) {
-  // change input value
-  $('#inpNumParte').val(item);
-  // hide proposition list
-  $('#listaNumParte').hide();
-  $('#inpCantReq').focus().select();
-}
+// function set_item(item) {
+//   // change input value
+//   $('#inpNumParte').val(item);
+//   // hide proposition list
+//   $('#listaNumParte').hide();
+//   $('#inpCantReq').focus().select();
+// }
 /*Recorrer el arreglo cuando tenemos mas de una fila en la consulta que nos envian desde el servidor
 for (var i = 0; i < dat.Datos.length; i++) {
   console.log(dat.Datos[i].cantidad);

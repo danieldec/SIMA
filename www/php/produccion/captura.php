@@ -115,7 +115,9 @@
         exit();
       }
       $fechas=fechaActual();
-        $consulta="SELECT DATE_FORMAT(DATE_ADD(MAX(a.fecha), INTERVAL 1 DAY),'%d-%b-%Y') as hoyF, MAX(a.fecha) as hoy from asistencia a";
+      //vamos a realizar una consulta antes de mostrar la fecha a ver si sale.
+        $conexion->query("SET lc_time_names = 'es_ES'");
+        $consulta="SELECT DATE_FORMAT(DATE_ADD(MAX(a.fecha), INTERVAL 1 DAY),'%W %d-%M-%Y') as hoyF, MAX(a.fecha) as hoy from asistencia a;";
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
         $arreglo['Validacion']='Error';
@@ -747,6 +749,7 @@
     $contador=1;
     while ($fila=$resultado->fetch_array()) {
       $tbody=$tbody.'<tr><td>'.$contador.'</td>';
+      $tbody=$tbody.'<td class="tdFecha">'.$fila['fecha'].'</td>';
       $tbody=$tbody.'<td class="tdCapNumOrd">'.$fila['idnum_orden'].'</td>';
       $tbody=$tbody.'<td class="tdCapNumPart">'.$fila['num_parte'].'</td>';
       $tbody=$tbody.'<td>'.$fila['STATUS'].'</td>';
