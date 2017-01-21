@@ -47,6 +47,8 @@
   var btnBNONP=$('#btnBNONP');
   var inpBNONP=$('#inpBNONP');
   var jqxNotiModCap = $('#jqxNotiModCap');
+  var feNOI = $('#feNOI');
+  var fecDetAsis = $('#fecDetAsis');
   var bandListaNumOrd=true;
   var arregloTiempoMuerto=[];
   var mensajeErrorGenerico='<div class="alert fade in" id="mensajeAlerta"><button type="button" class="close" data-dismiss="alert">&times;</button>';
@@ -104,6 +106,7 @@
   var eficienciaECVI='';
   var zInd=$('#modCapNumOrd').css('zIndex');
   divNotificaciones=$('#divNotificaciones');
+  var fechaDiaDet=new Date()
   //inicializamos el datepick del plug-in
   // horaInicioC.timeAutocomplete({formatter: '24hr'});
   // horaFinalC.timeAutocomplete({formatter: '24hr'});
@@ -835,8 +838,8 @@
     numOrdenDC=$(this).parent().siblings(".tdCapNumOrd").html();
     var numParteDC=$(this).parent().siblings(".tdCapNumPart").html();
     // console.log(numOrdenDC+" "+numParteDC);
-    var fechaDC=$('#hoy').val();
-    // console.log(fechaDC);
+    var fechaDCR = fecDetAsis.jqxDateTimeInput('getDate');
+    var fechaDC = obtenerFecha(fechaDCR);
     modDetCap.modal({backdrop: "static",keyboard:false});
     $('#spanNO','#modDetCap').html(numOrdenDC);
     $('#spanNP','#modDetCap').html(numParteDC);
@@ -1968,6 +1971,33 @@
     autoClose: false,
     template: "error"
     });
+    fecDetAsis.jqxDateTimeInput(
+  		{
+  			width: '150px',
+  			height: '25px',
+  			culture:'es-ES',
+  			formatString: "d",
+  			showFooter:true,
+  			clearString:'Limpiar',
+  			todayString:'Hoy',
+  			disabled:false,
+  			showWeekNumbers:true
+  	}).jqxDateTimeInput('setDate',new Date(fechaDiaDet.getFullYear(),fechaDiaDet.getMonth(),fechaDiaDet.getDate()));
+
+    function obtenerFecha(fechaDia) {
+  		this.fechaDia=fechaDia;
+  		if (parseInt(this.fechaDia.getMonth())<9) {
+  			mes=0+""+(this.fechaDia.getMonth()+1);
+  		}else{
+  			mes=this.fechaDia.getMonth()+1;
+  		}
+  		if (parseInt(this.fechaDia.getDate())<10) {
+  			dia=0+""+this.fechaDia.getDate();
+  		}else{
+  			dia=this.fechaDia.getDate();
+  		}
+  		return this.fechaDia.getFullYear()+"/"+mes+"/"+dia;
+  	}//fin de la función obtenerFecha
   //vamos a gregar un evento si hay un error en el AJAX
   function errorFuncionABtnEmp(jqXHR,textStatus,errorThrown) {
 		if (jqXHR.status == 0) {

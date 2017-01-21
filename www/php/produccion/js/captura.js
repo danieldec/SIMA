@@ -355,6 +355,8 @@ function principal() {
 			rateNumParteOriginal=data.rate;
 			inpNumParteCap.val(numParteOriginal);
 			spanRateCap.html(rateNumParteOriginal);
+			var fechaCapturaM=divFechaCapEmpleados.jqxDateTimeInput('getDate');
+			divFechaCapPost.jqxDateTimeInput('setDate',new Date(fechaCapturaM.getFullYear(),fechaCapturaM.getMonth(),fechaCapturaM.getDate()));
 		}else if (data.validacion=="Error") {
 			divNotificaciones.html(data.datos);
 			//console.log(data.datos);

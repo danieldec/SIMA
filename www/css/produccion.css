@@ -321,6 +321,9 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #formListNO{
   margin-top: 10px;
 }
+#fecDetAsis{
+  margin-left: 45%;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;

@@ -279,6 +279,12 @@
                         </form>
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="col-md-12 col-xs-12 text-center">
+                      <h4>Fecha Detalle Asistencia</h4>
+                      <div id="fecDetAsis"></div>
+                    </div>
+                  </div>
                 </div>
                 <div class="col-md-8 col-md-offset-2 container-fluid">
                   <h2 class="text-center">Lista Numero de Ordenes</h2>
