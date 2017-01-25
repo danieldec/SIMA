@@ -349,7 +349,8 @@
     var fechaMostrar=vFechaNumOrden.split('-').reverse().join('-');
     //console.log(parNumParte);
     if (vCantidadReq<1) {
-      window.alert("no has ingresado ninguna CANTIDAD");
+      window.alert("Ingresa el requerimiento del Folio");
+      $('#inpCantReq').focus().select();
       return;
     }
     //console.log(vNumOrden+" "+vNumParte+" "+vCantidadReq+" "+vFechaNumOrden+" "+vNumUsuario);
@@ -358,33 +359,142 @@
       $.ajax({
         url:'numOrden.php',
         type:'POST',
+        dataType:'json',
         data:{pVNumOrden:vNumOrden,pVNumParte:vNumParte,pVCantidadReq:vCantidadReq,pVFechaNumOrden:vFechaNumOrden,pVNumUsuario:vNumUsuario},
-        success:function(data) {
-          //agregar un mensaje de error, si pasa un error al momento de insertar un número de orden
-          $('#mensajeNumOrden').html(data).addClass('alert alert-success text-center').show().fadeOut(5000);
-          $.ajax({
-            url:'numOrden.php',
-            type:'POST',
-            data:{pNumOrdenMax:1},
-            success:function(data) {
-              var numParte=parseInt(data);
-              numParte=numParte+1;
-              inpNumOrden.val(numParte);
-              inpNumParte.val("");
-              inpCantReq.val(0);
-              inpCantReq.removeAttr('disabled');
-              inpParcial.val(0);
-              inpNumOrden.focus();
-            }
-          });//muestre el último registro del número de orden
-        }
+        success:exitoSubNM
       });
-    }else{
-      //console.log("no hola");
     }
-
+  });//fin del submit formNumOrden
+  //vamos a inicializar ventana de la edición de la captura
+  $('#venEditNM').jqxWindow({
+    height:'100%',
+    width:'100%',
+    maxWidth:'900px',
+    maxHeight:'200px',
+    autoOpen:false
   });
-
+  function exitoSubNM(datos,x,y) {
+    if (datos.validacion=="exito") {
+      divNotificaciones.html(datos.datos);
+      $(jqxNotiModCap).jqxNotification({template:'success',autoClose:true,autoCloseDelay:1000});
+      $(jqxNotiModCap).jqxNotification('open');
+      $.ajax({
+        url:'numOrden.php',
+        type:'POST',
+        data:{pNumOrdenMax:1},
+        success:function(data) {
+          var numParte=parseInt(data);
+          numParte=numParte+1;
+          inpNumOrden.val(numParte);
+          inpNumParte.val("");
+          inpCantReq.val(0);
+          inpCantReq.removeAttr('disabled');
+          inpParcial.val(0);
+          $('#rateNumP').val(0);
+          inpNumOrden.focus();
+        }
+      });//muestre el último registro del número de orden
+    }else if (datos.validacion=="error") {
+      if (datos.numError==1452) {
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,width:'300px'});
+        $(jqxNotiModCap).jqxNotification('open');
+        inpNumParte.focus();
+      }else{
+        $('#tablaEditNM>tbody').html(datos.datosnm);
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true});
+        $(jqxNotiModCap).jqxNotification('open');
+        $('#venEditNM').jqxWindow('open');
+        evtAndFunctEdtCap();
+      }
+    }
+  }
+  //eventos y funciones de la edición o eliminación de un número de orden o folioVenCap
+  function evtAndFunctEdtCap() {
+    $('.divFechRE','#venEditNM').each(function () {
+      //asi generamos un fecha con javascript con el formato 2017/01/20/ Año/mes/día/
+      var fechaR=$(this).siblings('.fechRaw').val();
+      fechaFormateada=fechaJS(fechaR);
+      var fechaFD=new Date(fechaFormateada[0],fechaFormateada[1],fechaFormateada[2]);
+      $(this).jqxDateTimeInput(
+        {
+          width: '100px',
+          height: '25px',
+          culture:'es-ES',
+          formatString: "d",
+          showFooter:true,
+          clearString:'Limpiar',
+          todayString:'Hoy',
+          disabled:true,
+          showWeekNumbers:true
+        }).jqxDateTimeInput('setDate',new Date(fechaFD.getFullYear(),fechaFD.getMonth(),fechaFD.getDate()));
+    });
+  }
+  //eventos asociados a la ventana de editar el número de orden o Folio
+  $('#venEditNM').on('click','.inpBtnElim',evtClickInpElim);
+  function evtClickInpElim(e) {
+    var numOrden = $(this).parent().siblings('.idNOE').children('input').val();
+    var numParte = $(this).parent().siblings('.cantiE').children('input').val();
+    $('#venEditNM').data(
+      {
+        numOrden:numOrden,
+        numParte:numParte
+      });
+    crearVenConfig();
+    $('#conDivVenConf').html("¿Deseas Eliminar este Folio?");
+    $('#venConf').css('display','');
+    $('#venConf').jqxWindow('open');
+  }
+  //evento del cierre de la ventana
+  $('#venConf').on('close',evtCerrVenConf);
+  function evtCerrVenConf(e) {
+    if (e.args.dialogResult.OK==true) {
+      console.log("Vamos a eliminar el número de orden");
+      var numOrden = $('#venEditNM').data('numOrden');
+      var numParte= $('#venEditNM').data('numParte')
+      $.post(
+        {
+          url:'numOrdenElim.php',
+          dataType:'json',
+          data:{numOrden:numOrden,numParte:numParte},
+          success:exitoElimFolio,
+          type:'POST',
+          error:errorFuncionABtnEmp
+        }
+      );
+    }
+  }//fin de la función evtCerrVenConf
+  function exitoElimFolio(datos,x,y) {
+    if (datos.validacion=="exito") {
+      divNotificaciones.html(datos.datos);
+      $(jqxNotiModCap).jqxNotification({template:'success',autoClose:true,autoCloseDelay:1000});
+      $(jqxNotiModCap).jqxNotification('open');
+    }else if (datos.validacion="error") {
+      divNotificaciones.html(datos.datos);
+      $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,autoCloseDelay:1000});
+      $(jqxNotiModCap).jqxNotification('open');
+    }
+  }
+  //función para crear la ventana jqxWindow
+  function crearVenConfig() {
+    var lenHtmlVenConf=$('#venConf').html().length;
+    if (lenHtmlVenConf<=427) {
+      $('#venConf').jqxWindow({
+        width:200,
+        height:200,
+        isModal:true,
+        okButton:$('#btnOK'),
+        cancelButton:$('#btnCAN')
+      });
+    }
+  }
+  //función que formatea la fecha en forma de 2017-0-1, porque en javascript el mes de enero empieza en  0 y el día no tiene que llevar un cero a la izquierda. y es llamada en la función evtAndFunctEdtCap
+  function fechaJS(fecha) {
+    fechaR = fecha.split('-');
+    fechaR[1]=parseInt(fechaR[1])-1;
+    return fechaR;
+  }
   $('#formMosNumOrd').on('submit',function(e) {
     e.preventDefault();
     fechaInicial=inpFechIni.val();
@@ -2009,12 +2119,12 @@
 		var errorPHP=jqXHR.responseText;
 		//Aquí vamos a capturar el error que nos arroje ya sea javascript, como php
 		divNotificaciones.html(textStatus);
-		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto',autoClose:false}).jqxNotification('open');
 		$('#jqxNotificationDefaultContainer-top-right').css({'z-index':zInd});
 		divNotificaciones.html(errorPHP);
-		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto',autoClose:false}).jqxNotification('open');
 		divNotificaciones.html(errorThrown.message+": "+errorThrown.name+"\n"+errorThrown.stack);
-		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto'}).jqxNotification('open');
+		jqxNotiModCap.jqxNotification({template:'error',width:'auto',height:'auto',autoClose:false}).jqxNotification('open');
 	}//fin de la función errorFuncionABtnEmp
 });//fin del la función del ready
 

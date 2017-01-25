@@ -389,3 +389,6 @@ td>.capturaEmpleados, .detalleNumOrden{
   cursor: pointer;
   color: blue;
 }
+.idNOE>input,.idNPE>input,.cantiE>input{
+  width:85px;
+}

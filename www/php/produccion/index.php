@@ -126,19 +126,19 @@
                 <div class="col-sm-12">
                   <form action="numOrden.php" id="formMosNumOrd"method="post">
                     <div class="col-sm-2">
-                      <label for="">De</label><input type="date" name="fechIni"class="form-control" id="inpFechIni" value="<?php
+                      <label for="">De: </label><input type="date" name="fechIni"class="form-control" id="inpFechIni" value="<?php
                         $diaAnterior=strtotime('-1 day',strtotime($dia));
                         $diaAnterior=date('Y-m-d',$diaAnterior);
                         echo $diaAnterior;?>">
                     </div>
                     <div class="col-sm-2">
-                      <label for="">hasta</label><input type="date" name="fechFin"class="form-control" id="inpFechFin" value="<?php echo $dia?>">
+                      <label for="">Hasta: </label><input type="date" name="fechFin"class="form-control" id="inpFechFin" value="<?php echo $dia?>">
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="button">Click</label>
                       <input type="submit" name="" class="form-control" value="Mostrar" id="btnMostrarNumOrden">
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                       <label for="button">Click</label>
                       <input type="button" name="" class="form-control" value="Ocultar" id="btnOcultarNumOrden">
                     </div>
@@ -914,6 +914,35 @@
         </div>
       </div>
      </div><!--Fin del div ventana divVentanaCapHora-->
+     <div id="venEditNM">
+       <div>Editar Número de Orden (FOLIO)</div>
+       <div>
+         <table id="tablaEditNM" class="table table-bordered table-condensed table-responsive">
+           <thead>
+             <tr>
+               <th>Folio</th>
+               <th># parte</th>
+               <th><abbr title="Cantidad Requerimiento">CR</abbr></th>
+               <th>Fecha Req.</th>
+               <th><abbr title="Fecha y hora generada">Fecha y Hora</abbr></th>
+               <th><abbr title="Número de Usuario">NM</abbr></th>
+               <th>nombre Usuario</th>
+               <th>Acción</th>
+             </tr>
+           </thead>
+           <tbody></tbody>
+         </table>
+       </div>
+     </div>
+     <div id="venConf" style="display:none">
+       <!-- Si vamos a modificar el contenido de esta ventana hay que modificar una condición el archivo de produccion.js en la funcion crearVenConfig() -->
+       <div>Confirmación</div>
+       <div>
+         <div id="conDivVenConf"></div>
+         <input type='button' class="btn btn-default" id="btnOK" value="Aceptar"/>
+         <input type="button" class="btn btn-default" id="btnCAN" value="Cancelar"/>
+       </div>
+     </div>
     <!-- <div id="divVenParcial">
       <div>Parcial </div>
       <div></div>

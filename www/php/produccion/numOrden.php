@@ -28,19 +28,58 @@
         //echo $fila['cantidad'].$fila['idparcial'].$fila['localizacion'];
       }
     }//fin del if Parcial
-    if (isset($_POST['pVNumOrden'])) {
-      $num_orden=$_POST['pVNumOrden'];
-      $num_parte=$_POST['pVNumParte'];
-      $cantidad_Req=$_POST['pVCantidadReq'];
-      $fecha_Num_Orden=$_POST['pVFechaNumOrden'];
-      $id_usuario=$_POST['pVNumUsuario'];
-      $consulta="insert into num_orden (idnum_orden, num_parte, cantidad, fecha, usuarios_idusuario, fecha_generada) value('$num_orden','$num_parte','$cantidad_Req','$fecha_Num_Orden','$id_usuario',CURRENT_TIMESTAMP)";
+    if (isset($_POST['pVNumOrden'])&&isset($_POST['pVNumParte'])) {
+      $num_orden=trim($_POST['pVNumOrden']);
+      $num_parte=trim($_POST['pVNumParte']);
+      $cantidad_Req=trim($_POST['pVCantidadReq']);
+      $fecha_Num_Orden=trim($_POST['pVFechaNumOrden']);
+      $id_usuario=trim($_POST['pVNumUsuario']);
+      $datos = array();
+      $consulta="SELECT nm.idnum_orden,nm.num_parte,nm.cantidad,nm.fecha,nm.fecha_generada,nm.usuarios_idusuario, CONCAT_WS(' ',e.nombre,e.apellidos)AS nombreU,nm.fecha AS fJS FROM num_orden AS nm
+      INNER JOIN usuarios AS u ON u.idusuario=nm.usuarios_idusuario
+      INNER JOIN empleados AS e ON e.idempleados=u.empleados_idempleados
+      WHERE nm.idnum_orden='$num_orden';";
       $resultado=$conexion->query($consulta);
       if (!$resultado) {
-        echo "error: ".mysqli_error($conexion);
-        return;
+        $datos['validacion']='error';
+        $datos['datos']=$conexion->errno."($conexion->error)";
+        echo json_encode($datos,JSON_UNESCAPED_UNICODE);
+        exit();
       }
-      echo "Registro Exitoso";
+      if ($resultado->num_rows>0) {
+        $datos['validacion']='error';
+        $datos['datos']="Número de orden Duplicada";
+        $tbody="";
+        while ($fila=$resultado->fetch_object()) {
+          $tbody.='<tr><td class="idNOE"><input type="number" name="" value="'.$fila->idnum_orden.'" disabled/></td>';
+          $tbody.='<td class="idNPE"><input type="text" name="" value="'.$fila->num_parte.'" disabled></td>';
+          $tbody.='<td class="cantiE"><input type="number" name="" value="'.$fila->cantidad.'" disabled></td>';
+          $tbody.='<td class="fechaReqE"><div class="divFechRE"></div><input type="hidden" value="'.date('Y-n-j',strtotime($fila->fJS)).'"class="fechRaw"/></td>';
+          $tbody.='<td class="fechaGenE">'.$fila->fecha_generada.'</td>';
+          $tbody.='<td class="idUsuE">'.$fila->usuarios_idusuario.'</td>';
+          $tbody.='<td class="nombreUE">'.$fila->nombreU.'</td>';
+          $tbody.='<td class="nombreUE"><input type="button" value="Editar" class="inpBtnEdit btn btn-default"/><input type="button" value="Eliminar" class="inpBtnElim btn btn-danger"/></td></tr>';
+        }
+        $datos['datosnm']=$tbody;
+      }else{
+        $consulta="insert into num_orden (idnum_orden, num_parte, cantidad, fecha, usuarios_idusuario, fecha_generada) value('$num_orden','$num_parte','$cantidad_Req','$fecha_Num_Orden','$id_usuario',CURRENT_TIMESTAMP)";
+        $resultado=$conexion->query($consulta);
+        if (!$resultado) {
+          $datos['validacion']='error';
+          if ($conexion->errno==1452) {
+            $datos['validacion']='error';
+            $datos['numError']='1452';
+            $datos['datos']="Número de parte invalido o no existe en la base de datos";
+          }else{
+            $datos['datos']=$conexion->errno."($conexion->error)";
+          }
+          echo json_encode($datos,JSON_UNESCAPED_UNICODE);
+          exit();
+        }
+        $datos['validacion']="exito";
+        $datos['datos']='Numéro de orden captura';
+      }
+      echo json_encode($datos,JSON_UNESCAPED_UNICODE);
     }//fin del if de numero de orden
     if (isset($_POST['pFechaInicial'])) {
       $fechaInicial=$_POST['pFechaInicial'];
@@ -77,7 +116,7 @@
           $fechaFormat=date("l d-m-Y H:i:sA ",strtotime($fecha));
           echo "<td>".$fechaFormat."</td></tr>";
         }//fin del while
-    }//fin del if Fecha
+    }//fin del if Fecha    
   }//fin del if del $_POST es igual a post
   //busqueda de numero de partes por .Ajax
   if (isset($_POST['pPalabraC'])) {
@@ -92,8 +131,8 @@
         echo '<li onclick="set_item(\''.str_replace("'", "\'", $fila['num_parte']).'\')">'.$numParte.'</li>';
       }
     }
-    mysqli_free_result($resultado);
-    mysqli_close($conexion);
+    //mysqli_free_result($resultado);
+    //mysqli_close($conexion);
   }
   if (isset($_POST['pNumOrdenMax'])) {
     $consulta="select MAX(idnum_orden) as id from num_orden";
@@ -104,7 +143,8 @@
     }
     $fila=$resultado->fetch_array();
     echo $fila['id'];
-    mysqli_free_result($resultado);
-    mysqli_close($conexion);
+    //mysqli_free_result($resultado);
+    //mysqli_close($conexion);
   }
+
  ?>
