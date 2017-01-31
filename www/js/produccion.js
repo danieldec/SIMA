@@ -1270,11 +1270,23 @@
         case 'Captura Numero Orden':
         break;
         case 'Captura Numero de Empleado':
-        $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple).fail(function(jqXHR,textStatus,errorThrown) {
-          // console.log(jqXHR);
-          // console.log(textStatus);
-          // console.log(errorThrown);
-        });
+          // $.post(
+          //   'capturaGeneral.php',
+          //   {pTabCapNumEmp:
+          //     tabCapNumEmp},
+          //     tablaCapNumEmple);
+          $.post(
+            {
+              url:'capturaGeneral.php',
+              data:
+              {
+                pTabCapNumEmp:tabCapNumEmp
+              },
+              type:'POST',
+              beforeSend:beforeTablaCapNumEmpl,
+              success:tablaCapNumEmple,
+              error:errorFuncionABtnEmp
+            });
         break;
         case 'Asignar Número de Empleado a Número de Orden':
         break;
@@ -1287,14 +1299,19 @@
       var tbody=$.parseJSON(datos);
       // console.log(datos);
       if (tbody.Validacion=="Exito") {
+
         // $('#tableCapNumEmp tbody').empty();
         // $('#tableCapNumEmp').DataTable().destroy();
-        $('#tableCapNumEmp tbody').html(tbody.Datos);
+        $('#tableCapNumEmp>tbody').html(tbody.Datos);
         // $('#tableCapNumEmp').DataTable();
       }
     } catch (e) {
       //console.log(e);
     }
+  }//fin de la función tablaCapNumEmple
+  function beforeTablaCapNumEmpl() {
+    $('#tableCapNumEmp>tbody').html("");
+    console.log("Antes de enviar el archivo");
   }
   //evento Boton del modal, Captura por número de orden.
   modCapNumOrd.on('click','#capturaC',modalCapturaC);

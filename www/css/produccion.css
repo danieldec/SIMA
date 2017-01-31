@@ -178,7 +178,6 @@ label{
   background-color: #c5fe5b;
 }
 #tableCapNumEmp>tbody>tr>td:nth-of-type(1){
-  background-color:rgb(12, 232, 205);
   width: 5%;
   font-size: 12px;
 }
