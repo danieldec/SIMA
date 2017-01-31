@@ -60,4 +60,19 @@ WHERE c.fecha BETWEEN '2016-10-31'  AND '2016-11-03'
 ORDER BY c.fecha,da.empleados_idempleados,c.hora_inicio  ASC
 
 --ejemplo de un operador la suma de horas trabajadas menos las horas de tiempo muerto.
-SELECT SUM(TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio))/60)/60-SUM(c.tiempo_muerto/60) FROM captura AS c INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND da.empleados_idempleados='D-1291'
+SELECT SUM(TIME_TO_SEC(SUBTIME(c.hora_final,c.hora_inicio))/60)/60-SUM(c.tiempo_muerto/60) FROM captura AS c INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND da.empleados_idempleados='D-1291';
+-- CONSULTA QUE NOS MUESTRE EL TIEMPO MUERTO QUE DEBEN TENER LOS EMPLEADOS POR DÍA
+SELECT * FROM captura AS c
+LEFT JOIN detalletiempom AS dtm ON dtm.idcaptura = c.idcaptura
+INNER JOIN tiempo_muerto AS tm ON tm.idtiempo_muerto= dtm.idtiempo_muerto
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
+INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList AND DA.iddetalle_asistencia= 83
+
+--OTRA CONSULTA DE TIEMPO MUERTO
+SELECT * FROM captura AS c
+LEFT JOIN detalletiempom AS dtm ON dtm.idcaptura = c.idcaptura
+INNER JOIN tiempo_muerto AS tm ON tm.idtiempo_muerto= dtm.idtiempo_muerto
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
+INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList
+INNER JOIN empleados AS e ON e.idempleados = da.empleados_idempleados AND e.idempleados='D-1275'
+WHERE c.fecha = '2017-01-24';

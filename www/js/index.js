@@ -1,4 +1,34 @@
   $(document).on('ready',function () {
+    //vamos a confirmar que la hora del servidor sea igual a la hora de nuestro cliente;
+    var fechaDia=new Date();
+    var inpHoy = $('#inpHoy');
+    var fechaC = inpHoy.val();
+    var fechaSplit = fechaC.split('-');
+    var fechaCDate=fechaJsConInput(fechaSplit);
+    //vamos a poner en nuestra fecha construida las horas, minutos, segundos y milisegundos de nuetra fecha Actual para comparar si la fecha del cliente es igual a a la del servidor
+    fechaCDate.setHours(fechaDia.getHours());
+    fechaCDate.setMinutes(fechaDia.getMinutes());
+    fechaCDate.setSeconds(fechaDia.getSeconds());
+    fechaCDate.setMilliseconds(fechaDia.getMilliseconds());
+    console.log(fechaDia.valueOf());
+    console.log(fechaCDate.valueOf());
+    console.log(fechaDia);
+    console.log(fechaCDate);
+    if (fechaDia.valueOf()!==fechaCDate.valueOf()) {
+      window.alert("No concuerda la fecha del cliente con la del servidor revisar su fecha y la del servidor.\n Y VUELVA A RECARGAR LA PÁGINA\n(PRESIONE F5 O CRTL+MAYUS+R)");
+      $('#inUsuario').prop('disabled','disabled')
+      $('#inContra').prop('disabled','disabled')
+      $('#btnIniciarSesion').prop('disabled','disabled')
+      return false;
+    }
+    function fechaJsConInput(fechaSplit) {
+      //Aquí hacemos entero el número para quitarle  y lo guardamos en el arreglo de la posición del mes y le restamos uno, porque en javascript el mes de enero empieza en 0
+      fechaSplit[1] = parseInt(fechaSplit[1])-1;
+      fechaSplit[2] = parseInt(fechaSplit[2]);
+      //Aquí construimos la fecha
+      var fechaJS= new Date(fechaSplit[0],fechaSplit[1],fechaSplit[2]);
+      return fechaJS;
+    };
   // creamos esta variable para guardar el nombreUsuario para convertirlo en mayusculas
   var cadenaUsuario="";
   //creamos una variable que hace referencia al input donde se va a colocar el nombre del usuario
@@ -22,12 +52,18 @@
     inputUsuario.val(cadenaUsuario);
     var usuario= inputUsuario.val();
     var contrasena=$('#inContra').val();
-    $.post('php/login.php',
-    {
-      nombreUsuario:usuario,
-      contrasenaUsuario:contrasena
-    },
-      function(data, status) {
+    $.post({
+      url:'php/login.php',
+      data:
+      {
+        nombreUsuario:usuario,
+        contrasenaUsuario:contrasena
+      },
+      beforeSend:function (x,y) {
+        $('#btnIniciarSesion').html("Entrando...").prop('disabled','disabled');
+      },
+      success:function (data,status) {
+        $('#btnIniciarSesion').html("Iniciar Sesión").removeAttr('disabled');
         switch (data) {
           case 'admin':
             mensajeIngreso();
@@ -54,16 +90,17 @@
             window.location.href="php/entrenamiento/";
             break;
           default:
-          $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(5000);
+          $('#tipoAlerta').html(data).addClass("alert alert-danger text-center").show().fadeOut(2000);
         }//fin del switch
       }
-    );
+    });
+    return false;
     e.preventDefault();
   });
   function mensajeIngreso() {
-    window.alert("Ingresaste Correctamente");
+    window.alert("Ingresaste Correctamente.\n Presiona la tecla Enter para continuar o dale click en aceptar");
   }
-});
+
 
 jQuery.print = function(message, insertionType) {
   if (typeof(message) == 'object') {
@@ -96,3 +133,4 @@ jQuery.print = function(message, insertionType) {
   insertionType = insertionType || 'append';
   $output[insertionType]($newMessage);
 };
+});

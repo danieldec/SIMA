@@ -175,6 +175,7 @@
     mes="0"+mes;
   }
   fechaCompleta=ano+"-"+mes+"-"+dia;
+  console.log(fechaCompleta);
   //hasta aquí se acaba lo de la fecha.
   if (fechaCompleta==!inpFNumOrden.val()) {
     //console.log("revisar la fecha de la computadora");
@@ -399,13 +400,14 @@
         divNotificaciones.html(datos.datos);
         $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,width:'300px'});
         $(jqxNotiModCap).jqxNotification('open');
-        inpNumParte.focus();
+        inpNumParte.focus().select();
       }else{
         $('#tablaEditNM>tbody').html(datos.datosnm);
         divNotificaciones.html(datos.datos);
         $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true});
         $(jqxNotiModCap).jqxNotification('open');
         $('#venEditNM').jqxWindow('open');
+        $('#venEditNM').jqxWindow('focus');
         evtAndFunctEdtCap();
       }
     }
@@ -430,46 +432,89 @@
           showWeekNumbers:true
         }).jqxDateTimeInput('setDate',new Date(fechaFD.getFullYear(),fechaFD.getMonth(),fechaFD.getDate()));
     });
-  }
+  }//fin de la función evtAndFunctEdtCap
   //eventos asociados a la ventana de editar el número de orden o Folio
   $('#venEditNM').on('click','.inpBtnElim',evtClickInpElim);
   function evtClickInpElim(e) {
     var numOrden = $(this).parent().siblings('.idNOE').children('input').val();
-    var numParte = $(this).parent().siblings('.cantiE').children('input').val();
+    var numParte = $(this).parent().siblings('.idNPE').children('select').val();
+    var numReg = $('.idNOE','#venEditNM').length;
+    // console.log(numReg);
+    //vamos a determinar si cerrar la ventana por si existe más de un número de orden repetido
     $('#venEditNM').data(
       {
         numOrden:numOrden,
-        numParte:numParte
+        numParte:numParte,
+        numReg:numReg
       });
     crearVenConfig();
     $('#conDivVenConf').html("¿Deseas Eliminar este Folio?");
     $('#venConf').css('display','');
     $('#venConf').jqxWindow('open');
-  }
+  }//fin de la función evtClickInpElim
   //evento del cierre de la ventana
   $('#venConf').on('close',evtCerrVenConf);
   function evtCerrVenConf(e) {
     if (e.args.dialogResult.OK==true) {
-      console.log("Vamos a eliminar el número de orden");
       var numOrden = $('#venEditNM').data('numOrden');
-      var numParte= $('#venEditNM').data('numParte')
+      var numParte = $('#venEditNM').data('numParte');
+      var numReg = $('#venEditNM').data('numReg');
       $.post(
         {
-          url:'numOrdenElim.php',
+          url:'numOrdElimEdit.php',
           dataType:'json',
-          data:{numOrden:numOrden,numParte:numParte},
+          data:{numOrden:numOrden,numParte:numParte,numReg:numReg},
           success:exitoElimFolio,
           type:'POST',
           error:errorFuncionABtnEmp
         }
       );
-    }
+    }//fin del if
   }//fin de la función evtCerrVenConf
   function exitoElimFolio(datos,x,y) {
-    if (datos.validacion=="exito") {
-      divNotificaciones.html(datos.datos);
-      $(jqxNotiModCap).jqxNotification({template:'success',autoClose:true,autoCloseDelay:1000});
-      $(jqxNotiModCap).jqxNotification('open');
+    switch (datos.validacion) {
+      case "exito":
+        if (datos.numReg>1) {
+          var numOrden = $('#venEditNM').data('numOrden');
+          var cargVen= true;
+          $.post(
+            {
+              url:'numOrden.php',
+              dataType:'json',
+              data:{numOrden:numOrden,cargVen:cargVen},
+              success:exitoRecVenNO,
+              type:'POST',
+              error:errorFuncionABtnEmp
+            }
+          );
+        }
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'success',autoClose:true,autoCloseDelay:1000});
+        $(jqxNotiModCap).jqxNotification('open');
+        $('#venEditNM').jqxWindow('close');
+        break;
+      case "error":
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,autoCloseDelay:2500});
+        $(jqxNotiModCap).jqxNotification('open');
+        break;
+      case "errodb":
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,autoCloseDelay:1000});
+        $(jqxNotiModCap).jqxNotification('open');
+        break;
+      default:
+        divNotificaciones.html(datos.datos);
+        $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,autoCloseDelay:1000});
+        $(jqxNotiModCap).jqxNotification('open');
+    }
+  }
+  //función recargarVentanaNumOrden
+  function exitoRecVenNO(datos,x,y) {
+    if (datos.validacion="exito") {
+      $('#tablaEditNM>tbody').html(datos.datos);
+      $('#venEditNM').jqxWindow('open');
+      evtAndFunctEdtCap();
     }else if (datos.validacion="error") {
       divNotificaciones.html(datos.datos);
       $(jqxNotiModCap).jqxNotification({template:'error',autoClose:true,autoCloseDelay:1000});
@@ -482,7 +527,7 @@
     if (lenHtmlVenConf<=427) {
       $('#venConf').jqxWindow({
         width:200,
-        height:200,
+        height:100,
         isModal:true,
         okButton:$('#btnOK'),
         cancelButton:$('#btnCAN')
@@ -495,6 +540,200 @@
     fechaR[1]=parseInt(fechaR[1])-1;
     return fechaR;
   }
+  //editar el número de orden o folio cuando tengamos abierta la ventana venEditNM
+  //Aquí estaran los método, funciones y variables
+  var NumOrdD = "";
+  var numParD = "";
+  var cantReqD = "";
+  var fechaReqDR = "";
+  var fechaReqD = "";
+  var fRDR="";
+  $('#venEditNM').on('click','.inpBtnEdit',evtClickEditNO);
+  function evtClickEditNO(e) {
+    if ($(this).val()=="Editar") {
+      //habilitar los elementos
+      $(this).parent().siblings('.idNOE').children('input').removeAttr('disabled');
+      $(this).parent().siblings('.idNPE').children('select').removeAttr('disabled');
+      $(this).parent().siblings('.cantiE').children('input').removeAttr('disabled');
+      $(this).parent().siblings('.fechaReqE').children('.divFechRE').jqxDateTimeInput({disabled:false});
+      //número de orden o folio
+      NumOrdD = $(this).parent().siblings('.idNOE').children('input').val();
+      //número de parte
+      numParD = $(this).parent().siblings('.idNPE').children('select').val();
+      //cantidad requerimiento
+      cantReqD = $(this).parent().siblings('.cantiE').children('input').val();
+      //fechas extraida desde el calendario
+      fechaReqDR = $(this).parent().siblings('.fechaReqE').children('.divFechRE').jqxDateTimeInput('getDate');
+      //fecha formateada YYYY/mm/dd
+      fechaReqD = obtenerFecha(fechaReqDR);
+      //vamos en milisegundos de la fecha
+      fRDR = fechaReqDR.valueOf();
+      //cambiamos el nombre del input.
+      $(this).val("Guardar");
+      console.log(NumOrdD);
+      console.log(numParD);
+      console.log(cantReqD);
+      console.log(fechaReqDR);
+      console.log(fechaReqD);
+      console.log(fRDR);
+    }else if ($(this).val()=="Guardar") {
+      //número de orden
+      var NumOrdM = $(this).parent().siblings('.idNOE').children('input').val();
+      //número de parte
+      var numParM = $(this).parent().siblings('.idNPE').children('select').val();
+      //cantidad requerimiento
+      var cantReqM = $(this).parent().siblings('.cantiE').children('input').val();
+      //fecha obtenida del calendario
+      var fechaReqMR = $(this).parent().siblings('.fechaReqE').children('.divFechRE').jqxDateTimeInput('getDate');
+      //fecha en formato YYYY/mm/dd Años/mes/día
+      var fechaReqM = obtenerFecha(fechaReqMR);
+      //fecha obtenida en milisegundos
+      var fRMR = fechaReqMR.valueOf();
+      console.log(NumOrdD);
+      console.log(NumOrdM);
+      console.log(NumOrdD === NumOrdM);
+      console.log(numParD);
+      console.log(numParM);
+      console.log(numParD === numParM);
+      console.log(cantReqD);
+      console.log(cantReqM);
+      console.log(cantReqD === cantReqM);
+      console.log(fRDR);
+      console.log(fRMR);
+      console.log(fRDR === fRMR);
+      if (NumOrdD === NumOrdM && numParD === numParM && cantReqD === cantReqM && fRDR === fRMR) {
+        $(this).val("Editar");
+        $(this).parent().siblings('.idNOE').children('input').prop('disabled','disabled');
+        $(this).parent().siblings('.idNPE').children('select').prop('disabled','disabled');
+        $(this).parent().siblings('.cantiE').children('input').prop('disabled','disabled');
+        $(this).parent().siblings('.fechaReqE').children('.divFechRE').jqxDateTimeInput({disabled:true});
+        console.log("No hacemos nada y cambiamos el valor del input a Editar y desactivamos los input y el calendario");
+      }else{
+        //vamos a modificar el número de orden o el folio.
+        var numUsuDb=$(this).parent().siblings('.idUsuE').text();
+        var numUsuLog=$('#inpNumUsuario').val();
+        if (NumOrdD !== NumOrdM) {
+          console.log("Vamos a editar número de orden");
+          console.log(fechaReqM);
+          console.log(NumOrdD);
+          console.log(NumOrdM);
+          console.log(numParD);
+          console.log(numParM);
+          console.log(cantReqM);
+          console.log(numUsuDb);
+          console.log(numUsuLog);
+          if (numUsuDb!==numUsuLog) {
+            console.log("Vamos a enviar el número de usuario");
+            $.post(
+              {
+                url : 'numOrdElimEdit.php',
+                type : 'POST',
+                data :
+                {
+                  fechaReqM : fechaReqM,
+                  NumOrdD : NumOrdD,
+                  NumOrdM : NumOrdM,
+                  numParD : numParD,
+                  numParM : numParM,
+                  cantReqM : cantReqM,
+                  numUsuLog : numUsuLog
+                },
+                dataType : 'json',
+                success : exitoEditNumOrd,
+                error : errorFuncionABtnEmp
+              });
+          }else{
+            console.log("No vamos a enviar el número de usuario");
+            $.post(
+              {
+                url : 'numOrdElimEdit.php',
+                type : 'POST',
+                data :
+                {
+                  fechaReqM : fechaReqM,
+                  NumOrdD : NumOrdD,
+                  NumOrdM : NumOrdM,
+                  numParD : numParD,
+                  numParM : numParM,
+                  cantReqM : cantReqM
+                },
+                dataType : 'json',
+                success : exitoEditNumOrd,
+                error : errorFuncionABtnEmp
+              });
+          }
+        }else{
+          console.log(fechaReqM);
+          console.log(NumOrdD);
+          console.log(NumOrdM);
+          console.log(numParD);
+          console.log(numParM);
+          console.log(cantReqM);
+          console.log(numUsuDb);
+          console.log(numUsuLog);
+          console.log("No Vamos a editar número de orden");
+          if (numUsuDb!==numUsuLog) {
+            console.log("Vamos a enviar el número de usuario");
+            $.post(
+              {
+                url : 'numOrdElimEdit.php',
+                type : 'POST',
+                data :
+                {
+                  fechaReqM : fechaReqM,
+                  NumOrdD : NumOrdD,
+                  numParD : numParD,
+                  numParM : numParM,
+                  cantReqM : cantReqM,
+                  numUsuLog : numUsuLog
+                },
+                dataType : 'json',
+                success : exitoEditNumOrd,
+                error : errorFuncionABtnEmp
+              });
+          }else{
+            console.log("No vamos a enviar el número de usuario");
+            $.post(
+              {
+                url : 'numOrdElimEdit.php',
+                type : 'POST',
+                data :
+                {
+                  fechaReqM : fechaReqM,
+                  NumOrdD : NumOrdD,
+                  numParD : numParD,
+                  numParM : numParM,
+                  cantReqM : cantReqM
+                },
+                dataType : 'json',
+                success : exitoEditNumOrd,
+                error : errorFuncionABtnEmp
+              });
+          }
+        }
+      }
+    }//fin del else if
+  }//fin de la función evtClickEditNO
+  //función que obtiene la respuesta al momento de editar el número de orden.
+  function exitoEditNumOrd(datos,x,y) {
+    if (datos.validacion=="exito") {
+      divNotificaciones.html(datos.datos);
+      jqxNotiModCap.jqxNotification({template:'success',autoClose:false,autoCloseDelay:1000,width:'100%'});
+      $(jqxNotiModCap).jqxNotification('open');
+      $('#venEditNM').jqxWindow('close');
+    }else if (datos.validacion=="error") {
+      divNotificaciones.html(datos.datos);
+      jqxNotiModCap.jqxNotification({template:'error',autoClose:false,autoCloseDelay:1000,width:'100%'});
+      jqxNotiModCap.jqxNotification('open');
+    }
+    divNotificaciones.html(datos);
+    console.log(datos);
+  }
+  //evento cuando se crea la ventana para editar o eliminar la captura
+  // $('#venEditNM').on('created',evtVenEditNMCreada);
+  // function evtVenEditNMCreada(e) {
+  //   $(this)
+  // }
   $('#formMosNumOrd').on('submit',function(e) {
     e.preventDefault();
     fechaInicial=inpFechIni.val();

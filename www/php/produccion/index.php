@@ -48,15 +48,17 @@
     $conexion->close();
    ?>
    <input type="date" name="hoy" id="hoy" value="<?php echo $dia?>" hidden='hidden'>
-  <div class="row">
-    <div id="divFechaPagina" class="col-sm-12 text-right well">
-      <?php include '../diaSemana.php';
-      setlocale(LC_TIME , 'es_MX.utf8');
-      $fecha="";
-      //$fecha="Hoy es ".strftime('%A')." ".date('d/M/Y');
-      $fecha = "Hoy es ".strtoupper(strftime('%A',strtotime(date('Y/m/d'))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
-      echo "<span id='spanFechaPagina'>".$fecha."</span>";
-      ?>
+   <div class="container-fluid">
+    <div class="row">
+      <div id="divFechaPagina" class="col-sm-12 text-right">
+        <?php include '../diaSemana.php';
+        setlocale(LC_TIME , 'es_MX.utf8');
+        $fecha="";
+        //$fecha="Hoy es ".strftime('%A')." ".date('d/M/Y');
+        $fecha = "Hoy es ".strtoupper(strftime('%A',strtotime(date('Y/m/d'))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
+        echo "<span id='spanFechaPagina'>".$fecha."</span>";
+        ?>
+      </div>
     </div>
   </div>
   <!-- Tablas de navegación-->
@@ -64,9 +66,9 @@
     <div class="row">
       <div role="tabpanel">
         <ul class="nav nav-pills nav-justified" role="tablist">
-          <li role="presentation" class=""><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
+          <li role="presentation" class="active"><a href="#divNumOrden" aria-controls="divNumorden" role="tab" data-toggle="tab">NÚMERO DE ORDEN</a></li>
           <li role="presentation" ><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
-          <li role="presentation" class="active"><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
+          <li role="presentation" class=""><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
           <li role="presentation"><a href="#divRequerimientos" aria-controls="divRequerimientos" role="tab" data-toggle="tab">REQUERIMIENTOS</a></li>
         </ul>
         <br>
@@ -74,7 +76,8 @@
           <!--Aquí empieza el tab de número de parte-->
           <!--Cambiar cuando termine con las otras pestañas
           <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">-->
-          <div role="tabpanel" class="tab-pane fade" id="divNumOrden">
+          <!-- <div role="tabpanel" class="tab-pane fade" id="divNumOrden"> -->
+          <div role="tabpanel" class="tab-pane fade in active" id="divNumOrden">
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" id="formNumOrden">
               <div class="container-fluid well">
                 <div class="row">
@@ -228,7 +231,7 @@
           </div>
           <!--Aquí termina el tab de asistencia| -->
           <!--Aquí empieza el tab de captura-->
-          <div role="tabpanel" class="tab-pane fade in active" id="divCaptura">
+          <div role="tabpanel" class="tab-pane fade" id="divCaptura">
             <!--Pestañas o tabs de la captura-->
             <ul class="nav nav-tabs" id="uLTabCaptura">
               <li><a href="#tabAsigNumOrden" data-toggle="tab">Asignar Número de Empleado a Número de Orden</a></li>
@@ -939,8 +942,8 @@
        <div>Confirmación</div>
        <div>
          <div id="conDivVenConf"></div>
-         <input type='button' class="btn btn-default" id="btnOK" value="Aceptar"/>
-         <input type="button" class="btn btn-default" id="btnCAN" value="Cancelar"/>
+         <input type='button' class="btn btn-danger" id="btnOK" value="Aceptar"/>
+         <input type="button" class="btn btn-primary" id="btnCAN" value="Cancelar"/>
        </div>
      </div>
     <!-- <div id="divVenParcial">

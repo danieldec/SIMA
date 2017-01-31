@@ -7,9 +7,7 @@
 </head>
 <body>
   <?php include 'php/navIndex.php';?>
-  <br>
-  <br>
-  <br>
+  <input type="date" name="" value="<?php echo date("Y-m-d")?>" hidden="hidden" id="inpHoy">
   <div class="container well col-md-8 col-md-offset-2">
     <form class="form-horizontal" id="loginForm" action="login.php" method="post">
       <div class="form-group">

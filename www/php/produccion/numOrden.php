@@ -49,17 +49,7 @@
       if ($resultado->num_rows>0) {
         $datos['validacion']='error';
         $datos['datos']="Número de orden Duplicada";
-        $tbody="";
-        while ($fila=$resultado->fetch_object()) {
-          $tbody.='<tr><td class="idNOE"><input type="number" name="" value="'.$fila->idnum_orden.'" disabled/></td>';
-          $tbody.='<td class="idNPE"><input type="text" name="" value="'.$fila->num_parte.'" disabled></td>';
-          $tbody.='<td class="cantiE"><input type="number" name="" value="'.$fila->cantidad.'" disabled></td>';
-          $tbody.='<td class="fechaReqE"><div class="divFechRE"></div><input type="hidden" value="'.date('Y-n-j',strtotime($fila->fJS)).'"class="fechRaw"/></td>';
-          $tbody.='<td class="fechaGenE">'.$fila->fecha_generada.'</td>';
-          $tbody.='<td class="idUsuE">'.$fila->usuarios_idusuario.'</td>';
-          $tbody.='<td class="nombreUE">'.$fila->nombreU.'</td>';
-          $tbody.='<td class="nombreUE"><input type="button" value="Editar" class="inpBtnEdit btn btn-default"/><input type="button" value="Eliminar" class="inpBtnElim btn btn-danger"/></td></tr>';
-        }
+        $tbody=tbodyNumOrdDup($resultado);
         $datos['datosnm']=$tbody;
       }else{
         $consulta="insert into num_orden (idnum_orden, num_parte, cantidad, fecha, usuarios_idusuario, fecha_generada) value('$num_orden','$num_parte','$cantidad_Req','$fecha_Num_Orden','$id_usuario',CURRENT_TIMESTAMP)";
@@ -116,7 +106,7 @@
           $fechaFormat=date("l d-m-Y H:i:sA ",strtotime($fecha));
           echo "<td>".$fechaFormat."</td></tr>";
         }//fin del while
-    }//fin del if Fecha    
+    }//fin del if Fecha
   }//fin del if del $_POST es igual a post
   //busqueda de numero de partes por .Ajax
   if (isset($_POST['pPalabraC'])) {
@@ -146,5 +136,59 @@
     //mysqli_free_result($resultado);
     //mysqli_close($conexion);
   }
-
+  if (isset($_POST['numOrden'])&&isset($_POST['cargVen'])) {
+    $numOrden = $_POST['numOrden'];
+    $consulta="SELECT nm.idnum_orden,nm.num_parte,nm.cantidad,nm.fecha,nm.fecha_generada,nm.usuarios_idusuario, CONCAT_WS(' ',e.nombre,e.apellidos)AS nombreU,nm.fecha AS fJS FROM num_orden AS nm
+    INNER JOIN usuarios AS u ON u.idusuario=nm.usuarios_idusuario
+    INNER JOIN empleados AS e ON e.idempleados=u.empleados_idempleados
+    WHERE nm.idnum_orden='$numOrden';";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      $datos['validacion']='error';
+      $datos['datos']=$conexion->errno."($conexion->error)";
+      echo json_encode($datos,JSON_UNESCAPED_UNICODE);
+      exit();
+    }
+    $tbody=tbodyNumOrdDup($resultado);
+    $datos['validacion']='exito';
+    $datos['datos']=$tbody;
+    echo json_encode($datos,JSON_UNESCAPED_UNICODE);
+  }//fin del if
+  //funciones del archivo numOrden.php
+  function tbodyNumOrdDup($resultado)
+  {
+    $tbody="";
+    while ($fila=$resultado->fetch_object()) {
+      $tbody.='<form><tr><td class="idNOE"><input type="number" name="" value="'.$fila->idnum_orden.'" disabled/></td>';
+      $tbody.='<td class="idNPE">'.selectNP($fila->num_parte).'</td>';
+      $tbody.='<td class="cantiE"><input type="number" name="" value="'.$fila->cantidad.'" disabled></td>';
+      $tbody.='<td class="fechaReqE"><div class="divFechRE"></div><input type="hidden" value="'.date('Y-n-j',strtotime($fila->fJS)).'"class="fechRaw"/></td>';
+      $tbody.='<td class="fechaGenE">'.$fila->fecha_generada.'</td>';
+      $tbody.='<td class="idUsuE">'.$fila->usuarios_idusuario.'</td>';
+      $tbody.='<td class="nombreUE">'.$fila->nombreU.'</td>';
+      $tbody.='<td class="nombreUE"><input type="button" value="Editar" class="inpBtnEdit btn btn-default"/><input type="button" value="Eliminar" class="inpBtnElim btn btn-danger"/></td></tr></form>';
+    }
+    return $tbody;
+  }
+  function selectNP($num_parte)
+  {
+    include '../conexion/conexion.php';
+    $select="";
+    $consulta="SELECT np.num_parte FROM num_parte AS np WHERE np.estado='1';";
+    $resultado=$conexion->query($consulta);
+    if (!$resultado) {
+      return $conexion->errno."($conexion->error)";
+      exit();
+    }
+    $select="<select name='sNp' class='sNp' disabled>";
+    while ($fila=$resultado->fetch_object()) {
+      if ($fila->num_parte==$num_parte) {
+        $select.="<option value='$fila->num_parte' selected>$fila->num_parte</option>";
+      }else{
+        $select.="<option value='$fila->num_parte'>$fila->num_parte</option>";
+      }
+    }
+    $select.="</select>";
+    return $select;
+  }
  ?>
