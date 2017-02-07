@@ -1,0 +1,25 @@
+legend{
+  margin-bottom: 0px;
+}
+#imgAtras{
+  width: 30%;
+}
+#divFechaPagina{
+  padding-top: 13px;
+}
+#spanFechaPagina{
+  font-size: 1.3em;
+  font-weight: bolder;
+  letter-spacing: 2px;
+}
+#formEfiPorEmp{
+  margin-top: 15px;
+}
+#inpFeNO{
+  margin-left: 10px;
+}
+#inpEmpABus{
+  border-radius: 5px;
+  width: 25rem;
+  text-transform: uppercase;
+}

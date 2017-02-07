@@ -76,3 +76,28 @@ INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddet
 INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList
 INNER JOIN empleados AS e ON e.idempleados = da.empleados_idempleados AND e.idempleados='D-1275'
 WHERE c.fecha = '2017-01-24';
+
+SELECT * FROM empleados AS e
+INNER JOIN detalle_asistencia AS da ON da.empleados_idempleados = e.idempleados
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_asistenciaDetList = da.iddetalle_asistencia
+INNER JOIN captura AS c ON c.iddetalle_Lista_NumOrdenCap = dln.iddetalle_Lista_NumOrden
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis
+INNER JOIN num_parte AS np ON np.num_parte = nm.num_parte
+WHERE c.fecha BETWEEN '2017-01-31' AND '2017-02-01' AND e.idempleados = 'D-617'
+ORDER BY c.fecha,c.hora_inicio
+
+SELECT * FROM captura AS c
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap AND dln.iddetalle_Lista_NumOrden = "1101"
+INNER JOIN usuarios AS u ON u.idusuario = c.usuarios_idusuario
+INNER JOIN empleados AS e ON e.idempleados = u.empleados_idempleados
+LEFT JOIN detalletiempom AS dtm ON dtm.idcaptura=c.idcaptura
+
+SELECT c.fecha, e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombreC,da.iddetalle_asistencia, COUNT(c.idcaptura) AS cantidadCap FROM empleados AS e
+INNER JOIN detalle_asistencia AS da ON da.empleados_idempleados = e.idempleados
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_asistenciaDetList = da.iddetalle_asistencia
+INNER JOIN captura AS c ON c.iddetalle_Lista_NumOrdenCap = dln.iddetalle_Lista_NumOrden
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis
+INNER JOIN num_parte AS np ON np.num_parte = nm.num_parte
+WHERE e.idempleados = 'D-617' AND c.fecha BETWEEN '2017-01-20' AND '2017-02-02'
+GROUP BY c.fecha
+ORDER BY c.fecha,c.hora_inicio

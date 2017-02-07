@@ -70,6 +70,7 @@
           <li role="presentation" ><a href="#divAsistencia" aria-controls="divAsistencia" role="tab" data-toggle="tab">ASISTENCIA</a></li>
           <li role="presentation" class=""><a href="#divCaptura" aria-controls="divCaptura" role="tab" data-toggle="tab">CAPTURA</a></li>
           <li role="presentation"><a href="#divRequerimientos" aria-controls="divRequerimientos" role="tab" data-toggle="tab">REQUERIMIENTOS</a></li>
+          <li role="presentation"><a href="consultas.php">CONSULTAS <span class="glyphicon glyphicon-arrow-right" aria-hidden="true" id="iconRowRigh"></span></a></li>
         </ul>
         <br>
         <div class="tab-content">
@@ -453,7 +454,8 @@
               </div>
             </div>
           </div>
-          <!--Aquí termina el tab de captura| -->
+          <!--Aquí termina el tab de requerimientos -->
+
         </div>
       </div>
     </div>
@@ -806,9 +808,9 @@
     <div id="jqxNotiModCap">
       <div id="divNotificaciones"></div>
     </div>
-    <div id="jqxErrorConexion">
+    <!-- <div id="jqxErrorConexion">
       <div id="divNotificaciones"></div>
-    </div>
+    </div> -->
     <div id="jqxError2ModCap"></div>
     <div id="jqxError3ModCap"></div>
     <div id="divVentanaModalConfirm"></div>

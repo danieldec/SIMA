@@ -323,6 +323,9 @@ totalwidth=100%; anchoCelda= (totalwidth - width)/12  eso es igual a 5.47
 #fecDetAsis{
   margin-left: 45%;
 }
+#iconRowRigh{
+  margin-left: 10px;
+}
 ul.ui-front{
   position: absolute;
   z-index: 1050;
