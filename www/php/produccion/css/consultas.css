@@ -1,6 +1,9 @@
 legend{
   margin-bottom: 0px;
 }
+body{
+  background-color: rgb(255, 255, 255);
+}
 #imgAtras{
   width: 30%;
 }
@@ -14,6 +17,7 @@ legend{
 }
 #formEfiPorEmp{
   margin-top: 15px;
+  margin-bottom: 45px;
 }
 #inpFeNO{
   margin-left: 10px;
@@ -22,4 +26,22 @@ legend{
   border-radius: 5px;
   width: 25rem;
   text-transform: uppercase;
+}
+#tablaDetEfi>tbody>tr>td{
+  text-align: center;
+}
+#tablaDetEfi>thead>tr>th{
+  text-align: center;
+}
+.detAsisDia{
+  cursor: pointer;
+  color: rgb(10, 0, 196);
+  background-color: rgb(197, 156, 242) !important;
+}
+.detAsisDia:hover{
+  background-color: rgb(197, 140, 260) !important
+}
+.detAsisDia:focus{
+  color:white;
+  transform: scale(1.05);
 }

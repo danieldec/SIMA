@@ -23,3 +23,23 @@ SELECT * FROM captura as c
     		INNER JOIN detalle_Lista_NumOrden dln ON dln.iddetalle_Lista_NumOrden=c.iddetalle_Lista_NumOrdenCap
     		INNER JOIN detalle_asistencia da ON da.iddetalle_asistencia='966' AND da.iddetalle_asistencia=dln.iddetalle_asistenciaDetList
     		WHERE c.fecha='2016-12-05' AND (c.hora_inicio BETWEEN '07:00:00' AND '07:59:00') ORDER BY c.hora_inicio ASC
+
+SELECT c.fecha, e.idempleados,CONCAT_WS(' ',e.nombre,e.apellidos) AS nombreC,da.iddetalle_asistencia, COUNT(c.idcaptura) AS cantidadCap,SUM(TIME_TO_SEC(c.hora_final-c.hora_inicio)/60)/60 as ttot, SUM(c.tiempo_muerto/60) AS tm, SUM(TIME_TO_SEC(c.hora_final-c.hora_inicio)/60)/60 - SUM(c.tiempo_muerto/60) ttrab FROM empleados AS e
+INNER JOIN detalle_asistencia AS da ON da.empleados_idempleados = e.idempleados
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_asistenciaDetList = da.iddetalle_asistencia
+INNER JOIN captura AS c ON c.iddetalle_Lista_NumOrdenCap = dln.iddetalle_Lista_NumOrden
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis
+INNER JOIN num_parte AS np ON np.num_parte = nm.num_parte
+WHERE e.idempleados = 'D-617' AND c.fecha BETWEEN '2017-01-30' AND '2017-02-03'
+GROUP BY c.fecha
+ORDER BY c.fecha ASC
+
+SELECT * FROM detalle_asistencia AS da 
+INNER JOIN empleados AS e ON e.idempleados = da.empleados_idempleados
+INNER JOIN detalle_Lista_NumOrden AS dln ON dln.iddetalle_asistenciaDetList = da.iddetalle_asistencia
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis
+INNER JOIN num_parte AS np ON np.num_parte = nm.num_parte
+INNER JOIN captura AS c ON c.iddetalle_Lista_NumOrdenCap = dln.iddetalle_Lista_NumOrden
+INNER JOIN usuarios AS u ON u.idusuario = c.usuarios_idusuario
+INNER JOIN empleados AS eu ON eu.idempleados = u.empleados_idempleados
+WHERE da.iddetalle_asistencia = '1209'

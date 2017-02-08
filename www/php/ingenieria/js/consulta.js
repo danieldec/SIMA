@@ -73,7 +73,6 @@ function principal(e) {
     var fechaFF = obtenerFecha(fechaF);
     var numParte = numParteConsul.val();
     var rangoDias = ((((fechaF.valueOf()-fechaI.valueOf())/1000)/24)/60)/60;
-    console.log(rangoDias);
     if (rangoDias>30) {
       jqxNotIngContent.html("La consulta no debe pasar de los 30 días");
       jqxNotIng.jqxNotification(
