@@ -654,6 +654,7 @@ function Principal() {
       //$('#tablaEfiCap').DataTable().clear().draw();
     }
   }
+  //aquí termina todo lo relacionado con el reporte de eficiencia
   //Aquí estaran todas las variables, eventos y funciones del reporte de entrenamiento
   var formRepEnt = $('#formRepEnt');
   var divFechaIRE = $('#divFechaIRE');

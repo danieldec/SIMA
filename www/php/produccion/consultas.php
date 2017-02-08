@@ -15,6 +15,8 @@
   <?php include '../hojasEstilo.php'; ?>
   <!--CSS de Libreria jqwidget-->
   <link type="text/css" rel="Stylesheet" href="../../css/styles/jqx.base.css" />
+  <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="../../css/buttons.dataTables.min.css" media="screen" charset="utf-8">
   <!-- archivo css creado por el desarrollador -->
   <link rel="stylesheet" href="css/consultas.css">
 </head>
@@ -101,6 +103,44 @@
             </div>
           </article>
           <article id="articleTabRepEfi" class="tab-pane fade">
+            <div class="row">
+              <div class="container-fluid">
+                <div class="col-md-12 col-xs-12">
+                  <div class="container-fluid">
+                    <form action="" id="formBufi">
+                      <fieldset>
+                        <legend>Reporte Eficiencia</legend>
+                        <label for="">Todo</label>
+                        <input type="radio" name="tipoConsul" id="radTodo" checked value="t">
+                        <label for="">por numero de empleado</label>
+                        <input type="radio" name="tipoConsul" id="radEmp" value="e"><br>
+                        <div id="divForm">
+                          <div id="divNumEmp">
+                            <label for="">Número de empleado</label>
+                            <input type="text" id="inpNuEmp" disabled name="inpNuEmp" required>
+                          </div>
+                          <label for="">Fecha Inicio:</label>
+                          <div id="divFechaI"></div>
+                          <label for="">Fecha Final</label>
+                          <div id="divFechaF"></div>
+                        </div>
+                        <input type="submit" value="Buscar" class="btn btn-default">
+                      </fieldset>
+                    </form>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 col-xs-12">
+                    <div class="container-fluid">
+                      <table class="table table-bordered table-condensed table-responsive" id="tablaEfiCap">
+                        <thead></thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </article>
         </section>
       </div>
@@ -145,8 +185,16 @@
   </div>
   <!--scripts de la pagina-->
   <?php include '../scriptsPiePag.php'; ?>
+  <!--  librerias de datatables-->
   <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
-  <script type="text/javascript" src="js/consultasPro.js"></script>
+  <script src="../../js/dataTables.buttons.min.js" charset="utf-8"></script>
+  <script src="../../js/buttons.flash.min.js" charset="utf-8"></script>
+  <script src="../../js/jszip.min.js" charset="utf-8"></script>
+  <script src="../../js/pdfmake.min.js" charset="utf-8"></script>
+  <script src="../../js/vfs_fonts.js" charset="utf-8"></script>
+  <script src="../../js/buttons.html5.min.js" charset="utf-8"></script>
+  <script src="../../js/buttons.print.min.js" charset="utf-8"></script>
+  <!--  librerias jqwidget-->
   <script type="text/javascript" src="../../js/jqwidget/jqxcore.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxnotification.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/jqxwindow.js"></script>
@@ -155,5 +203,6 @@
   <script type="text/javascript" src="../../js/jqwidget/jqxtooltip.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.js"></script>
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
+  <script type="text/javascript" src="js/consultasPro.js"></script>
 </body>
 </html>

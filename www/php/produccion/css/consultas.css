@@ -33,6 +33,12 @@ body{
 #tablaDetEfi>thead>tr>th{
   text-align: center;
 }
+#divForm{
+  display: inline-flex;
+}
+#divNumEmp{
+  display: none;
+}
 .detAsisDia{
   cursor: pointer;
   color: rgb(10, 0, 196);

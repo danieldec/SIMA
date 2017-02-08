@@ -13,6 +13,9 @@ function principal() {
   var itemSelectList = false;
   var venDetCap = $('#venDetCap');
   var tablaDetCap = $('#tablaDetCap');
+  //variables relacionado con el reporte de eficiencia
+  var divFechaI = $('#divFechaI');
+  var divFechaF = $('#divFechaF');
   //evento ul para realizar una acción al momento de cambiar de pestañas, posibles eventos showb.bs.tab
   ulTabConsulta.children('li').children('a[data-toggle="tab"]').on('show.bs.tab shown.bs.tab',evtShowTab);
   //función que va a recibir el evento de tab
@@ -291,7 +294,209 @@ function principal() {
     var tdClikcOrEnter = venDetCap.data('objeto');
     tdClikcOrEnter.focus();
   }
-
+  //Aquí terminada todo lo relacionado con la pestaña eficiencia por empleado.
+  //vamos a iniciar lo del reporte de eficiencia, funciones, inicializamos objetos y eventos de cada elemento que tengamos en nuestra pestaña eficiencia
+  divFechaI.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
+    }
+  );
+  divFechaF.jqxDateTimeInput(
+    {
+      width:'150px',
+      height:'25px',
+      culture:'es-ES',
+      formatString:'d',
+      showFooter:true,
+      clearString:'Limpiar',
+      todayString:'Hoy',
+      showWeekNumbers:true
+    }
+  );
+  var formBufi = $('#formBufi');
+  var radTodo = $('#radTodo');
+  var radEmp = $('#radEmp');
+  var inpNuEmp = $('#inpNuEmp');
+  var divNumEmp = $('#divNumEmp');
+  var tablaEfiCap = $('#tablaEfiCap');
+  $('input[name="tipoConsul"]').on('change',evtChaRadBtn);
+  //evento change de los radiobuttons
+  function evtChaRadBtn(e) {
+    var valRadBtn = $(this).val();
+    var displayDivNumEmp = divNumEmp.css('display');
+    var disabledInpNuEmp = inpNuEmp.attr('disabled');
+    if (valRadBtn=="t") {
+      if (displayDivNumEmp == "block" && disabledInpNuEmp == undefined) {
+        divNumEmp.css('display','none');
+        inpNuEmp.prop('disabled',true);
+      }
+    } else if (valRadBtn=='e') {
+      if (displayDivNumEmp == "none" && disabledInpNuEmp == "disabled") {
+        divNumEmp.css('display','initial');
+        inpNuEmp.removeAttr('disabled');
+        inpNuEmp.val("").focus();
+      }
+    }
+  }
+  formBufi.on('submit',evtSubForB);
+  function evtSubForB(e) {
+    // console.log(tablaEfiCap.children('tbody').html().length)
+    // console.log(tablaEfiCap.children('thead').html().length)
+    if (tablaEfiCap.children('tbody').html().length>0 && tablaEfiCap.children('thead').html().length>0) {
+      $('#tablaEfiCap').DataTable().destroy();
+    }
+    var valRadBtn = $("input[name='tipoConsul']:checked").val();
+    var fechaIB = divFechaI.jqxDateTimeInput('getDate');
+    var fechaFB = divFechaF.jqxDateTimeInput('getDate');
+    // console.log(fechaIB);
+    // console.log(fechaFB);
+    if (fechaIB == null || fechaFB == null) {
+      divNotificaciones.html("Se deben llenar los campos de la fecha");
+      jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+      jqxNoti.jqxNotification('open');
+      return false;
+    }
+    var rangoDias= ((((fechaFB.valueOf()-fechaIB.valueOf())/1000)/24)/60)/60;
+    var fechaIForm = obtenerFecha(fechaIB);
+    var fechaFForm = obtenerFecha(fechaFB);
+    //console.log(fechaIForm);
+    //console.log(fechaFForm);
+    if(rangoDias>=0&&rangoDias<=6){
+      if (valRadBtn=="t") {
+        $.post(
+          {
+            url:'../rh/php/consultaEfi.php',
+            dataType:'json',
+            data:
+            {
+             fechaIForm:fechaIForm,
+             fechaFForm:fechaFForm,
+             dias:rangoDias,
+             datosForm:$(this).serialize()
+            },
+            success:exitFormConsulta,
+            type:'POST',
+            error:errorAJAX
+          });
+        //console.log($(this).serialize());
+      }
+      if (valRadBtn=="e") {
+        $.post(
+          {
+            url:'../rh/php/consultaEfi.php',
+            dataType:'json',
+            data:
+            {
+             fechaIForm:fechaIForm,
+             fechaFForm:fechaFForm,
+             dias:rangoDias,
+             datosForm:$(this).serialize()
+            },
+            success:exitFormConsulta,
+            type:'POST',
+            error:errorAJAX
+          });
+        // console.log("vamos a consultar eficiencia por empleado");
+        // console.log($(this).serialize());
+      }
+    }else{
+      if (rangoDias>6) {
+        tablaEfiCap.children('thead').html("");
+        tablaEfiCap.children('tbody').html("");
+        divNotificaciones.html("La selección de las fechas debe ser menor a 7 días");
+        jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNoti.jqxNotification('open');
+      }else{
+        divNotificaciones.html("La fecha inicio debe ser menor a la fecha final");
+        jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNoti.jqxNotification('open');
+      }
+    }
+    e.preventDefault();
+  }//fin de la función evtSubForB;
+  function exitFormConsulta(datos,x,y) {
+    // console.log(datos);
+    if (datos.validacion=="exito") {
+      //mostrar datos después que haya estado lista la tabla eliminar registros.
+      //console.log(datos);
+      if (datos.tc=="t") {
+        $('#tablaEfiCap').children('thead').html(datos.datos.thead);
+        $('#tablaEfiCap>tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').DataTable(
+        {
+          "language":
+          {
+            "url":"../../json/Spanish.json"
+          },
+          stateSave: true,
+          dom: 'Bfrtip',
+          buttons:
+          [
+            'copy',
+            {
+              extend:'excelHtml5',
+              title:'reporteEfi'
+            },
+            {
+              extend:'pdfHtml5',
+              title:'reporteEfi'
+            },
+            'print'
+          ]
+        });
+      }else if (datos.tc=="e") {
+        $('#tablaEfiCap').children('thead').html(datos.datos.thead);
+        $('#tablaEfiCap').children('tbody').html(datos.datos.tbody);
+        $('#tablaEfiCap').DataTable(
+        {
+          "language":
+          {
+            "url":"../../json/Spanish.json"
+          },
+          stateSave: true,
+          dom: 'Bfrtip',
+          buttons:
+          [
+            'copy',
+            {
+              extend:'excelHtml5',
+              title:'reporteEfi'
+            },
+            {
+              extend:'pdfHtml5',
+              title:'reporteEfi'
+            },
+            'print'
+          ]
+        });
+      }
+    }else if (datos.validacion="error") {
+      if (datos.errorE==1) {
+        divNotificaciones.html(datos.datos);
+        jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNoti.jqxNotification('open');
+      }else if(datos.errorC==1){
+        divNotificaciones.html(datos.datos);
+        jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNoti.jqxNotification('open');
+      }else{
+        divNotificaciones.html("No se encontraron registros");
+        jqxNoti.jqxNotification({template:'error',width:'300px',height:'auto'});
+        jqxNoti.jqxNotification('open');
+      }
+      tablaEfiCap.children('thead').html("");
+      tablaEfiCap.children('tbody').html("");
+      //$('#tablaEfiCap').DataTable().clear().draw();
+    }
+  }
+  //aquí termina todo lo relacionado con el reporte de eficiencia
   //funciones genericas
   function obtenerFecha(fechaDia) {
     this.fechaDia=fechaDia;
