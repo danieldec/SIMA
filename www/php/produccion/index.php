@@ -948,33 +948,6 @@
          <input type="button" class="btn btn-primary" id="btnCAN" value="Cancelar"/>
        </div>
      </div>
-    <!-- <div id="divVenParcial">
-      <div>Parcial </div>
-      <div></div>
-    </div> -->
-  <!--  Modal para la captura de número de empleado-->
-  <!-- <button type="button" class="btn btn-success btn-md" id="myBtn" data-toggle="modal" data-target="#myModal" data-keyboard="false" data-backdrop='false'> -->
-  <!-- <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog"> -->
-      <!-- Modal -->
-        <!-- <div class="modal fade" id="myModal" role="dialog">
-          <div class="modal-dialog"> -->
-            <!-- Modal content-->
-            <!-- <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Options</h4>
-              </div>
-              <div class="modal-body">
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
-
   <!--importar los scripts de la ruta www/js -->
   <?php include '../scriptsPiePag.php'; ?>
   <script src="../../js/jquery.dataTables.min.js" charset="utf-8"></script>
@@ -991,6 +964,8 @@
   <script type="text/javascript" src="../../js/jqwidget/globalization/globalize.culture.es.js"></script>
   <script type="text/javascript" src="../../js/produccion.js"></script>
   <script type="text/javascript" src="js/captura.js">
+  </script>
+  <script type="text/javascript" src="js/asistencia.js">
   </script>
 </body>
 </html>
