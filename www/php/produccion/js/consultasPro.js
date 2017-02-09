@@ -210,6 +210,12 @@ function principal() {
         error:errorAJAX
       });
   }//fin del if
+  else{
+    divNotificaciones.html("Selecciona el nombre o número del empleado de la lista");
+    jqxNoti.jqxNotification({template:'error',autoClose:true,autoCloseDelay:2000}).jqxNotification('open');
+    var teclaPresionada = jQuery.Event( "keydown", { keyCode: 64 } );
+    inpEmpABus.focus().triggerHandler(teclaPresionada);
+  }
   e.preventDefault();
 }//fin de la función formSubmitEfiEmp
   //función antes de enviar los datos al servidor

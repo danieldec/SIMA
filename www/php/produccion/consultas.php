@@ -132,7 +132,7 @@
                 <div class="row">
                   <div class="col-md-12 col-xs-12">
                     <div class="container-fluid">
-                      <table class="table table-bordered table-condensed table-responsive" id="tablaEfiCap">
+                      <table class="table table-bordered table-condensed table-responsive display compact" id="tablaEfiCap" style="width:100%">
                         <thead></thead>
                         <tbody></tbody>
                       </table>
