@@ -55,9 +55,26 @@
         setlocale(LC_TIME , 'es_MX.utf8');
         $fecha="";
         //$fecha="Hoy es ".strftime('%A')." ".date('d/M/Y');
-        $fecha = "Hoy es ".strtoupper(strftime('%A',strtotime(date('Y/m/d'))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
+        $fecha = "Hoy es ".fechaWindow(strtoupper(strftime('%A',strtotime(date('Y/m/d')))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
         echo "<span id='spanFechaPagina'>".$fecha."</span>";
         ?>
+        <?php
+         function fechaWindow($diaSemana)
+         {
+           $diaSemanaIngles=array('SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY');
+           $diaSemanaEspanol =array('DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO');
+           for ($i=0; $i < count($diaSemanaEspanol); $i++) {
+             if ($diaSemanaEspanol[$i]==$diaSemana) {
+               return $diaSemanaEspanol[$i];
+             }
+           }
+           for ($i=0; $i < count($diaSemanaIngles); $i++) {
+             if ($diaSemanaIngles[$i]==$diaSemana) {
+               return $diaSemanaEspanol[$i];
+             }
+           }
+         }
+         ?>
       </div>
     </div>
   </div>

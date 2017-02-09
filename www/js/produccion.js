@@ -392,7 +392,7 @@
           inpCantReq.removeAttr('disabled');
           inpParcial.val(0);
           $('#rateNumP').val(0);
-          inpNumOrden.focus();
+          inpNumOrden.focus().select();
         }
       });//muestre el último registro del número de orden
     }else if (datos.validacion=="error") {
@@ -589,18 +589,18 @@
       var fechaReqM = obtenerFecha(fechaReqMR);
       //fecha obtenida en milisegundos
       var fRMR = fechaReqMR.valueOf();
-      console.log(NumOrdD);
-      console.log(NumOrdM);
-      console.log(NumOrdD === NumOrdM);
-      console.log(numParD);
-      console.log(numParM);
-      console.log(numParD === numParM);
-      console.log(cantReqD);
-      console.log(cantReqM);
-      console.log(cantReqD === cantReqM);
-      console.log(fRDR);
-      console.log(fRMR);
-      console.log(fRDR === fRMR);
+      // console.log(NumOrdD);
+      // console.log(NumOrdM);
+      // console.log(NumOrdD === NumOrdM);
+      // console.log(numParD);
+      // console.log(numParM);
+      // console.log(numParD === numParM);
+      // console.log(cantReqD);
+      // console.log(cantReqM);
+      // console.log(cantReqD === cantReqM);
+      // console.log(fRDR);
+      // console.log(fRMR);
+      // console.log(fRDR === fRMR);
       if (NumOrdD === NumOrdM && numParD === numParM && cantReqD === cantReqM && fRDR === fRMR) {
         $(this).val("Editar");
         $(this).parent().siblings('.idNOE').children('input').prop('disabled','disabled');
@@ -614,14 +614,14 @@
         var numUsuLog=$('#inpNumUsuario').val();
         if (NumOrdD !== NumOrdM) {
           console.log("Vamos a editar número de orden");
-          console.log(fechaReqM);
-          console.log(NumOrdD);
-          console.log(NumOrdM);
-          console.log(numParD);
-          console.log(numParM);
-          console.log(cantReqM);
-          console.log(numUsuDb);
-          console.log(numUsuLog);
+          // console.log(fechaReqM);
+          // console.log(NumOrdD);
+          // console.log(NumOrdM);
+          // console.log(numParD);
+          // console.log(numParM);
+          // console.log(cantReqM);
+          // console.log(numUsuDb);
+          // console.log(numUsuLog);
           if (numUsuDb!==numUsuLog) {
             console.log("Vamos a enviar el número de usuario");
             $.post(
@@ -663,14 +663,14 @@
               });
           }
         }else{
-          console.log(fechaReqM);
-          console.log(NumOrdD);
-          console.log(NumOrdM);
-          console.log(numParD);
-          console.log(numParM);
-          console.log(cantReqM);
-          console.log(numUsuDb);
-          console.log(numUsuLog);
+          // console.log(fechaReqM);
+          // console.log(NumOrdD);
+          // console.log(NumOrdM);
+          // console.log(numParD);
+          // console.log(numParM);
+          // console.log(cantReqM);
+          // console.log(numUsuDb);
+          // console.log(numUsuLog);
           console.log("No Vamos a editar número de orden");
           if (numUsuDb!==numUsuLog) {
             console.log("Vamos a enviar el número de usuario");
@@ -848,19 +848,33 @@
     inpNumEmpAsis.val(cadNumEmpList.trim());
     inpFeAsis=$('#inpFeAsis').val();
     inpNumEmp=inpNumEmpAsis.val();
-    console.log(inpNumEmp);
-    console.log(inpFeAsis);
+    // console.log(inpNumEmp);
+    // console.log(inpFeAsis);
     // console.log(inpFeAsis + " " + inpNumEmp);
     //este $.post se encuentra en la línea 22 del archivo asistencia.php
-    $.post('asistencia.php',
-    {
-      pInpFeAsis:inpFeAsis,
-      pInpNumEmp:inpNumEmp,
-      pHoy:hoy
-    },postLista);
+    $.post(
+      {
+        url: 'asistencia.php',
+        type:"POST",
+        data:
+        {
+          pInpFeAsis:inpFeAsis,
+          pInpNumEmp:inpNumEmp,
+          pHoy:hoy
+        },
+        success:postLista,
+        beforeSend:evtBefore
+      });
+    function evtBefore(x,y,z) {
+      $('#inpBtnLista').prop({
+        'disabled':'disabled'
+      }).val('Agregando...');
+      console.log(x);
+      console.log(y);
+    }
     function postLista(data,status) {
       // comprobamos que datos nos arrojo el post
-      // console.log("datos: "+data+" respuesta: "+status);
+      $('#inpBtnLista').prop('disabled') ? $('#inpBtnLista').removeAttr('disabled').val('Agregar lista') :"";
       var capError= data.substr(0,1);
       // console.log(capError);
       var banBtnMos=true;
@@ -2308,6 +2322,8 @@
   //esta función sirve para captar todos los errores que tenemos al momento de hacer un ajax.
   $.ajaxSetup({
     error: function( jqXHR, textStatus, errorThrown ) {
+      //vamos a hablitar de nuevo el botón.
+      $('#inpBtnLista').prop('disabled') ? $('#inpBtnLista').removeAttr('disabled').val('Agregar lista') :"";
       if (jqXHR.status == 0) {
         divNotificaciones.html("No hay conexión con el servidor,por favor espere ó llame al administrador");
         $(jqxNotiModCap).jqxNotification({template:'error'});
@@ -2329,6 +2345,12 @@
       }
     }
   });//fin de la función $.ajaxSetup
+  //ajaxSend, se ejecutara cada vez que enviamos un AJAX
+  // $(document).ajaxSend(function (event, request, settings) {
+  //   console.log(event);
+  //   console.log(request);
+  //   console.log(settings);
+  // });
   $('#jqxNotiModCap').jqxNotification({
     width: 250,
     position: "top-right",
