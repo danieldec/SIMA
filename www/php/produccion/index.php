@@ -55,11 +55,11 @@
         setlocale(LC_TIME , 'es_MX.utf8');
         $fecha="";
         //$fecha="Hoy es ".strftime('%A')." ".date('d/M/Y');
-        $fecha = "Hoy es ".fechaWindow(strtoupper(strftime('%A',strtotime(date('Y/m/d')))))." ".strftime('%d/%B/%Y',strtotime(date('Y/m/d')));
+        $fecha = "Hoy es ".fechaWinDia(strtoupper(strftime('%A',strtotime(date('Y/m/d')))))." ".date('d')."/".fechaWinMes(date('n'))."/".date('Y');
         echo "<span id='spanFechaPagina'>".$fecha."</span>";
         ?>
         <?php
-         function fechaWindow($diaSemana)
+         function fechaWinDia($diaSemana)
          {
            $diaSemanaIngles=array('SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY');
            $diaSemanaEspanol =array('DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO');
@@ -73,6 +73,11 @@
                return $diaSemanaEspanol[$i];
              }
            }
+         }
+         function fechaWinMes($mes)
+         {
+           $mesesEsp = array('enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
+           return $mesesEsp[$mes-1];
          }
          ?>
       </div>

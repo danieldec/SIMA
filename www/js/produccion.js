@@ -869,8 +869,6 @@
       $('#inpBtnLista').prop({
         'disabled':'disabled'
       }).val('Agregando...');
-      console.log(x);
-      console.log(y);
     }
     function postLista(data,status) {
       // comprobamos que datos nos arrojo el post
@@ -1822,13 +1820,13 @@
         // console.log(porcentaje);
         if (porcentaje>100) {
           $(this).siblings('.porReq').children('.progress').css('width',Math.round(100)+"%");
-          $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%").removeClass('progress-bar-success').addClass('progress-bar-danger');
+          $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%").removeClass('progress-bar-success').addClass('progress-bar-warning');
         }else if (porcentaje<=100&&porcentaje>95) {
         $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
         $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
         }else if (porcentaje<=95) {
         $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
-        $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
+        $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%").addClass('progress-bar-danger');
         }
       });
       $('#tablaReq').DataTable({
@@ -1863,6 +1861,13 @@
       // console.log("cantidad req"+ cantR+"parcial"+parcR+"producido"+proR);
       var porcentaje=((parseInt(parcR)+parseInt(proR))/cantR)*100;
       // console.log(parcR+proR);
+      if (porcentaje>100) {
+        $(this).siblings('.porReq').children('.progress').children('div').addClass('progress-bar-warning').removeClass('progress-bar-success progress-bar-danger');
+      }else if (porcentaje<=100&&porcentaje>95) {
+        $(this).siblings('.porReq').children('.progress').children('div').addClass('progress-bar-success').removeClass('progress-bar-warning progress-bar-danger');
+      }else if (porcentaje<=95) {
+        $(this).siblings('.porReq').children('.progress').children('div').addClass('progress-bar-danger');
+      }
       $(this).siblings('.porReq').children('.progress').css('width',Math.round(porcentaje)+"%");
       $(this).siblings('.porReq').children('.progress').children('div').html(Math.round(porcentaje)+"%");
       // console.log(cantR);
