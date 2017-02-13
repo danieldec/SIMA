@@ -101,3 +101,11 @@ INNER JOIN num_parte AS np ON np.num_parte = nm.num_parte
 WHERE e.idempleados = 'D-617' AND c.fecha BETWEEN '2017-01-20' AND '2017-02-02'
 GROUP BY c.fecha
 ORDER BY c.fecha,c.hora_inicio
+
+SELECT e.idempleados,nm.idnum_orden,nm.num_parte,SUM(c.cantidad),AVG(c.eficiencia),dln.iddetalle_Lista_NumOrden FROM captura AS c
+INNER JOIN detalle_lista_numorden AS dln ON dln.iddetalle_Lista_NumOrden = c.iddetalle_Lista_NumOrdenCap
+INNER JOIN num_orden AS nm ON nm.idnum_orden = dln.idnum_ordenDetLis
+INNER JOIN detalle_asistencia AS da ON da.iddetalle_asistencia = dln.iddetalle_asistenciaDetList
+INNER JOIN empleados AS e ON e.idempleados = da.empleados_idempleados
+WHERE c.fecha BETWEEN '2017-02-08' AND '2017-02-08'
+GROUP BY e.idempleados,nm.num_parte WITH ROLLUP

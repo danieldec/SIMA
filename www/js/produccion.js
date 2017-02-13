@@ -362,10 +362,17 @@
         type:'POST',
         dataType:'json',
         data:{pVNumOrden:vNumOrden,pVNumParte:vNumParte,pVCantidadReq:vCantidadReq,pVFechaNumOrden:vFechaNumOrden,pVNumUsuario:vNumUsuario},
-        success:exitoSubNM
+        success:exitoSubNM,
+        beforeSend:evtSubformNumOrden
       });
     }
   });//fin del submit formNumOrden
+  //antes de enviar los datosDeshabilitamos el botón del submit
+  var valBtnOrdPro = $('#btnOrdPro').val();
+  function evtSubformNumOrden() {
+    valBtnOrdPro = $('#btnOrdPro').val();
+    $('#btnOrdPro').prop('disabled','disabled').val('enviando...');
+  }
   //vamos a inicializar ventana de la edición de la captura
   $('#venEditNM').jqxWindow({
     height:'100%',
@@ -375,6 +382,7 @@
     autoOpen:false
   });
   function exitoSubNM(datos,x,y) {
+    $('#btnOrdPro').prop('disabled') ? $('#btnOrdPro').val(valBtnOrdPro).removeAttr('disabled') : "";
     if (datos.validacion=="exito") {
       divNotificaciones.html(datos.datos);
       $(jqxNotiModCap).jqxNotification({template:'success',autoClose:true,autoCloseDelay:1000});
@@ -2321,14 +2329,11 @@
   //   }
   // });
 
-
-  //sección de POST
-  // $.post('capturaGeneral.php',{pTabCapNumEmp:tabCapNumEmp},tablaCapNumEmple);
-  //esta función sirve para captar todos los errores que tenemos al momento de hacer un ajax.
   $.ajaxSetup({
     error: function( jqXHR, textStatus, errorThrown ) {
       //vamos a hablitar de nuevo el botón.
       $('#inpBtnLista').prop('disabled') ? $('#inpBtnLista').removeAttr('disabled').val('Agregar lista') :"";
+      $('#btnOrdPro').prop('disabled') ? $('#btnOrdPro').val(valBtnOrdPro).removeAttr('disabled') : "";
       if (jqXHR.status == 0) {
         divNotificaciones.html("No hay conexión con el servidor,por favor espere ó llame al administrador");
         $(jqxNotiModCap).jqxNotification({template:'error'});
